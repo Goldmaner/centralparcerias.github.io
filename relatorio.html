@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório de Execução Financeira — Central de Parcerias DDH</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1565C0">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #FAFAFA; color: #212121; font-size: 14px; }
+button { cursor: pointer; font-family: inherit; font-size: 13px; }
+input, select, textarea { font-family: inherit; font-size: 13px; }
+
+.toolbar { background: #1565C0; padding: 8px 16px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.toolbar .sep { width: 1px; height: 28px; background: #5C8EC8; margin: 0 10px; }
+.btn-save { background: #43A047; color: #fff; border: none; padding: 8px 18px; font-weight: bold; border-radius: 4px; }
+.btn-save:hover { background: #2E7D32; }
+.btn-primary { background: #1E88E5; color: #fff; border: none; padding: 7px 14px; border-radius: 4px; font-weight: 600; }
+.btn-primary:hover { background: #1565C0; }
+.btn-secondary { background: #E0E0E0; color: #333; border: 1px solid #BDBDBD; padding: 6px 12px; border-radius: 4px; }
+.btn-secondary:hover { background: #BDBDBD; }
+.btn-danger { background: #E53935; color: #fff; border: none; padding: 7px 14px; border-radius: 4px; font-weight: 600; }
+.btn-danger:hover { background: #C62828; }
+.dirty-indicator { color: #FFEB3B; font-weight: bold; font-size: 12px; display: none; }
+.dirty-indicator.active { display: inline; }
+.toolbar input[type="file"] { display: none; }
+
+.app-header { background: #0D47A1; color: #fff; padding: 6px 16px; display: flex; align-items: center; justify-content: space-between; }
+.app-header h1 { font-size: 15px; font-weight: 700; letter-spacing: .3px; }
+.app-header .app-subtitle { font-size: 11px; opacity: .8; }
+
+.tabs { display: flex; border-bottom: 2px solid #1565C0; background: #E3F2FD; flex-wrap: wrap; }
+.tab-btn { padding: 10px 20px; border: none; background: transparent; font-size: 13px; font-weight: 600; color: #1565C0; border-bottom: 3px solid transparent; transition: all .15s; }
+.tab-btn:hover { background: #BBDEFB; }
+.tab-btn.active { background: #1565C0; color: #fff; border-bottom-color: #0D47A1; }
+.tab-content { display: none; padding: 20px; min-height: 400px; }
+.tab-content.active { display: block; }
+
+.form-section { max-width: 820px; }
+.form-section h3 { color: #1565C0; font-size: 14px; margin: 20px 0 10px; border-bottom: 1px solid #BBDEFB; padding-bottom: 6px; }
+.form-section h3:first-child { margin-top: 0; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; }
+.form-grid label { font-weight: 600; font-size: 12px; color: #555; margin-bottom: 2px; display: block; }
+.form-grid input, .form-grid select, .form-grid textarea {
+  width: 100%; padding: 8px 10px; border: 1px solid #BDBDBD; border-radius: 4px;
+}
+.form-grid input:focus, .form-grid select:focus, .form-grid textarea:focus {
+  outline: none; border-color: #1565C0; box-shadow: 0 0 0 2px rgba(21,101,192,0.15);
+}
+.form-span-2 { grid-column: span 2; }
+.form-field-group { display: flex; flex-direction: column; gap: 3px; }
+
+.form-actions { margin-top: 24px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.autosave-msg { font-size: 11px; color: #757575; }
+
+.placeholder-box { background: #FFF9C4; border-radius: 6px; padding: 24px; max-width: 700px; }
+.placeholder-box h3 { color: #F57F17; margin-bottom: 8px; }
+
+.statusbar { background: #ECEFF1; padding: 4px 16px; font-size: 11px; display: flex; justify-content: space-between; align-items: center; }
+
+@media print {
+  @page { size: A4 portrait; margin: 15mm; }
+  body { font-size: 10px; }
+  .toolbar, .tabs, .form-actions, .statusbar { display: none !important; }
+  .tab-content { display: block !important; }
+  .form-grid input, .form-grid textarea { border: none; border-bottom: 1px solid #ccc; border-radius: 0; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ TOOLBAR ═══════════════════════════════════════════════ -->
+<div class="toolbar">
+  <button class="btn-save" onclick="salvarJSON()" title="Ctrl+S">💾 Salvar JSON</button>
+  <button class="btn-primary" onclick="document.getElementById('fileLoadBtn').click()">📂 Carregar JSON</button>
+  <input type="file" id="fileLoadBtn" accept=".json,.ref.json" onchange="carregarJSON(event)">
+  <div class="sep"></div>
+  <button class="btn-secondary" onclick="window.print()">📄 Imprimir</button>
+  <button class="btn-danger" onclick="limparFormulario()">🗑 Limpar</button>
+  <div class="sep"></div>
+  <span class="dirty-indicator" id="dirtyFlag">● Alterações não salvas</span>
+</div>
+
+<!-- ═══ NOME DA APLICAÇÃO ════════════════════════════════════ -->
+<div class="app-header">
+  <div>
+    <h1>📅 Relatório de Execução Financeira</h1>
+    <span class="app-subtitle">Gestão de Parcerias OSC — DDH / FAF</span>
+  </div>
+  <button onclick="window.location='index.html'" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);padding:5px 12px;border-radius:4px;font-size:12px;cursor:pointer;margin-left:auto;">← Painéis OSC</button>
+</div>
+
+<!-- ═══ TABS ══════════════════════════════════════════════════ -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab(0)">1. Dados Gerais</button>
+  <button class="tab-btn" onclick="switchTab(1)">2. Orçamento Anual</button>
+  <button class="tab-btn" onclick="switchTab(2)">3. Cronograma de Metas</button>
+  <button class="tab-btn" onclick="switchTab(3)">4. Conciliação Bancária</button>
+</div>
+
+<!-- ═══ TAB 0: DADOS GERAIS ═══════════════════════════════════ -->
+<div class="tab-content active" id="tab0">
+  <div class="form-section">
+
+    <h3>📋 Identificação da Parceria</h3>
+    <div class="form-grid">
+      <div class="form-field-group">
+        <label for="fNumeroTermo">Número do Termo</label>
+        <input type="text" id="fNumeroTermo" placeholder="Ex.: TC-001/2026" oninput="markDirty()">
+      </div>
+      <div class="form-field-group">
+        <label for="fCNPJ">CNPJ da OSC</label>
+        <input type="text" id="fCNPJ" placeholder="00.000.000/0000-00" maxlength="18" oninput="maskCNPJ(this);markDirty()">
+      </div>
+      <div class="form-field-group form-span-2">
+        <label for="fNomeOrganizacao">Nome da Organização (razão social)</label>
+        <input type="text" id="fNomeOrganizacao" placeholder="Razão social conforme CNPJ" oninput="markDirty()">
+      </div>
+      <div class="form-field-group form-span-2">
+        <label for="fNomeProjeto">Nome do Projeto</label>
+        <input type="text" id="fNomeProjeto" placeholder="Título completo conforme o instrumento" oninput="markDirty()">
+      </div>
+    </div>
+
+    <h3>📆 Vigência</h3>
+    <div class="form-grid">
+      <div class="form-field-group">
+        <label for="fDataInicio">Data de Início do Projeto</label>
+        <input type="date" id="fDataInicio" onchange="markDirty()">
+      </div>
+      <div class="form-field-group">
+        <label for="fDataEncerramento">Data de Encerramento do Projeto</label>
+        <input type="date" id="fDataEncerramento" onchange="markDirty()">
+      </div>
+    </div>
+
+    <h3>💰 Recursos</h3>
+    <div class="form-grid">
+      <div class="form-field-group">
+        <label for="fValorTotal">Valor Total do Projeto — R$</label>
+        <input type="text" id="fValorTotal" placeholder="0,00" inputmode="numeric" oninput="maskCurrency(this);markDirty()">
+      </div>
+      <div class="form-field-group">
+        <label for="fValorRepassado">Valor Repassado — R$</label>
+        <input type="text" id="fValorRepassado" placeholder="0,00" inputmode="numeric" oninput="maskCurrency(this);markDirty()">
+      </div>
+    </div>
+
+    <h3>🏦 Conta Específica</h3>
+    <div class="form-grid">
+      <div class="form-field-group form-span-2">
+        <label for="fContaEspecifica">Conta Específica (Banco / Agência / Nº conta)</label>
+        <input type="text" id="fContaEspecifica" placeholder="Ex.: Bradesco / 0237 / 12345-6" oninput="markDirty()">
+      </div>
+    </div>
+
+    <h3>📍 Endereço de Execução</h3>
+    <div class="form-grid">
+      <div class="form-field-group form-span-2">
+        <label for="fEndereco">Endereço do Projeto</label>
+        <input type="text" id="fEndereco" placeholder="Logradouro, n.º, bairro, cidade/UF, CEP" oninput="markDirty()">
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button class="btn-save" onclick="salvarJSON()">💾 Salvar JSON</button>
+      <button class="btn-secondary" onclick="window.print()">📄 Imprimir</button>
+      <span class="autosave-msg" id="autosaveMsg">Rascunho salvo automaticamente no navegador.</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ═══ TAB 1: ORÇAMENTO ANUAL ════════════════════════════════ -->
+<div class="tab-content" id="tab1">
+  <div class="placeholder-box">
+    <h3>⚙ Em desenvolvimento</h3>
+    <p>A seção de <b>Orçamento Anual</b> será implementada em breve.<br>
+    Ela permitirá lançar o plano orçamentário aprovado por elemento de despesa, com detalhamento mensal e comparação com o executado.</p>
+  </div>
+</div>
+
+<!-- ═══ TAB 2: CRONOGRAMA DE METAS ════════════════════════════ -->
+<div class="tab-content" id="tab2">
+  <div class="placeholder-box">
+    <h3>⚙ Em desenvolvimento</h3>
+    <p>A seção de <b>Cronograma de Metas</b> será implementada em breve.<br>
+    Ela permitirá registrar as metas pactuadas no Plano de Trabalho e o cumprimento físico-financeiro de cada meta.</p>
+  </div>
+</div>
+
+<!-- ═══ TAB 3: CONCILIAÇÃO BANCÁRIA ══════════════════════════ -->
+<div class="tab-content" id="tab3">
+  <div class="placeholder-box">
+    <h3>⚙ Em desenvolvimento</h3>
+    <p>A seção de <b>Conciliação Bancária</b> será implementada em breve.<br>
+    Ela permitirá importar extratos e registrar a conciliação entre saldos e despesas pagas.</p>
+  </div>
+</div>
+
+<!-- ═══ STATUS BAR ═══════════════════════════════════════════ -->
+<div class="statusbar">
+  <span id="statusFile">Nenhum arquivo carregado</span>
+  <span id="autosaveStatus" style="font-size:11px;color:#757575;">Rascunho local ativo</span>
+</div>
+
+<script>
+'use strict';
+
+const LS_KEY = 'relatorio_autosave';
+let isDirty = false;
+
+function markDirty() {
+  isDirty = true;
+  document.getElementById('dirtyFlag').classList.add('active');
+  autoSave();
+}
+
+function clearDirty() {
+  isDirty = false;
+  document.getElementById('dirtyFlag').classList.remove('active');
+}
+
+function switchTab(idx) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+  document.querySelectorAll('.tab-content').forEach((c, i) => c.classList.toggle('active', i === idx));
+}
+
+// ── Máscaras ──────────────────────────────────────────────────
+
+function maskCNPJ(input) {
+  let v = input.value.replace(/\D/g, '').slice(0, 14);
+  v = v.replace(/^(\d{2})(\d)/, '$1.$2');
+  v = v.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+  v = v.replace(/\.(\d{3})(\d)/, '.$1/$2');
+  v = v.replace(/(\d{4})(\d)/, '$1-$2');
+  input.value = v;
+}
+
+function maskCurrency(input) {
+  const digits = input.value.replace(/\D/g, '');
+  if (!digits) { input.value = ''; return; }
+  const val = parseInt(digits) / 100;
+  input.value = val.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+// ── Leitura / escrita do formulário ──────────────────────────
+
+function readForm() {
+  return {
+    NumeroTermo: document.getElementById('fNumeroTermo').value,
+    CNPJ: document.getElementById('fCNPJ').value,
+    NomeOrganizacao: document.getElementById('fNomeOrganizacao').value,
+    NomeProjeto: document.getElementById('fNomeProjeto').value,
+    DataInicio: document.getElementById('fDataInicio').value,
+    DataEncerramento: document.getElementById('fDataEncerramento').value,
+    ValorTotal: document.getElementById('fValorTotal').value,
+    ValorRepassado: document.getElementById('fValorRepassado').value,
+    ContaEspecifica: document.getElementById('fContaEspecifica').value,
+    Endereco: document.getElementById('fEndereco').value
+  };
+}
+
+function writeForm(obj) {
+  if (!obj) return;
+  document.getElementById('fNumeroTermo').value = obj.NumeroTermo || '';
+  document.getElementById('fCNPJ').value = obj.CNPJ || '';
+  document.getElementById('fNomeOrganizacao').value = obj.NomeOrganizacao || '';
+  document.getElementById('fNomeProjeto').value = obj.NomeProjeto || '';
+  document.getElementById('fDataInicio').value = obj.DataInicio || '';
+  document.getElementById('fDataEncerramento').value = obj.DataEncerramento || '';
+  document.getElementById('fValorTotal').value = obj.ValorTotal || '';
+  document.getElementById('fValorRepassado').value = obj.ValorRepassado || '';
+  document.getElementById('fContaEspecifica').value = obj.ContaEspecifica || '';
+  document.getElementById('fEndereco').value = obj.Endereco || '';
+}
+
+// ── Salvar / Carregar JSON ────────────────────────────────────
+
+function salvarJSON() {
+  const obj = readForm();
+  const fileName = `relatorio_${(obj.NumeroTermo || 'parceria').replace(/[^a-zA-Z0-9]/g, '_')}.ref.json`;
+  const json = JSON.stringify({ _tipo: 'relatorio_execucao_financeira', _versao: 1, ...obj }, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = fileName; a.click();
+  URL.revokeObjectURL(url);
+  document.getElementById('statusFile').textContent = `Salvo: ${fileName}`;
+  clearDirty();
+}
+
+function carregarJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const obj = JSON.parse(e.target.result);
+      writeForm(obj);
+      document.getElementById('statusFile').textContent = `Arquivo: ${file.name}`;
+      clearDirty();
+      switchTab(0);
+    } catch (err) { alert('Erro ao carregar arquivo: ' + err.message); }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function limparFormulario() {
+  if (!confirm('Limpar todos os campos? Os dados não salvos serão perdidos.')) return;
+  writeForm({});
+  localStorage.removeItem(LS_KEY);
+  document.getElementById('statusFile').textContent = 'Nenhum arquivo carregado';
+  clearDirty();
+}
+
+// ── AutoSave ──────────────────────────────────────────────────
+
+function autoSave() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(readForm())); } catch (e) {}
+}
+
+function tryRestoreAutoSave() {
+  try {
+    const saved = localStorage.getItem(LS_KEY);
+    if (!saved) return;
+    const obj = JSON.parse(saved);
+    const hasData = Object.values(obj).some(v => v && v.trim && v.trim() !== '');
+    if (hasData) writeForm(obj);
+  } catch (e) {}
+}
+
+// ── Atalhos ───────────────────────────────────────────────────
+
+document.addEventListener('keydown', function(e) {
+  if (e.ctrlKey && e.key === 's') { e.preventDefault(); salvarJSON(); }
+});
+
+window.addEventListener('beforeunload', function(e) {
+  if (isDirty) { e.preventDefault(); e.returnValue = ''; }
+});
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(() => {});
+}
+
+// ── Init ──────────────────────────────────────────────────────
+tryRestoreAutoSave();
+</script>
+</body>
+</html>

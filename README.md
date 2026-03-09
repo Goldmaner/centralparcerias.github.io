@@ -1,57 +1,105 @@
-# Painel do Demonstrativo de Aferição
+# Central de Parcerias DDH
 
-> Ferramenta web para controle e documentação de remanejamentos orçamentários em parcerias entre OSCs e Unidades Gestoras públicas (Lei 13.019/2014).
+> Plataforma web unificada de apoio à gestão de parcerias entre OSCs e Unidades Gestoras públicas, referenciada na Lei Federal n.º 13.019/2014.
 
 🔗 **Acesso direto:** [https://goldmaner.github.io](https://goldmaner.github.io)
 
 ---
 
-## O que é
+## Estrutura do sistema
 
-O **Demonstrativo de Aferição de Remanejamento Orçamentário** calcula automaticamente o **PA (Percentual Acumulado)** de alterações entre valores previstos e executados, indicando se a execução está dentro do limite de autonomia de **15% sobre o VTP** (Valor Total da Parceria).
+A Central de Parcerias é uma **PWA (Progressive Web App)** composta por módulos independentes, organizados por perfil de usuário: **Sou OSC** e **Sou Pessoa Gestora**.
 
-### Funcionalidades
-
-- **Cabeçalho** — OSC, projeto, número do termo, processo SEI, VTP, valor repassado, rendimentos e período
-- **Previsto** — plano orçamentário por item de despesa e mês; reordenação de linhas; colar do Excel
-- **Executado** — lança valores realizados; destaca extrapolações em amarelo; suporte a despesas não previstas
-- **% de Alteração** — calcula PRA célula a célula e PA total com semáforo de 15%
-- **Conciliação Bancária** — seção reservada para registros futuros
-- **Exportar PDF** — impressão por seção com divisão automática de colunas (projetos com muitos meses)
-- **Exportar CSV** — 3 arquivos (Previsto, Executado, % Alteração) compatíveis com Excel
-- **Auto-save** — rascunho automático no navegador; salvo definitivamente em `.daf.json`
-- **PWA** — instala no computador/celular, funciona offline
-
----
-
-## Como usar
-
-1. Abra [https://goldmaner.github.io](https://goldmaner.github.io) no navegador (Chrome ou Edge recomendados)
-2. Leia a aba **1. Instruções** antes de começar
-3. Preencha o **2. Cabeçalho** com os dados da parceria
-4. Lance o orçamento em **4. Previsto** e os gastos em **5. Executado**
-5. Consulte **6. % de Alteração** para verificar o PA acumulado
-6. Salve com **SALVAR** (gera um arquivo `.daf.json`) — guarde este arquivo
-
----
-
-## Formato de arquivo
-
-Os projetos são salvos em `.daf.json`:
-
-```json
-{
-  "Version": 1,
-  "Header": { "NomeOSC": "...", "NomeProjeto": "...", "NumeroTermo": "...", "ProcessoSEI": "...",
-               "ValorTotalPrevisto": 0, "ValorTotalRepassado": 0, "ValorAplicacao": 0,
-               "DataInicio": "YYYY-MM-DD", "DataFim": "YYYY-MM-DD" },
-  "Items": [
-    { "Id": 1, "ElementoDespesa": "Pessoal", "Quantidade": 1, "ItemDespesa": "Coordenador",
-      "ValoresPrevisto": [0, ...], "ValoresExecutado": [0, ...], "Justificativas": ["", ...] }
-  ],
-  "Historico": []
-}
 ```
+index.html            ← Hub de navegação (landing page)
+demonstrativo.html    ← Demonstrativo de Aferição (perfil OSC)
+oficio.html           ← Formulário de Ofício de Solicitação (perfil OSC)
+relatorio.html        ← Relatório de Execução Financeira (perfil OSC)
+encaminhamento.html   ← Encaminhamento ao Setor Competente (perfil Gestora)
+sw.js                 ← Service Worker (suporte offline)
+manifest.json         ← Manifesto PWA
+```
+
+---
+
+## Módulos
+
+### 📊 Demonstrativo de Aferição — `demonstrativo.html`
+
+Calcula automaticamente o **PA (Percentual Acumulado)** de remanejamento orçamentário mês a mês, indicando se a execução está dentro do limite de autonomia de **15% sobre o VTP** (Valor Total da Parceria).
+
+**Abas:**
+| # | Nome | Descrição |
+|---|------|-----------|
+| 1 | Instruções | Guia de uso do módulo |
+| 2 | Cabeçalho | Dados da OSC, projeto, VTP, datas e valores |
+| 3 | Conciliação Bancária | Em desenvolvimento |
+| 4 | Previsto | Plano orçamentário aprovado, por item e mês |
+| 5 | Executado | Valores efetivamente gastos; destaca extrapolações |
+| 6 | % de Alteração | PRA por célula e PA total com semáforo de 15% |
+
+**Funcionalidades:**
+- Colar planilha do Excel diretamente na tabela (Ctrl+V)
+- Mover, inserir e remover linhas de despesa
+- Exportar PDF por seção (divisão automática a cada 8 meses)
+- Exportar CSV (3 arquivos: Previsto, Executado, % Alteração)
+- Salvar projeto como `.daf.json` e recarregar
+- Auto-save silencioso no navegador (localStorage)
+- Atalhos: `Ctrl+S` salvar, `Ctrl+O` abrir
+
+---
+
+### 📝 Formulário de Ofício — `oficio.html`
+
+Gera o **Ofício de Solicitação de Alterações Orçamentárias** preenchido pela OSC para envio à Unidade Gestora.
+
+**Funcionalidades:**
+- Identificação automática via dados do Demonstrativo (localStorage compartilhado)
+- 27 tipos de alteração com checkboxes
+- Campos de Identificação, Demarcação, Fundamentação e Assinatura
+- Exportar como PDF imprimível (A4 retrato, layout de ofício com timbre)
+- Auto-save no navegador
+
+---
+
+### 📅 Relatório de Execução Financeira — `relatorio.html`
+
+Módulo em construção para geração periódica de relatórios de execução físico-financeira da parceria.
+
+**Aba 1 — Dados Gerais (disponível):**
+
+| Campo | Formato |
+|-------|---------|
+| Número do Termo | Texto livre |
+| CNPJ da OSC | Máscara XX.XXX.XXX/XXXX-XX |
+| Nome da Organização | Texto livre |
+| Nome do Projeto | Texto livre |
+| Data de Início / Encerramento | Seletor de data |
+| Valor Total do Projeto | Máscara monetária R$ |
+| Valor Repassado | Máscara monetária R$ |
+| Conta Específica | Texto livre (banco / agência / conta) |
+| Endereço do Projeto | Texto livre |
+
+Salva como `.ref.json`; auto-save no navegador.
+
+**Próximas abas (em desenvolvimento):**
+- Orçamento Anual
+- Cronograma de Metas
+- Conciliação Bancária
+
+---
+
+### 📋 Encaminhamento ao Setor Competente — `encaminhamento.html`
+
+Ferramenta para a **Pessoa Gestora** gerar o bloco de HTML formatado para colar no sistema SEI, com o encaminhamento formal da solicitação da OSC.
+
+**Funcionalidades:**
+- 30 tipos de alteração (checkboxes)
+- Seção de Demarcação (texto livre)
+- Seção de Fundamentação — aparece automaticamente apenas quando **Prorrogação de Vigência** está marcada
+- Botão "📋 Copiar HTML para SEI" — gera código HTML pronto para colar no editor do SEI
+- Preview do documento e do código gerado
+- Auto-save no navegador
 
 ---
 
@@ -61,10 +109,11 @@ Os projetos são salvos em `.daf.json`:
 |------|---------|
 | Stack | HTML + CSS + JavaScript ES2020 puro |
 | Dependências externas | **nenhuma** |
-| Tamanho | ~1 arquivo `index.html` |
 | Hospedagem | GitHub Pages (gratuito, HTTPS automático) |
-| Offline | Service Worker (cache-first) |
-| Instalação | PWA — instala direto do navegador |
+| Offline | Service Worker — estratégia network-first |
+| Instalação | PWA — instala direto do navegador (Chrome/Edge) |
+| Persistência local | `localStorage` por módulo |
+| Formato de arquivo | `.daf.json` (Demonstrativo), `.ref.json` (Relatório) |
 
 ---
 
@@ -72,11 +121,11 @@ Os projetos são salvos em `.daf.json`:
 
 ```bash
 # Clone
-git clone https://github.com/Goldmaner/goldminer.github.io.git
-cd goldminer.github.io
+git clone https://github.com/Goldmaner/goldmaner.github.io.git
+cd goldmaner.github.io
 
-# Servidor local (qualquer um serve)
-python -m http.server 8899
+# Servidor local sem cache (recomendado)
+python iniciar_servidor.py
 # acesse http://localhost:8899
 ```
 
@@ -84,4 +133,4 @@ python -m http.server 8899
 
 ## Licença
 
-Uso interno — Gestão de Parcerias OSC.
+Uso interno — Gestão de Parcerias OSC / DDH / FAF.

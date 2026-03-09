@@ -3,21 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Central de Documentos — Departamento de Direitos Humanos</title>
+<title>Demonstrativo de Aferição — Central de Parcerias DDH</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1565C0">
 <style>
-/* ═══════════════════════════════════════════════════════════════
-   RESET & BASE
-   ═══════════════════════════════════════════════════════════════ */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #FAFAFA; color: #212121; font-size: 14px; }
 button { cursor: pointer; font-family: inherit; font-size: 13px; }
 input, select { font-family: inherit; font-size: 13px; }
 
-/* ═══════════════════════════════════════════════════════════════
-   TOOLBAR
-   ═══════════════════════════════════════════════════════════════ */
 .toolbar { background: #1565C0; padding: 8px 16px; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 .toolbar .sep { width: 1px; height: 28px; background: #5C8EC8; margin: 0 10px; }
 .btn-save { background: #43A047; color: #fff; border: none; padding: 8px 18px; font-weight: bold; border-radius: 4px; }
@@ -34,17 +28,11 @@ input, select { font-family: inherit; font-size: 13px; }
 .dirty-indicator.active { display: inline; }
 .toolbar input[type="file"] { display: none; }
 
-/* ═══════════════════════════════════════════════════════════════
-   STATUS BAR
-   ═══════════════════════════════════════════════════════════════ */
 .statusbar { background: #ECEFF1; padding: 4px 16px; font-size: 11px; display: flex; justify-content: space-between; align-items: center; }
 .pa-badge { padding: 3px 10px; border-radius: 3px; color: #fff; font-weight: 600; font-size: 11px; }
 .pa-ok { background: #43A047; }
 .pa-warn { background: #E53935; }
 
-/* ═══════════════════════════════════════════════════════════════
-   TABS
-   ═══════════════════════════════════════════════════════════════ */
 .tabs { display: flex; border-bottom: 2px solid #1565C0; background: #E3F2FD; flex-wrap: wrap; }
 .tab-btn { padding: 10px 20px; border: none; background: transparent; font-size: 13px; font-weight: 600; color: #1565C0; border-bottom: 3px solid transparent; transition: all .15s; }
 .tab-btn:hover { background: #BBDEFB; }
@@ -52,9 +40,6 @@ input, select { font-family: inherit; font-size: 13px; }
 .tab-content { display: none; padding: 16px; min-height: 400px; }
 .tab-content.active { display: block; }
 
-/* ═══════════════════════════════════════════════════════════════
-   FORMS
-   ═══════════════════════════════════════════════════════════════ */
 .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 24px; max-width: 860px; }
 .form-grid label { font-weight: 600; font-size: 12px; color: #555; margin-bottom: 2px; display: block; }
 .form-grid input, .form-grid select { width: 100%; padding: 8px 10px; border: 1px solid #BDBDBD; border-radius: 4px; }
@@ -62,15 +47,9 @@ input, select { font-family: inherit; font-size: 13px; }
 .form-span-2 { grid-column: span 2; }
 .form-actions { margin-top: 16px; }
 
-/* ═══════════════════════════════════════════════════════════════
-   INSTRUCTION BLOCKS
-   ═══════════════════════════════════════════════════════════════ */
 .instr-block { border-radius: 6px; padding: 16px; margin-bottom: 12px; font-size: 13px; line-height: 1.6; }
 .instr-block b { display: inline; }
 
-/* ═══════════════════════════════════════════════════════════════
-   DATA TABLES
-   ═══════════════════════════════════════════════════════════════ */
 .table-toolbar { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; flex-wrap: wrap; }
 .table-wrapper { overflow-x: auto; max-height: 70vh; overflow-y: auto; border: 1px solid #E0E0E0; border-radius: 4px; }
 .data-table { border-collapse: collapse; width: max-content; min-width: 100%; }
@@ -90,33 +69,23 @@ input, select { font-family: inherit; font-size: 13px; }
 .data-table .qty-input { width: 40px; text-align: center; }
 .data-table .readonly-cell { color: #555; }
 .data-table tfoot td { background: #F5F5F5; font-weight: bold; border-top: 2px solid #1565C0; position: sticky; bottom: 0; z-index: 1; }
-
-/* Alt table header */
 .alt-header { background: #4A148C !important; }
 
-/* PA banner */
 .pa-banner { padding: 10px 16px; border-radius: 4px; margin-bottom: 10px; color: #fff; font-weight: bold; }
 .pa-banner.ok { background: #43A047; }
 .pa-banner.warn { background: #E53935; }
 
-/* Warnings */
 .warnings-box { background: #FFF3E0; border-radius: 4px; padding: 10px; margin-bottom: 10px; font-size: 12px; display: none; }
 .warnings-box.active { display: block; }
 
-/* VTP display */
 .vtp-display { font-weight: bold; color: #1565C0; font-size: 13px; margin-left: 16px; }
 
-/* App name header */
 .app-header { background: #0D47A1; color: #fff; padding: 6px 16px; display: flex; align-items: center; justify-content: space-between; }
 .app-header h1 { font-size: 15px; font-weight: 700; letter-spacing: .3px; }
 .app-header .app-subtitle { font-size: 11px; opacity: .8; }
 
-/* Info blocks in placeholder tab */
 .placeholder-box { background: #FFF9C4; border-radius: 6px; padding: 20px; max-width: 700px; }
 
-/* ═══════════════════════════════════════════════════════════════
-   PRINT STYLES
-   ═══════════════════════════════════════════════════════════════ */
 @media print {
   @page { size: A4 landscape; margin: 10mm; }
   body { font-size: 9px !important; background: #fff !important; }
@@ -139,236 +108,9 @@ input, select { font-family: inherit; font-size: 13px; }
   h2.print-title { display: block !important; font-size: 14px; margin-bottom: 8px; }
 }
 h2.print-title { display: none; }
-
-/* ═════════════════════════════════════════════════════
-   LANDING PAGE
-   ═════════════════════════════════════════════════════ */
-.landing {
-  min-height: 100vh;
-  background: linear-gradient(160deg, #0D47A1 0%, #1565C0 40%, #1976D2 70%, #1E88E5 100%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  gap: 40px;
-}
-.landing-header {
-  text-align: center;
-  color: #fff;
-}
-.landing-logo {
-  font-size: 48px;
-  margin-bottom: 12px;
-  display: block;
-}
-.landing-title {
-  font-size: 22px;
-  font-weight: 700;
-  letter-spacing: .3px;
-  line-height: 1.35;
-  margin-bottom: 8px;
-}
-.landing-subtitle {
-  font-size: 14px;
-  opacity: .8;
-  font-weight: 400;
-}
-.landing-cards {
-  display: flex;
-  gap: 28px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-.landing-card {
-  background: #fff;
-  border-radius: 16px;
-  width: 260px;
-  padding: 36px 28px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  cursor: pointer;
-  box-shadow: 0 8px 32px rgba(0,0,0,.18);
-  transition: transform .18s, box-shadow .18s;
-  border: 3px solid transparent;
-  text-align: center;
-  position: relative;
-}
-.landing-card:hover:not(.landing-card-disabled) {
-  transform: translateY(-6px);
-  box-shadow: 0 16px 40px rgba(0,0,0,.25);
-  border-color: #1565C0;
-}
-.landing-card-disabled {
-  opacity: .6;
-  cursor: not-allowed;
-}
-.landing-card-icon {
-  font-size: 52px;
-  line-height: 1;
-}
-.landing-card-title {
-  font-size: 18px;
-  font-weight: 700;
-  color: #1565C0;
-}
-.landing-card-desc {
-  font-size: 12px;
-  color: #555;
-  line-height: 1.5;
-}
-.landing-card-badge {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  background: #FF8F00;
-  color: #fff;
-  font-size: 10px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 20px;
-  letter-spacing: .5px;
-}
-.landing-footer {
-  color: rgba(255,255,255,.55);
-  font-size: 11px;
-  text-align: center;
-}
-
-/* Esconde o app enquanto landing está visível */
-#appShell { display: none; }
 </style>
 </head>
 <body>
-
-<!-- ═══ LANDING PAGE ══════════════════════════════════════════ -->
-<div class="landing" id="landingPage">
-
-  <div class="landing-header">
-    <span class="landing-logo">🏙️</span>
-    <div class="landing-title">Bem-vindo à Central de Documentos e Seções<br>do Departamento de Direitos Humanos</div>
-    <div class="landing-subtitle">Selecione seu perfil de acesso para continuar</div>
-  </div>
-
-  <div class="landing-cards">
-
-    <div class="landing-card" onclick="showLandingOSC()">
-      <div class="landing-card-icon">🏢</div>
-      <div class="landing-card-title">Sou OSC</div>
-      <div class="landing-card-desc">Acesse os painéis e ferramentas disponíveis para Organizações da Sociedade Civil.</div>
-    </div>
-
-    <div class="landing-card" onclick="showLandingGestor()">
-      <div class="landing-card-icon">💼</div>
-      <div class="landing-card-title">Sou Pessoa Gestora</div>
-      <div class="landing-card-desc">Acesse os painéis e ferramentas disponíveis para Pessoas Gestoras de Parcerias.</div>
-    </div>
-
-  </div>
-
-  <div class="landing-footer">
-    Central de Documentos — Departamento de Direitos Humanos<br>
-    Todos os dados são salvos localmente no seu dispositivo.
-  </div>
-
-</div>
-
-<!-- ═══ LANDING OSC (nível 2) ════════════════════════════════ -->
-<div class="landing" id="landingOSC" style="display:none;">
-
-  <div class="landing-header">
-    <span class="landing-logo">🏢</span>
-    <div class="landing-title">Painel da OSC</div>
-    <div class="landing-subtitle">Selecione o painel que deseja acessar</div>
-  </div>
-
-  <div class="landing-cards">
-
-    <div class="landing-card" onclick="entrarComoOSC()">
-      <div class="landing-card-icon">📊</div>
-      <div class="landing-card-title">Demonstrativo de Aferição</div>
-      <div class="landing-card-desc">Controle e documente remanejamentos orçamentários. Calcule o PA acumulado e o limite de 15% sobre o VTP.</div>
-    </div>
-
-    <div class="landing-card" onclick="window.location='oficio.html'">
-      <div class="landing-card-icon">📝</div>
-      <div class="landing-card-title">Formulário de Ofício de Alteração</div>
-      <div class="landing-card-desc">Geração do ofício formal de solicitação de alteração orçamentária para a Unidade Gestora.</div>
-    </div>
-
-    <div class="landing-card" onclick="window.location='relatorio.html'">
-      <div class="landing-card-icon">📅</div>
-      <div class="landing-card-title">Relatório de Execução Financeira</div>
-      <div class="landing-card-desc">Geração de relatórios periódicos de execução físico-financeira da parceria.</div>
-    </div>
-
-    <div class="landing-card landing-card-disabled">
-      <div class="landing-card-badge">EM BREVE</div>
-      <div class="landing-card-icon">🧳</div>
-      <div class="landing-card-title">Prestação de Contas</div>
-      <div class="landing-card-desc">Organização e checklist de documentos para prestação de contas parcial e final.</div>
-    </div>
-
-  </div>
-
-  <div class="landing-footer" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-    <button onclick="voltarLanding()" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);padding:7px 20px;border-radius:6px;font-size:12px;cursor:pointer;">← Voltar ao início</button>
-    <span>Central de Documentos — Departamento de Direitos Humanos</span>
-  </div>
-
-</div>
-
-<!-- ═══ LANDING GESTORA (nível 2) ═══════════════════════════ -->
-<div class="landing" id="landingGestor" style="display:none;">
-
-  <div class="landing-header">
-    <span class="landing-logo">💼</span>
-    <div class="landing-title">Painel da Pessoa Gestora</div>
-    <div class="landing-subtitle">Selecione o painel que deseja acessar</div>
-  </div>
-
-  <div class="landing-cards">
-
-    <div class="landing-card landing-card-disabled">
-      <div class="landing-card-badge">EM BREVE</div>
-      <div class="landing-card-icon">📋</div>
-      <div class="landing-card-title">Relatório de Visita Técnica</div>
-      <div class="landing-card-desc">Registro e documentação de visitas técnicas realizadas às OSCs parceiras.</div>
-    </div>
-
-    <div class="landing-card landing-card-disabled">
-      <div class="landing-card-badge">EM BREVE</div>
-      <div class="landing-card-icon">📊</div>
-      <div class="landing-card-title">Relatório Técnico de Monitoramento e Avaliação</div>
-      <div class="landing-card-desc">Elaboração de relatórios técnicos de acompanhamento e avaliação das parcerias.</div>
-    </div>
-
-    <div class="landing-card" onclick="window.location='encaminhamento.html'">
-      <div class="landing-card-icon">📝</div>
-      <div class="landing-card-title">Encaminhamento de Alteração de Parceria</div>
-      <div class="landing-card-desc">Elaboração do modelo de encaminhamento de solicitação de alterações para o SEI.</div>
-    </div>
-
-    <div class="landing-card landing-card-disabled">
-      <div class="landing-card-badge">EM BREVE</div>
-      <div class="landing-card-icon">🧾</div>
-      <div class="landing-card-title">Parecer Técnico Conclusivo de Análise da Prestação de Contas</div>
-      <div class="landing-card-desc">Elaboração do parecer técnico conclusivo para análise de prestações de contas.</div>
-    </div>
-
-  </div>
-
-  <div class="landing-footer" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
-    <button onclick="voltarLandingGestor()" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);padding:7px 20px;border-radius:6px;font-size:12px;cursor:pointer;">← Voltar ao início</button>
-    <span>Central de Documentos — Departamento de Direitos Humanos</span>
-  </div>
-
-</div>
-
-<!-- ═══ APP SHELL ══════════════════════════════════════════════ -->
-<div id="appShell">
 
 <!-- ═══ TOOLBAR ═══════════════════════════════════════════════ -->
 <div class="toolbar" id="toolbar">
@@ -389,7 +131,7 @@ h2.print-title { display: none; }
     <h1>📊 Painel do Demonstrativo de Aferição</h1>
     <span class="app-subtitle">Demonstrativo de Aferição de Remanejamento Orçamentário — Gestão de Parcerias OSC</span>
   </div>
-  <button onclick="voltarLandingOSC()" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);padding:5px 12px;border-radius:4px;font-size:12px;cursor:pointer;margin-left:auto;">← Painéis OSC</button>
+  <button onclick="window.location='index.html'" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);padding:5px 12px;border-radius:4px;font-size:12px;cursor:pointer;margin-left:auto;">← Painéis OSC</button>
 </div>
 
 <!-- ═══ TABS ══════════════════════════════════════════════════ -->
@@ -421,82 +163,40 @@ h2.print-title { display: none; }
         <li><b>Nome do Projeto</b>: título completo conforme o instrumento jurídico.</li>
         <li><b>Número do Termo</b>: número do convênio, termo de fomento ou colaboração (máx. 30 caracteres).</li>
         <li><b>Processo SEI</b>: número do processo eletrônico no sistema SEI (máx. 20 caracteres).</li>
-        <li><b>VTP (Valor Total Previsto)</b>: valor global da parceria, <u>sem</u> incluir rendimentos. Este valor é o <b>denominador constante</b> de todos os cálculos de percentual. Não deve ser alterado durante a execução, salvo Termo Aditivo de valor.</li>
+        <li><b>VTP (Valor Total Previsto)</b>: valor global da parceria, <u>sem</u> incluir rendimentos. Este valor é o <b>denominador constante</b> de todos os cálculos de percentual.</li>
         <li><b>Valor Repassado</b>: montante efetivamente transferido para a conta da parceria.</li>
-        <li><b>Rendimentos</b>: total de juros/aplicação acumulados na conta. O uso de rendimentos <b>não</b> conta no limite de 15%.</li>
-        <li><b>Data de Início / Fim</b>: definem o número de meses do projeto e os cabeçalhos das colunas mensais nas tabelas.</li>
+        <li><b>Rendimentos</b>: total de juros/aplicação acumulados na conta.</li>
+        <li><b>Data de Início / Fim</b>: definem o número de meses do projeto e os cabeçalhos das colunas mensais.</li>
       </ul>
     </div>
 
     <div class="instr-block" style="background:#FFF3E0;">
       <b>Passo 2 — Previsto (aba 4):</b><br>
-      Registre o <b>plano orçamentário original</b> aprovado no instrumento:<br>
-      <ul style="margin:8px 0 0 18px;line-height:1.8;">
-        <li>Clique em <b>"+ Adicionar Item"</b> para cada linha de despesa.</li>
-        <li>Selecione o <b>Elemento de Despesa</b> (Pessoal, Materiais, Administrativas, Serviços de Terceiros, Outras Despesas, Imobilizado, Implantação).</li>
-        <li>Informe a <b>Quantidade</b> (ex: nº de profissionais, unidades) — campo informativo.</li>
-        <li>Preencha o <b>Item de Despesa</b> com a descrição específica (ex: "Coordenador de projeto").</li>
-        <li>Lance os valores mês a mês. A <b>coluna Total</b> é calculada automaticamente.</li>
-        <li>Use <b>▲ / ▼</b> para reordenar linhas, <b>"Inserir Acima"</b> para incluir uma linha entre outras existentes.</li>
-        <li>Para apagar, selecione a linha e clique em <b>"✕ Remover"</b>.</li>
-        <li>⚠ O total previsto de todos os itens <b>não deve ultrapassar o VTP</b>.</li>
-      </ul>
+      Registre o <b>plano orçamentário original</b> aprovado no instrumento.
+      Clique em <b>"+ Adicionar Item"</b>, selecione o Elemento de Despesa, informe Quantidade e Descrição do Item, e lance os valores mês a mês.
     </div>
 
     <div class="instr-block" style="background:#F3E5F5;">
       <b>Passo 3 — Executado (aba 5):</b><br>
-      Registre os valores <b>efetivamente gastos</b> mês a mês:
-      <ul style="margin:8px 0 0 18px;line-height:1.8;">
-        <li>As linhas do Previsto são <b>espelhadas automaticamente</b> — os campos de Elemento, Qtd e Item não são editáveis aqui.</li>
-        <li>Lance apenas os valores de execução em cada célula de mês.</li>
-        <li><b>Célula amarela</b>: o valor executado excede o previsto naquele mês e item — isso gera PRA na aba de Alteração.</li>
-        <li>Para despesas <b>não previstas</b> no plano original, use <b>"+ Só Executado"</b>. Essas linhas aparecerão em <span style="background:#E8F5E9;padding:1px 5px;border-radius:2px;">verde</span> e também entram no cálculo do PA.</li>
-        <li>Remoção de linhas não é permitida nesta aba — para excluir um item, use a aba Previsto.</li>
-        <li>⚠ O total executado <b>não deve ultrapassar</b> o Valor Repassado + Rendimentos.</li>
-      </ul>
+      Registre os valores <b>efetivamente gastos</b> mês a mês. Células em amarelo indicam que o executado excedeu o previsto. Use <b>"+ Só Executado"</b> para despesas não previstas.
     </div>
 
     <div class="instr-block" style="background:#EDE7F6;">
       <b>Passo 4 — % de Alteração (aba 6):</b><br>
-      Esta aba é <b>somente leitura</b> e calculada automaticamente:
-      <ul style="margin:8px 0 0 18px;line-height:1.8;">
-        <li><b>PRA (célula)</b> = max(0, (Executado − Previsto) / VTP). Células com PRA &gt; 0 ficam destacadas em <span style="background:#FFF9C4;padding:1px 5px;border-radius:2px;">amarelo claro</span>.</li>
-        <li><b>PA</b> = soma de todas as células PRA. Representa o impacto percentual acumulado de remanejamento.</li>
-        <li>Se <b>PA ≤ 15%</b>: remanejamento dentro da autonomia → <span style="background:#43A047;color:#fff;padding:1px 6px;border-radius:2px;">verde</span>. Registre a justificativa no Demonstrativo de Aferição.</li>
-        <li>Se <b>PA &gt; 15%</b>: limite excedido → <span style="background:#E53935;color:#fff;padding:1px 6px;border-radius:2px;">vermelho</span>. Requer consulta e anuência prévia da Unidade Gestora e possível Termo Aditivo.</li>
-      </ul>
-    </div>
-
-    <div class="instr-block" style="background:#FFF9C4;">
-      <b>⚠ Restrições de Integridade (Hard Blocks):</b>
-      <ul style="margin:8px 0 0 18px;line-height:1.8;">
-        <li><b>Vedação de Exclusão</b>: é proibido zerar um item de despesa (executado = R$ 0,00) quando havia valor previsto, sem anuência expressa da Unidade Gestora.</li>
-        <li><b>Alteração de Cronograma</b>: movimentação de valores entre parcelas mensais de um mesmo item exige Termo Aditivo, independentemente do percentual.</li>
-        <li><b>Rendimentos</b>: só podem ser utilizados após o esgotamento integral dos recursos repassados.</li>
-      </ul>
+      Calculada automaticamente. <b>PA ≤ 15%</b> = dentro da autonomia (verde). <b>PA &gt; 15%</b> = requer anuência prévia da Unidade Gestora (vermelho).
+      <br><b>PRA</b> = max(0, (Executado − Previsto) / VTP) por célula. <b>PA</b> = soma de todos os PRA.
     </div>
 
     <div class="instr-block" style="background:#FFEBEE;">
-      <b>💾 Salvar, Abrir e Exportar:</b>
-      <ul style="margin:8px 0 0 18px;line-height:1.8;">
-        <li><b>SALVAR (Ctrl+S)</b>: salva o projeto em formato <code>.daf.json</code>. Guarde este arquivo — ele contém todos os dados do projeto.</li>
-        <li><b>Abrir (Ctrl+O)</b>: carrega um arquivo <code>.daf.json</code> salvo anteriormente.</li>
-        <li><b>Salvar Como</b>: salva com um nome diferente (útil para criar versões).</li>
-        <li><b>Exportar PDF</b>: use o botão na barra superior para imprimir todas as abas, ou os botões <b>"🖨 Imprimir esta seção"</b> nas abas individuais para exportar apenas aquela tabela (recomendado para projetos com muitos meses).</li>
-        <li><b>Exportar CSV</b>: gera 3 arquivos (Previsto, Executado, % Alteração) compatíveis com Excel.</li>
-        <li><b>Auto-save</b>: o sistema salva um rascunho automaticamente no navegador. Se fechar sem salvar, será oferecida a restauração na próxima abertura.</li>
-      </ul>
+      <b>💾 Salvar, Abrir e Exportar:</b><br>
+      <b>SALVAR (Ctrl+S)</b> gera um arquivo <code>.daf.json</code>. <b>Abrir (Ctrl+O)</b> carrega um arquivo salvo.
+      <b>Exportar PDF</b> imprime todas as abas ou use os botões por seção.
+      <b>Exportar CSV</b> gera 3 arquivos para Excel.
     </div>
 
     <div class="instr-block" style="background:#E3F2FD;">
-      <b>📋 Colar do Excel (Ctrl+V):</b>
-      <ul style="margin:8px 0 0 18px;line-height:1.8;">
-        <li>Selecione as células no Excel e copie (Ctrl+C).</li>
-        <li>Clique na <b>célula de destino</b> na tabela do sistema.</li>
-        <li>Cole (Ctrl+V) — os valores serão distribuídos pelas linhas e colunas a partir da célula selecionada.</li>
-        <li>Aceita separador decimal vírgula (<code>1.200,50</code>) e ponto (<code>1200.50</code>).</li>
-        <li>Colunas de texto (Elemento, Item de Despesa) também podem ser coladas diretamente.</li>
-      </ul>
+      <b>📋 Colar do Excel (Ctrl+V):</b><br>
+      Selecione as células no Excel, clique na célula de destino na tabela e cole (Ctrl+V). Distribui pelas linhas e colunas automaticamente. Aceita separador decimal vírgula ou ponto.
     </div>
 
   </div>
@@ -557,8 +257,7 @@ h2.print-title { display: none; }
   <h3 style="color:#1565C0;margin-bottom:16px;">🏦 Conciliação Bancária</h3>
   <div class="placeholder-box">
     <b>⚠ Seção em construção.</b><br><br>
-    Esta seção será implementada em uma próxima versão com base nas especificações de conciliação bancária a serem fornecidas.<br><br>
-    Por enquanto, prossiga para as abas de Previsto e Executado.
+    Esta seção será implementada em uma próxima versão. Por enquanto, prossiga para as abas de Previsto e Executado.
   </div>
 </div>
 
@@ -572,7 +271,7 @@ h2.print-title { display: none; }
     <button class="btn-secondary" onclick="moveRow('prev',+1)" title="Mover para baixo">▼</button>
     <button class="btn-danger" onclick="removeRow('prev')">✕ Remover</button>
     <span class="vtp-display" id="vtpDisplay"></span>
-    <button class="btn-secondary" style="margin-left:auto;" onclick="imprimirSecao('previsto')" title="Imprime só esta tabela, dividindo em páginas se houver muitos meses">🖨 Imprimir esta seção</button>
+    <button class="btn-secondary" style="margin-left:auto;" onclick="imprimirSecao('previsto')">🖨 Imprimir esta seção</button>
   </div>
   <div class="table-wrapper" id="prevWrapper">
     <table class="data-table" id="prevTable">
@@ -589,7 +288,7 @@ h2.print-title { display: none; }
   <div class="table-toolbar">
     <button class="btn-green" onclick="addExecOnly()">+ Só Executado</button>
     <span style="font-size:11px;background:#FFF9C4;padding:4px 8px;border-radius:3px;margin-left:12px;">⬛ Célula amarela = valor executado excede o previsto</span>
-    <button class="btn-secondary" style="margin-left:auto;" onclick="imprimirSecao('executado')" title="Imprime só esta tabela">🖨 Imprimir esta seção</button>
+    <button class="btn-secondary" style="margin-left:auto;" onclick="imprimirSecao('executado')">🖨 Imprimir esta seção</button>
   </div>
   <div class="table-wrapper" id="execWrapper">
     <table class="data-table" id="execTable">
@@ -608,7 +307,7 @@ h2.print-title { display: none; }
   <div class="table-toolbar">
     <button class="btn-primary" onclick="window.print()">📄 Exportar PDF (todas abas)</button>
     <button class="btn-secondary" onclick="exportarCSV()">📊 Exportar CSV</button>
-    <button class="btn-secondary" onclick="imprimirSecao('alteracao')" title="Imprime só esta tabela, dividindo em páginas se houver muitos meses">🖨 Imprimir esta seção</button>
+    <button class="btn-secondary" onclick="imprimirSecao('alteracao')">🖨 Imprimir esta seção</button>
   </div>
   <div class="table-wrapper" id="altWrapper">
     <table class="data-table" id="altTable">
@@ -625,17 +324,12 @@ h2.print-title { display: none; }
   <span class="pa-badge pa-ok" id="statusPA">PA: 0,00%</span>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════
-     JAVASCRIPT — TODA A LÓGICA DA APLICAÇÃO
-     ═══════════════════════════════════════════════════════════ -->
 <script>
 'use strict';
 
-// ── Constantes ────────────────────────────────────────────────
 const ELEMENTOS = ['Pessoal','Materiais','Administrativas','Serviços de Terceiros','Outras Despesas','Imobilizado','Implantação'];
 const LS_KEY = 'daf_autosave';
 
-// ── Estado global ─────────────────────────────────────────────
 let data = createEmptyProject();
 let currentFileName = '';
 let isDirty = false;
@@ -657,7 +351,6 @@ function createEmptyProject() {
   };
 }
 
-// ── Utilitários ───────────────────────────────────────────────
 function uuid() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
     const r = Math.random() * 16 | 0;
@@ -669,12 +362,11 @@ function parseDecimal(str) {
   if (typeof str === 'number') return str;
   if (!str) return 0;
   str = String(str).trim();
-  // Se tem vírgula e ponto, determina qual é o separador de milhar
   if (str.includes(',') && str.includes('.')) {
     if (str.lastIndexOf(',') > str.lastIndexOf('.'))
-      str = str.replace(/\./g, '').replace(',', '.'); // pt-BR: 1.234,56
+      str = str.replace(/\./g, '').replace(',', '.');
     else
-      str = str.replace(/,/g, ''); // en-US: 1,234.56
+      str = str.replace(/,/g, '');
   } else if (str.includes(',')) {
     str = str.replace(/,/g, '.');
   }
@@ -685,11 +377,9 @@ function parseDecimal(str) {
 function fmtMoney(v) {
   return v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 }
-
 function fmtDecimal(v) {
   return v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
-
 function fmtPercent(v) {
   return (v * 100).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '%';
 }
@@ -725,7 +415,6 @@ function clearDirty() {
   document.getElementById('dirtyFlag').classList.remove('active');
 }
 
-// ── Tabs ──────────────────────────────────────────────────────
 let currentTab = 0;
 function switchTab(idx) {
   currentTab = idx;
@@ -736,7 +425,6 @@ function switchTab(idx) {
   if (idx === 5) renderAlteracao();
 }
 
-// ── Header ────────────────────────────────────────────────────
 function loadHeaderToForm() {
   const h = data.Header;
   document.getElementById('hNomeOSC').value = h.NomeOSC;
@@ -774,23 +462,19 @@ function onDateChange() {
   const oldTotal = getTotalMeses();
   readHeaderFromForm();
   const newTotal = getTotalMeses();
-
-  // Avisar se dados fora do novo intervalo
   if (newTotal < oldTotal && data.Items.length > 0) {
-    let hasData = data.Items.some(item =>
+    const hasData = data.Items.some(item =>
       item.ValoresPrevisto.slice(newTotal).some(v => v !== 0) ||
       item.ValoresExecutado.slice(newTotal).some(v => v !== 0)
     );
     if (hasData) {
-      alert(`⚠ Atenção: há valores preenchidos nos meses além do mês ${newTotal}.\n\nEsses dados não serão excluídos, mas ficarão fora do intervalo visível.\nPara acessá-los novamente, restaure o período original.`);
+      alert(`⚠ Atenção: há valores preenchidos nos meses além do mês ${newTotal}.\nEsses dados não serão excluídos, mas ficarão fora do intervalo visível.`);
     }
   }
-
-  // Garantir capacidade
   data.Items.forEach(item => ensureCapacity(item));
   updateMesesLabel();
   markDirty();
-  if (currentTab >= 3) switchTab(currentTab); // refresh table
+  if (currentTab >= 3) switchTab(currentTab);
 }
 
 function updateMesesLabel() {
@@ -799,7 +483,6 @@ function updateMesesLabel() {
   document.getElementById('vtpDisplay').textContent = `VTP: ${fmtMoney(data.Header.ValorTotalPrevisto)}`;
 }
 
-// ── Criar / adicionar itens ───────────────────────────────────
 function createItem(execOnly = false) {
   const item = {
     Id: uuid(),
@@ -868,19 +551,16 @@ function removeRow(table) {
   renderAlteracao();
 }
 
-// ── Renderizar PREVISTO ───────────────────────────────────────
 function renderPrevisto() {
   const totalMeses = getTotalMeses();
   const thead = document.getElementById('prevHead');
   const tbody = document.getElementById('prevBody');
   const tfoot = document.getElementById('prevFoot');
 
-  // Header
   thead.innerHTML = '<th>Elemento</th><th>Qtd</th><th>Item de Despesa</th>';
   for (let j = 0; j < totalMeses; j++) thead.innerHTML += `<th>${getMonthLabel(j)}</th>`;
   thead.innerHTML += '<th>Total</th>';
 
-  // Body
   tbody.innerHTML = '';
   const items = data.Items.filter(it => !it._execOnly);
   items.forEach((item, displayIdx) => {
@@ -890,30 +570,21 @@ function renderPrevisto() {
     if (realIdx === selectedPrevIdx) tr.classList.add('selected');
     tr.onclick = () => { selectedPrevIdx = realIdx; highlightRow('prevBody', displayIdx); };
 
-    // Elemento
     let optHtml = ELEMENTOS.map(e => `<option${e === item.ElementoDespesa ? ' selected' : ''}>${e}</option>`).join('');
     tr.innerHTML = `<td><select onchange="data.Items[${realIdx}].ElementoDespesa=this.value;markDirty()">${optHtml}</select></td>`;
-
-    // Qtd
     tr.innerHTML += `<td><input type="number" class="qty-input" value="${item.Quantidade}" min="0" onchange="data.Items[${realIdx}].Quantidade=parseInt(this.value)||0;markDirty()"></td>`;
-
-    // Item de Despesa
     tr.innerHTML += `<td><input type="text" class="item-input" value="${escHtml(item.ItemDespesa)}" onchange="data.Items[${realIdx}].ItemDespesa=this.value;markDirty()"></td>`;
 
-    // Meses
     for (let j = 0; j < totalMeses; j++) {
       const v = item.ValoresPrevisto[j] || 0;
       tr.innerHTML += `<td><input type="text" value="${v ? fmtDecimal(v) : ''}" onfocus="this.select()" onchange="setPrevValue(${realIdx},${j},this.value)"></td>`;
     }
 
-    // Total
     const total = item.ValoresPrevisto.reduce((s, v) => s + v, 0);
     tr.innerHTML += `<td class="total-col">${fmtDecimal(total)}</td>`;
-
     tbody.appendChild(tr);
   });
 
-  // Footer
   tfoot.innerHTML = '<td colspan="3" style="text-align:right;"><b>TOTAL</b></td>';
   let grandTotal = 0;
   for (let j = 0; j < totalMeses; j++) {
@@ -922,7 +593,6 @@ function renderPrevisto() {
     tfoot.innerHTML += `<td style="text-align:right;">${fmtDecimal(colSum)}</td>`;
   }
   tfoot.innerHTML += `<td class="total-col">${fmtDecimal(grandTotal)}</td>`;
-
   updateMesesLabel();
 }
 
@@ -932,7 +602,6 @@ function setPrevValue(itemIdx, monthIdx, rawVal) {
   renderPrevisto();
 }
 
-// ── Renderizar EXECUTADO ──────────────────────────────────────
 function renderExecutado() {
   const totalMeses = getTotalMeses();
   const thead = document.getElementById('execHead');
@@ -951,7 +620,6 @@ function renderExecutado() {
     if (realIdx === selectedExecIdx) tr.classList.add('selected');
     tr.onclick = () => { selectedExecIdx = realIdx; highlightRow('execBody', realIdx); };
 
-    // Info columns (read-only for non-execOnly, editable for execOnly)
     if (item._execOnly) {
       let optHtml = ELEMENTOS.map(e => `<option${e === item.ElementoDespesa ? ' selected' : ''}>${e}</option>`).join('');
       tr.innerHTML = `<td><select onchange="data.Items[${realIdx}].ElementoDespesa=this.value;markDirty()">${optHtml}</select></td>`;
@@ -963,12 +631,10 @@ function renderExecutado() {
       tr.innerHTML += `<td class="readonly-cell">${escHtml(item.ItemDespesa)}</td>`;
     }
 
-    // Month columns
     for (let j = 0; j < totalMeses; j++) {
       const v = item.ValoresExecutado[j] || 0;
       const prev = item.ValoresPrevisto[j] || 0;
-      const isOver = v > prev;
-      tr.innerHTML += `<td class="${isOver ? 'overrun' : ''}"><input type="text" value="${v ? fmtDecimal(v) : ''}" onfocus="this.select()" onchange="setExecValue(${realIdx},${j},this.value)"></td>`;
+      tr.innerHTML += `<td class="${v > prev ? 'overrun' : ''}"><input type="text" value="${v ? fmtDecimal(v) : ''}" onfocus="this.select()" onchange="setExecValue(${realIdx},${j},this.value)"></td>`;
     }
 
     const total = item.ValoresExecutado.reduce((s, v) => s + v, 0);
@@ -976,7 +642,6 @@ function renderExecutado() {
     tbody.appendChild(tr);
   });
 
-  // Footer
   tfoot.innerHTML = '<td colspan="3" style="text-align:right;"><b>TOTAL</b></td>';
   let grandTotal = 0;
   for (let j = 0; j < totalMeses; j++) {
@@ -994,7 +659,6 @@ function setExecValue(itemIdx, monthIdx, rawVal) {
   if (currentTab === 5) renderAlteracao();
 }
 
-// ── Renderizar % DE ALTERAÇÃO ─────────────────────────────────
 function renderAlteracao() {
   const totalMeses = getTotalMeses();
   const vtp = data.Header.ValorTotalPrevisto;
@@ -1013,7 +677,6 @@ function renderAlteracao() {
     ensureCapacity(item);
     const tr = document.createElement('tr');
     if (item._execOnly) tr.classList.add('exec-only');
-
     tr.innerHTML = `<td class="readonly-cell">${escHtml(item.ElementoDespesa)}</td>`;
     tr.innerHTML += `<td class="readonly-cell" style="text-align:center;">${item.Quantidade}</td>`;
     tr.innerHTML += `<td class="readonly-cell">${escHtml(item.ItemDespesa)}</td>`;
@@ -1023,15 +686,12 @@ function renderAlteracao() {
       const pra = calcPRA(item, j, vtp);
       itemPRA += pra;
       paTotal += pra;
-      const display = pra > 0 ? fmtPercent(pra) : '0%';
-      tr.innerHTML += `<td class="${pra > 0 ? 'pra-positive' : ''}" style="text-align:center;">${display}</td>`;
+      tr.innerHTML += `<td class="${pra > 0 ? 'pra-positive' : ''}" style="text-align:center;">${pra > 0 ? fmtPercent(pra) : '0%'}</td>`;
     }
-
     tr.innerHTML += `<td class="alt-total">${itemPRA > 0 ? fmtPercent(itemPRA) : '0%'}</td>`;
     tbody.appendChild(tr);
   });
 
-  // Footer
   tfoot.innerHTML = '<td colspan="3" style="text-align:right;"><b>TOTAL</b></td>';
   for (let j = 0; j < totalMeses; j++) {
     const colPRA = data.Items.reduce((s, it) => s + calcPRA(it, j, vtp), 0);
@@ -1039,7 +699,6 @@ function renderAlteracao() {
   }
   tfoot.innerHTML += `<td class="alt-total">${fmtPercent(paTotal)}</td>`;
 
-  // Banner
   const banner = document.getElementById('paBanner');
   const paPct = paTotal * 100;
   if (paPct <= 15) {
@@ -1050,12 +709,9 @@ function renderAlteracao() {
     banner.textContent = `ATENÇÃO: Limite de 15% excedido (PA: ${fmtPercent(paTotal)}). Requer consulta e anuência prévia da Unidade Gestora.`;
   }
 
-  // Status bar
   const badge = document.getElementById('statusPA');
   badge.textContent = `PA: ${fmtPercent(paTotal)}`;
   badge.className = paPct <= 15 ? 'pa-badge pa-ok' : 'pa-badge pa-warn';
-
-  // Validations
   runValidations();
 }
 
@@ -1067,7 +723,6 @@ function calcPRA(item, monthIdx, vtp) {
   return diff > 0 ? diff / vtp : 0;
 }
 
-// ── Validações ────────────────────────────────────────────────
 function runValidations() {
   const warnings = [];
   const vtp = data.Header.ValorTotalPrevisto;
@@ -1075,59 +730,45 @@ function runValidations() {
   const totalPrev = data.Items.reduce((s, it) => s + it.ValoresPrevisto.reduce((a, b) => a + b, 0), 0);
   const teto = data.Header.ValorTotalRepassado + data.Header.ValorAplicacao;
 
-  if (teto > 0 && totalExec > teto) {
-    warnings.push(`• Total executado (${fmtMoney(totalExec)}) excede o limite disponível (Repassado ${fmtMoney(data.Header.ValorTotalRepassado)} + Rendimentos ${fmtMoney(data.Header.ValorAplicacao)} = ${fmtMoney(teto)}).`);
-  }
-  if (vtp > 0 && totalPrev > vtp) {
+  if (teto > 0 && totalExec > teto)
+    warnings.push(`• Total executado (${fmtMoney(totalExec)}) excede o limite disponível (${fmtMoney(teto)}).`);
+  if (vtp > 0 && totalPrev > vtp)
     warnings.push(`• Total previsto (${fmtMoney(totalPrev)}) excede o VTP (${fmtMoney(vtp)}).`);
-  }
   data.Items.forEach(item => {
-    if (item.ValoresPrevisto.reduce((a, b) => a + b, 0) > 0 && item.ValoresExecutado.reduce((a, b) => a + b, 0) === 0) {
-      warnings.push(`• Vedação de Exclusão: o item "${item.ItemDespesa || '(sem nome)'}" foi zerado. É proibido zerar um item sem anuência expressa.`);
-    }
+    if (item.ValoresPrevisto.reduce((a, b) => a + b, 0) > 0 && item.ValoresExecutado.reduce((a, b) => a + b, 0) === 0)
+      warnings.push(`• Vedação de Exclusão: item "${item.ItemDespesa || '(sem nome)'}" foi zerado.`);
   });
 
   const box = document.getElementById('warningsBox');
-  if (warnings.length > 0) {
-    box.innerHTML = warnings.join('<br>');
-    box.classList.add('active');
-  } else {
-    box.classList.remove('active');
-  }
+  if (warnings.length > 0) { box.innerHTML = warnings.join('<br>'); box.classList.add('active'); }
+  else { box.classList.remove('active'); }
 }
 
-// ── Seleção visual ────────────────────────────────────────────
 function highlightRow(tbodyId, idx) {
-  const rows = document.getElementById(tbodyId).querySelectorAll('tr');
-  rows.forEach((r, i) => r.classList.toggle('selected', i === idx));
+  document.getElementById(tbodyId).querySelectorAll('tr').forEach((r, i) => r.classList.toggle('selected', i === idx));
 }
 
 function escHtml(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-// ── Colar do Excel (Ctrl+V) ──────────────────────────────────
 document.addEventListener('paste', function(e) {
   const active = document.activeElement;
   if (!active || !active.closest('.data-table')) return;
-
   const table = active.closest('.data-table');
   const isPrev = table.id === 'prevTable';
   const isExec = table.id === 'execTable';
   if (!isPrev && !isExec) return;
 
   const text = (e.clipboardData || window.clipboardData).getData('text');
-  if (!text || !text.includes('\t')) return; // Só intercepta TSV (Excel)
-
+  if (!text || !text.includes('\t')) return;
   e.preventDefault();
 
-  // Descobrir posição da célula ativa
   const td = active.closest('td');
   const tr = td.closest('tr');
   const tbody = tr.closest('tbody');
   const rowIdx = Array.from(tbody.children).indexOf(tr);
   const colIdx = Array.from(tr.children).indexOf(td);
-
   const rows = text.trimEnd().split('\n');
   const items = isPrev ? data.Items.filter(it => !it._execOnly) : data.Items;
 
@@ -1135,25 +776,17 @@ document.addEventListener('paste', function(e) {
     const targetRow = rowIdx + r;
     if (targetRow >= items.length) break;
     const item = items[targetRow];
-    const realIdx = data.Items.indexOf(item);
     const cells = rows[r].trimEnd().split('\t');
-
     for (let c = 0; c < cells.length; c++) {
       const targetCol = colIdx + c;
       const cellText = cells[c].trim();
       if (!cellText) continue;
-
-      if (targetCol === 0) { // Elemento
-        if (ELEMENTOS.includes(cellText)) item.ElementoDespesa = cellText;
-      } else if (targetCol === 1) { // Qtd
-        const q = parseInt(cellText);
-        if (!isNaN(q)) item.Quantidade = q;
-      } else if (targetCol === 2) { // Item de Despesa
-        item.ItemDespesa = cellText;
-      } else { // Meses (colIdx 3+)
+      if (targetCol === 0) { if (ELEMENTOS.includes(cellText)) item.ElementoDespesa = cellText; }
+      else if (targetCol === 1) { const q = parseInt(cellText); if (!isNaN(q)) item.Quantidade = q; }
+      else if (targetCol === 2) { item.ItemDespesa = cellText; }
+      else {
         const monthIdx = targetCol - 3;
-        const totalMeses = getTotalMeses();
-        if (monthIdx >= 0 && monthIdx < totalMeses) {
+        if (monthIdx >= 0 && monthIdx < getTotalMeses()) {
           const val = parseDecimal(cellText);
           if (isPrev) item.ValoresPrevisto[monthIdx] = val;
           else item.ValoresExecutado[monthIdx] = val;
@@ -1161,13 +794,11 @@ document.addEventListener('paste', function(e) {
       }
     }
   }
-
   markDirty();
   if (isPrev) renderPrevisto();
   if (isExec) renderExecutado();
 });
 
-// ── Salvar / Abrir / Novo ─────────────────────────────────────
 function salvarProjeto() {
   readHeaderFromForm();
   if (!currentFileName) { salvarComo(); return; }
@@ -1186,18 +817,11 @@ function salvarComo() {
 }
 
 function downloadJSON(fileName) {
-  // Limpar campo _execOnly dos itens para salvar JSON limpo
-  const exportData = JSON.parse(JSON.stringify(data));
-  exportData.Items.forEach(it => {
-    if (it._execOnly) it._execOnly = true; // mantém o campo
-  });
-  const json = JSON.stringify(exportData, null, 2);
+  const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = fileName;
-  a.click();
+  a.href = url; a.download = fileName; a.click();
   URL.revokeObjectURL(url);
 }
 
@@ -1208,7 +832,6 @@ function abrirProjeto(event) {
   reader.onload = function(e) {
     try {
       const loaded = JSON.parse(e.target.result);
-      // Retrocompatibilidade: se não tem _execOnly, todos são regulares
       if (loaded.Items) {
         loaded.Items.forEach(it => {
           if (it._execOnly === undefined) it._execOnly = false;
@@ -1219,14 +842,11 @@ function abrirProjeto(event) {
       data = loaded;
       currentFileName = file.name;
       loadHeaderToForm();
-      selectedPrevIdx = -1;
-      selectedExecIdx = -1;
+      selectedPrevIdx = -1; selectedExecIdx = -1;
       clearDirty();
       document.getElementById('statusFile').textContent = `Arquivo: ${file.name}`;
       switchTab(0);
-    } catch (err) {
-      alert('Erro ao abrir arquivo: ' + err.message);
-    }
+    } catch (err) { alert('Erro ao abrir arquivo: ' + err.message); }
   };
   reader.readAsText(file);
   event.target.value = '';
@@ -1242,7 +862,6 @@ function ensureCapacityOnObj(item) {
   while (item.Justificativas.length < t) item.Justificativas.push('');
 }
 
-// ── CSV ───────────────────────────────────────────────────────
 function exportarCSV() {
   const totalMeses = getTotalMeses();
   const vtp = data.Header.ValorTotalPrevisto;
@@ -1255,16 +874,11 @@ function exportarCSV() {
     let csv = headers.join(sep) + '\n';
     data.Items.forEach(item => {
       ensureCapacity(item);
-      const row = [
-        `"${item.ElementoDespesa}"`,
-        item.Quantidade,
-        `"${item.ItemDespesa}"`
-      ];
+      const row = [`"${item.ElementoDespesa}"`, item.Quantidade, `"${item.ItemDespesa}"`];
       const vals = getValues(item);
       let total = 0;
       for (let j = 0; j < totalMeses; j++) {
-        const v = vals[j] || 0;
-        total += v;
+        const v = vals[j] || 0; total += v;
         row.push(formatFn ? formatFn(item, j) : fmtDecimal(v));
       }
       row.push(formatFn ? '' : fmtDecimal(total));
@@ -1272,106 +886,70 @@ function exportarCSV() {
     });
     return csv;
   }
-
   downloadText('previsto.csv', buildCSV(it => it.ValoresPrevisto));
   downloadText('executado.csv', buildCSV(it => it.ValoresExecutado));
-  downloadText('alteracao.csv', buildCSV(
-    it => it.ValoresExecutado,
-    (it, j) => fmtPercent(calcPRA(it, j, vtp))
-  ));
+  downloadText('alteracao.csv', buildCSV(it => it.ValoresExecutado, (it, j) => fmtPercent(calcPRA(it, j, vtp))));
 }
 
 function downloadText(fileName, content) {
   const blob = new Blob(['\uFEFF' + content], { type: 'text/csv;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
-  a.href = url;
-  a.download = fileName;
-  a.click();
+  a.href = url; a.download = fileName; a.click();
   URL.revokeObjectURL(url);
 }
 
-// ── Impressão por seção (com divisão de colunas para tabelas largas) ──────
 function imprimirSecao(secao) {
-  const FIXED_COLS = 3;  // Elemento, Qtd, Item de Despesa
-  const MAX_MONTH_COLS = 8; // máximo de colunas de meses por página impressa
-
+  const FIXED_COLS = 3;
+  const MAX_MONTH_COLS = 8;
   let tableId, titulo, isPercent;
-  if (secao === 'previsto')  { tableId = 'prevTable';  titulo = '4. Previsto';         isPercent = false; }
-  if (secao === 'executado') { tableId = 'execTable';  titulo = '5. Executado';        isPercent = false; }
-  if (secao === 'alteracao') { tableId = 'altTable';   titulo = '6. % de Alteração';  isPercent = true;  }
+  if (secao === 'previsto')  { tableId = 'prevTable'; titulo = '4. Previsto';        isPercent = false; }
+  if (secao === 'executado') { tableId = 'execTable'; titulo = '5. Executado';       isPercent = false; }
+  if (secao === 'alteracao') { tableId = 'altTable';  titulo = '6. % de Alteração'; isPercent = true;  }
 
   const table = document.getElementById(tableId);
   if (!table) return;
 
-  // Coletar cabeçalhos
-  const headRow = table.querySelector('thead tr');
-  const allHeaders = Array.from(headRow.cells).map(c => c.textContent.trim());
+  const allHeaders = Array.from(table.querySelector('thead tr').cells).map(c => c.textContent.trim());
   const fixedHeaders = allHeaders.slice(0, FIXED_COLS);
   const monthHeaders = allHeaders.slice(FIXED_COLS, allHeaders.length - 1);
   const totalHeader  = allHeaders[allHeaders.length - 1];
-
-  // Coletar linhas do body
   const bodyRows = Array.from(table.querySelectorAll('tbody tr'));
-
-  // Coletar linha de totais do footer
-  const footRow = table.querySelector('tfoot tr');
-  const footCells = footRow ? Array.from(footRow.cells) : [];
-  // footCells[0] = colspan 3 label; depois colunas de meses; depois total
-  const footValues = [];
-  if (footCells.length > 1) {
-    for (let i = 1; i < footCells.length - 1; i++) footValues.push(footCells[i].textContent.trim());
-  }
+  const footCells = Array.from(table.querySelectorAll('tfoot tr')[0]?.cells || []);
+  const footValues = footCells.length > 1 ? footCells.slice(1, footCells.length - 1).map(c => c.textContent.trim()) : [];
   const footTotal = footCells.length > 0 ? footCells[footCells.length - 1].textContent.trim() : '';
 
-  // Info do cabeçalho do projeto
-  const projInfo = [
-    `<b>OSC:</b> ${data.Header.NomeOSC || '—'} &nbsp;&nbsp; `,
-    `<b>Projeto:</b> ${data.Header.NomeProjeto || '—'} &nbsp;&nbsp; `,
-    `<b>VTP:</b> ${fmtMoney(data.Header.ValorTotalPrevisto)} &nbsp;&nbsp; `,
-    `<b>Período:</b> ${getMonthLabel(0)} a ${getMonthLabel(getTotalMeses()-1)}`
-  ].join('');
+  const projInfo = `<b>OSC:</b> ${data.Header.NomeOSC || '—'} &nbsp; <b>Projeto:</b> ${data.Header.NomeProjeto || '—'} &nbsp; <b>VTP:</b> ${fmtMoney(data.Header.ValorTotalPrevisto)} &nbsp; <b>Período:</b> ${getMonthLabel(0)} a ${getMonthLabel(getTotalMeses()-1)}`;
 
-  // Dividir meses em grupos
   const groups = [];
-  for (let g = 0; g < monthHeaders.length; g += MAX_MONTH_COLS) {
-    groups.push({ start: g, headers: monthHeaders.slice(g, g + MAX_MONTH_COLS) });
-  }
+  for (let g = 0; g < monthHeaders.length; g += MAX_MONTH_COLS) groups.push({ start: g, headers: monthHeaders.slice(g, g + MAX_MONTH_COLS) });
   if (groups.length === 0) groups.push({ start: 0, headers: [] });
 
-  // Construir HTML para a janela de impressão
-  let html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8">
-  <style>
-    @page { size: A4 landscape; margin: 10mm; }
-    body { font-family: 'Segoe UI', sans-serif; font-size: 9px; color: #212121; }
-    h2 { font-size: 13px; color: #1565C0; margin: 0 0 4px 0; }
-    .proj-info { font-size: 9px; color: #555; margin-bottom: 8px; }
-    .group-label { font-size: 10px; font-weight: bold; color: #555; margin: 10px 0 3px; }
-    table { border-collapse: collapse; width: 100%; margin-bottom: 4px; }
-    th { background: #333; color: #fff; padding: 4px 5px; font-size: 8px; white-space: nowrap; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    .alt-th { background: #4A148C !important; }
-    td { padding: 3px 5px; border: 1px solid #ccc; font-size: 8px; white-space: nowrap; }
-    .total-col { background: #E3F2FD; font-weight: bold; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    .alt-total { background: #EDE7F6; font-weight: bold; text-align:center; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    .overrun { background: #FFEB3B !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    .pra-pos { background: #FFF9C4 !important; font-weight:bold; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    .exec-only td { background: #E8F5E9 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    tfoot td { background: #F5F5F5; font-weight:bold; border-top: 2px solid #1565C0; text-align:right; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-    .page-break { page-break-before: always; }
-    @media screen { body { padding: 16px; } }
-  </style>
-  <title>${titulo}</title></head><body>`;
-
-  html += `<h2>Painel do Demonstrativo de Aferição — ${titulo}</h2><div class="proj-info">${projInfo}</div>`;
+  let html = `<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><style>
+    @page{size:A4 landscape;margin:10mm}body{font-family:'Segoe UI',sans-serif;font-size:9px}
+    h2{font-size:13px;color:#1565C0;margin:0 0 4px}
+    .proj-info{font-size:9px;color:#555;margin-bottom:8px}
+    table{border-collapse:collapse;width:100%;margin-bottom:4px}
+    th{background:#333;color:#fff;padding:4px 5px;font-size:8px;white-space:nowrap;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .alt-th{background:#4A148C!important}
+    td{padding:3px 5px;border:1px solid #ccc;font-size:8px;white-space:nowrap}
+    .total-col{background:#E3F2FD;font-weight:bold;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .alt-total{background:#EDE7F6;font-weight:bold;text-align:center;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .overrun{background:#FFEB3B!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .pra-pos{background:#FFF9C4!important;font-weight:bold;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .exec-only td{background:#E8F5E9!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    tfoot td{background:#F5F5F5;font-weight:bold;border-top:2px solid #1565C0;text-align:right;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    .page-break{page-break-before:always}
+  </style><title>${titulo}</title></head><body>`;
+  html += `<h2>Demonstrativo de Aferição — ${titulo}</h2><div class="proj-info">${projInfo}</div>`;
 
   groups.forEach((group, gi) => {
     const thClass = isPercent ? 'alt-th' : '';
     const isLast = gi === groups.length - 1;
     if (groups.length > 1) {
-      const rangeLabel = group.headers.length > 0 ? `${group.headers[0]} a ${group.headers[group.headers.length-1]}` : 'sem meses';
-      html += `<div class="group-label ${gi > 0 ? 'page-break' : ''}">Parte ${gi+1}/${groups.length} — Meses: ${rangeLabel}</div>`;
+      const rangeLabel = group.headers.length > 0 ? `${group.headers[0]} a ${group.headers[group.headers.length-1]}` : '';
+      html += `<div style="font-size:10px;font-weight:bold;color:#555;margin:10px 0 3px;${gi > 0 ? 'page-break-before:always' : ''}">Parte ${gi+1}/${groups.length} — Meses: ${rangeLabel}</div>`;
     }
-
     html += `<table><thead><tr>`;
     fixedHeaders.forEach(h => html += `<th class="${thClass}">${h}</th>`);
     group.headers.forEach(h => html += `<th class="${thClass}" style="text-align:center">${h}</th>`);
@@ -1381,55 +959,44 @@ function imprimirSecao(secao) {
     bodyRows.forEach(row => {
       const cells = Array.from(row.cells);
       const isExecOnly = row.classList.contains('exec-only');
-      html += `<tr${isExecOnly ? ' class="exec-only"' : ''}>` ;
-      // Fixed cols
+      html += `<tr${isExecOnly ? ' class="exec-only"' : ''}>`;
       for (let f = 0; f < FIXED_COLS; f++) {
         const inp = cells[f].querySelector('input,select');
-        const txt = inp ? inp.value : cells[f].textContent.trim();
-        html += `<td>${txt}</td>`;
+        html += `<td>${inp ? inp.value : cells[f].textContent.trim()}</td>`;
       }
-      // Month cols for this group
-      const globalOffset = FIXED_COLS + group.start;
+      const off = FIXED_COLS + group.start;
       for (let c = 0; c < group.headers.length; c++) {
-        const cell = cells[globalOffset + c];
+        const cell = cells[off + c];
         if (!cell) { html += '<td></td>'; continue; }
         const inp = cell.querySelector('input');
         const val = inp ? inp.value : cell.textContent.trim();
-        const cls = cell.classList.contains('overrun') ? 'overrun'
-                  : cell.classList.contains('pra-positive') ? 'pra-pos' : '';
+        const cls = cell.classList.contains('overrun') ? 'overrun' : cell.classList.contains('pra-positive') ? 'pra-pos' : '';
         html += `<td class="${cls}" style="text-align:right">${val}</td>`;
       }
-      // Total col only on last group
       if (isLast) {
-        const lastCell = cells[cells.length - 1];
-        const cls = lastCell.classList.contains('total-col') ? 'total-col' : 'alt-total';
-        html += `<td class="${cls}">${lastCell.textContent.trim()}</td>`;
+        const lc = cells[cells.length - 1];
+        html += `<td class="${lc.classList.contains('total-col') ? 'total-col' : 'alt-total'}">${lc.textContent.trim()}</td>`;
       }
-      html += `</tr>`;
+      html += '</tr>';
     });
-    html += `</tbody><tfoot><tr>`;
-    html += `<td colspan="${FIXED_COLS}" style="text-align:right"><b>TOTAL</b></td>`;
-    for (let c = 0; c < group.headers.length; c++) {
-      const vi = group.start + c;
-      html += `<td style="text-align:center">${footValues[vi] || ''}</td>`;
-    }
+
+    html += `</tbody><tfoot><tr><td colspan="${FIXED_COLS}" style="text-align:right"><b>TOTAL</b></td>`;
+    for (let c = 0; c < group.headers.length; c++) html += `<td style="text-align:center">${footValues[group.start + c] || ''}</td>`;
     if (isLast) html += `<td class="${isPercent ? 'alt-total' : 'total-col'}">${footTotal}</td>`;
     html += `</tr></tfoot></table>`;
   });
 
   html += `<script>window.onload=function(){window.print();}<\/script></body></html>`;
-
   const w = window.open('', '_blank', 'width=900,height=700');
   if (w) { w.document.write(html); w.document.close(); }
-  else alert('O navegador bloqueou o pop-up. Permita pop-ups para este site e tente novamente.');
+  else alert('Pop-up bloqueado. Permita pop-ups para este site e tente novamente.');
 }
 
-// ── localStorage auto-save ────────────────────────────────────
 function autoSave() {
   try {
     readHeaderFromForm();
     localStorage.setItem(LS_KEY, JSON.stringify(data));
-  } catch (e) { /* localStorage cheio ou indisponível */ }
+  } catch (e) {}
 }
 
 function tryRestoreAutoSave() {
@@ -1445,73 +1012,31 @@ function tryRestoreAutoSave() {
       data = restored;
       loadHeaderToForm();
     }
-  } catch (e) { /* ignora */ }
+  } catch (e) {}
 }
 
-// ── Atalhos de teclado ────────────────────────────────────────
 document.addEventListener('keydown', function(e) {
-  if (e.ctrlKey && e.key === 's') {
-    e.preventDefault();
-    salvarProjeto();
-  }
-  if (e.ctrlKey && e.key === 'o') {
-    e.preventDefault();
-    document.getElementById('fileOpen').click();
-  }
+  if (e.ctrlKey && e.key === 's') { e.preventDefault(); salvarProjeto(); }
+  if (e.ctrlKey && e.key === 'o') { e.preventDefault(); document.getElementById('fileOpen').click(); }
 });
 
-// ── Aviso ao fechar com alterações não salvas ─────────────────
 window.addEventListener('beforeunload', function(e) {
-  if (isDirty) {
-    e.preventDefault();
-    e.returnValue = '';
-  }
+  if (isDirty) { e.preventDefault(); e.returnValue = ''; }
 });
 
-// ── PWA Service Worker ────────────────────────────────────────
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 
-// ── Inicialização ─────────────────────────────────────────────
 (function init() {
-  // Definir datas padrão
   const now = new Date();
   document.getElementById('hDataInicio').value = `${now.getFullYear()}-01-01`;
   document.getElementById('hDataFim').value = `${now.getFullYear()}-12-31`;
   readHeaderFromForm();
-
   tryRestoreAutoSave();
   loadHeaderToForm();
   updateMesesLabel();
 })();
-
-// ── Navegação landing ↔ app ─────────────────────────────────
-function showLandingOSC() {
-  document.getElementById('landingPage').style.display = 'none';
-  document.getElementById('landingOSC').style.display = 'flex';
-}
-function showLandingGestor() {
-  document.getElementById('landingPage').style.display = 'none';
-  document.getElementById('landingGestor').style.display = 'flex';
-}
-function voltarLandingGestor() {
-  document.getElementById('landingGestor').style.display = 'none';
-  document.getElementById('landingPage').style.display = 'flex';
-}
-function entrarComoOSC() {
-  window.location = 'demonstrativo.html';
-}
-function voltarLandingOSC() {
-  document.getElementById('appShell').style.display = 'none';
-  document.getElementById('landingOSC').style.display = 'flex';
-}
-function voltarLanding() {
-  document.getElementById('landingOSC').style.display = 'none';
-  document.getElementById('landingPage').style.display = 'flex';
-}
 </script>
-
-</div><!-- /#appShell -->
 </body>
 </html>
