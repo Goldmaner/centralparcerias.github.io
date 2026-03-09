@@ -276,6 +276,53 @@ h2.print-title { display: none; }
 
 </div>
 
+<!-- ═══ LANDING OSC (nível 2) ════════════════════════════════ -->
+<div class="landing" id="landingOSC" style="display:none;">
+
+  <div class="landing-header">
+    <span class="landing-logo">🏢</span>
+    <div class="landing-title">Painel da OSC</div>
+    <div class="landing-subtitle">Selecione o painel que deseja acessar</div>
+  </div>
+
+  <div class="landing-cards">
+
+    <div class="landing-card" onclick="entrarComoOSC()">
+      <div class="landing-card-icon">📊</div>
+      <div class="landing-card-title">Demonstrativo de Aferição</div>
+      <div class="landing-card-desc">Controle e documente remanejamentos orçamentários. Calcule o PA acumulado e o limite de 15% sobre o VTP.</div>
+    </div>
+
+    <div class="landing-card landing-card-disabled">
+      <div class="landing-card-badge">EM BREVE</div>
+      <div class="landing-card-icon">📝</div>
+      <div class="landing-card-title">Formulário de Ofício de Alteração</div>
+      <div class="landing-card-desc">Geração do ofício formal de solicitação de alteração orçamentária para a Unidade Gestora.</div>
+    </div>
+
+    <div class="landing-card landing-card-disabled">
+      <div class="landing-card-badge">EM BREVE</div>
+      <div class="landing-card-icon">📅</div>
+      <div class="landing-card-title">Relatório de Execução</div>
+      <div class="landing-card-desc">Geração de relatórios periódicos de execução físico-financeira da parceria.</div>
+    </div>
+
+    <div class="landing-card landing-card-disabled">
+      <div class="landing-card-badge">EM BREVE</div>
+      <div class="landing-card-icon">🧳</div>
+      <div class="landing-card-title">Prestação de Contas</div>
+      <div class="landing-card-desc">Organização e checklist de documentos para prestação de contas parcial e final.</div>
+    </div>
+
+  </div>
+
+  <div class="landing-footer" style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+    <button onclick="voltarLanding()" style="background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.4);padding:7px 20px;border-radius:6px;font-size:12px;cursor:pointer;">← Voltar ao início</button>
+    <span>Central de Documentos — Departamento de Direitos Humanos</span>
+  </div>
+
+</div>
+
 <!-- ═══ APP SHELL ══════════════════════════════════════════════ -->
 <div id="appShell">
 
