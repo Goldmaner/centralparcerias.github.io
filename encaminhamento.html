@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Encaminhamento de Alteração de Parceria</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #FAFAFA; color: #212121; font-size: 14px; }
+button { cursor: pointer; font-family: inherit; }
+
+/* ── Toolbar ────────────────────────────────────────────────── */
+.toolbar { background: #1565C0; padding: 8px 16px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.toolbar-title { color: #fff; font-size: 15px; font-weight: 700; flex: 1; }
+.btn { font-size: 13px; padding: 7px 14px; border-radius: 4px; border: none; font-weight: 600; }
+.btn-back  { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.4); }
+.btn-back:hover  { background: rgba(255,255,255,.25); }
+.btn-copy  { background: #43A047; color: #fff; font-size: 14px; padding: 10px 22px; }
+.btn-copy:hover  { background: #2E7D32; }
+.btn-copy.copied { background: #1565C0; }
+.btn-clear { background: #E53935; color: #fff; }
+.btn-clear:hover { background: #C62828; }
+
+/* ── Container ─────────────────────────────────────────────── */
+.container { max-width: 900px; margin: 24px auto; padding: 0 16px 60px; }
+.autosave-bar { font-size: 11px; color: #888; text-align: right; margin-bottom: 10px; }
+
+/* ── Sections ──────────────────────────────────────────────── */
+.section { background: #fff; border-radius: 8px; border: 1px solid #E0E0E0; padding: 20px 24px; margin-bottom: 16px; }
+.section-title { font-size: 12px; font-weight: 700; color: #1565C0; text-transform: uppercase; letter-spacing: .6px; border-bottom: 2px solid #E3F2FD; padding-bottom: 8px; margin-bottom: 16px; }
+.section-toggle { cursor: pointer; user-select: none; display: flex; align-items: center; justify-content: space-between; }
+.section-toggle:hover { color: #0D47A1; }
+
+/* ── Form fields ───────────────────────────────────────────── */
+.field { display: flex; flex-direction: column; gap: 4px; margin-bottom: 0; }
+.field label { font-size: 12px; font-weight: 600; color: #555; }
+.field input, .field textarea {
+  padding: 8px 10px; border: 1px solid #BDBDBD; border-radius: 4px;
+  font-family: inherit; font-size: 13px; color: #212121;
+}
+.field input:focus, .field textarea:focus {
+  outline: none; border-color: #1565C0;
+  box-shadow: 0 0 0 2px rgba(21,101,192,.15);
+}
+.field textarea { resize: vertical; min-height: 90px; line-height: 1.6; }
+.check-help { font-size: 12px; color: #555; margin-bottom: 12px; }
+
+/* ── Checklist ─────────────────────────────────────────────── */
+.check-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px 12px; }
+label.check-item {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 12px; cursor: pointer;
+  padding: 7px 9px; border-radius: 5px;
+  border: 1px solid #E0E0E0; background: #FAFAFA;
+  transition: background .12s, border-color .12s;
+  line-height: 1.35;
+}
+label.check-item:hover { background: #E3F2FD; border-color: #90CAF9; }
+label.check-item.checked { background: #E3F2FD; border-color: #1565C0; font-weight: 600; }
+label.check-item input[type="checkbox"] { margin-top: 2px; accent-color: #1565C0; width: 14px; height: 14px; flex-shrink: 0; }
+
+/* ── Fundamentação sub-itens ───────────────────────────────── */
+.fund-item { border-left: 3px solid #1565C0; padding-left: 14px; margin-bottom: 18px; }
+.fund-item:last-child { margin-bottom: 0; }
+.fund-label { font-size: 12px; font-weight: 700; color: #1565C0; margin-bottom: 4px; }
+.fund-hint { font-size: 11px; color: #777; line-height: 1.5; margin-bottom: 8px; font-style: italic; }
+
+/* ── Copy section ──────────────────────────────────────────── */
+.copy-section { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.copy-hint { font-size: 12px; color: #666; }
+.copy-status { font-size: 12px; font-weight: 600; color: #43A047; }
+
+/* ── Preview ────────────────────────────────────────────────── */
+.preview-wrap { margin-top: 16px; border: 1px solid #E0E0E0; border-radius: 4px; padding: 24px; background: #fff; }
+.code-wrap { margin-top: 16px; }
+.code-wrap textarea { width: 100%; font-family: 'Consolas', 'Courier New', monospace; font-size: 11px; color: #333; background: #F5F5F5; border: 1px solid #E0E0E0; border-radius: 4px; padding: 10px; resize: vertical; min-height: 280px; }
+
+/* ── SEI preview scoped styles ─────────────────────────────── */
+.sei-preview p { font-family: Calibri, 'Segoe UI', sans-serif; }
+.sei-preview p.MsoNormal { font-size: 11pt; font-family: Cambria, serif; text-align: center; margin-bottom: 13px; line-height: 150%; }
+.sei-preview p.Texto_Fundo_Cinza_Maiusculas_Negrito {
+  text-transform: uppercase; font-weight: bold; background-color: #e6e6e6;
+  font-size: 12pt; font-family: Calibri, sans-serif; text-align: justify; margin: 6pt;
+}
+.sei-preview p.Texto_Justificado {
+  font-size: 12pt; font-family: Calibri, sans-serif; text-align: justify; margin: 6pt;
+}
+
+/* ── Print ──────────────────────────────────────────────────── */
+@media print {
+  @page { size: A4 portrait; margin: 20mm 25mm; }
+  body { background: #fff !important; }
+  .toolbar, .autosave-bar, .section:not(.print-section) { display: none !important; }
+  .print-section { display: block !important; border: none !important; padding: 0 !important; }
+  .container { max-width: 100%; margin: 0; padding: 0; }
+  .sei-preview p.Texto_Fundo_Cinza_Maiusculas_Negrito {
+    -webkit-print-color-adjust: exact; print-color-adjust: exact;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ TOOLBAR ════════════════════════════════════════════════ -->
+<div class="toolbar">
+  <span class="toolbar-title">📄 Encaminhamento de Alteração de Parceria</span>
+  <button class="btn btn-back"  onclick="window.location='index.html'">← Voltar</button>
+  <button class="btn btn-clear" onclick="limparFormulario()">🗑 Limpar</button>
+  <button class="btn btn-copy"  onclick="copiarHTML()" id="btnCopy">📋 Copiar HTML para SEI</button>
+</div>
+
+<div class="container">
+  <div class="autosave-bar" id="autosaveLabel">Aguardando dados…</div>
+
+  <!-- ══ 1. TIPO DE ALTERAÇÃO ════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">1. Tipo de Alteração Solicitada</div>
+    <p class="check-help">Assinale todas as opções pertinentes:</p>
+    <div class="check-grid" id="checkGrid"></div>
+  </div>
+
+  <!-- ══ 2. DEMARCAÇÃO ══════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">2. Demarcação da(s) Alteração(ões) Solicitada(s)</div>
+    <p class="check-help">Descreva detalhadamente as alterações propostas, informando o texto atual e a nova redação pretendida (ou novos valores/datas). Se houver documentação complementar, inclua aqui ou referencie-a.</p>
+    <div class="field">
+      <textarea id="demarcacao" rows="8" placeholder="Informe o texto atual e a nova redação…" oninput="salvarRascunho()"></textarea>
+    </div>
+  </div>
+
+  <!-- ══ 3. FUNDAMENTAÇÃO ════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">3. Fundamentação e/ou Justificativa da Alteração</div>
+    <p class="check-help" style="margin-bottom:16px;">Preencha os campos abaixo conforme aplicável. Os campos deixados em branco manterão o texto instrucional padrão no documento gerado.</p>
+
+    <div class="fund-item">
+      <div class="fund-label">Do interesse público na alteração proposta</div>
+      <p class="fund-hint">Evidenciar se a alteração beneficiará, direta ou indiretamente, o público-alvo do instrumento, ou se é necessária para a plena execução do projeto.</p>
+      <div class="field">
+        <textarea id="fund1" rows="4" placeholder="Redigir a justificativa de interesse público…" oninput="salvarRascunho()"></textarea>
+      </div>
+    </div>
+
+    <div class="fund-item">
+      <div class="fund-label">Da proporcionalidade das contrapartidas, tendo em vista o inicialmente pactuado, se o caso</div>
+      <p class="fund-hint">Apenas se o projeto tiver contrapartida e houver regimento de proporcionalidade de cálculo. Deixe em branco se não se aplicar.</p>
+      <div class="field">
+        <textarea id="fund2" rows="4" placeholder="Redigir a justificativa sobre proporcionalidade (ou deixar em branco)…" oninput="salvarRascunho()"></textarea>
+      </div>
+    </div>
+
+    <div class="fund-item">
+      <div class="fund-label">Da capacidade técnica-operacional da organização da sociedade civil para cumprir a proposta</div>
+      <p class="fund-hint">Em casos de modificações nas metas do plano de trabalho. Deve comprovar que a OSC tem capacidade técnica-operacional para a nova definição.</p>
+      <div class="field">
+        <textarea id="fund3" rows="4" placeholder="Redigir a justificativa sobre capacidade técnica-operacional…" oninput="salvarRascunho()"></textarea>
+      </div>
+    </div>
+
+    <div class="fund-item">
+      <div class="fund-label">Da existência de dotação orçamentária para execução da proposta</div>
+      <p class="fund-hint">Para casos de acréscimo de valor: especificar a dotação orçamentária adequada para consulta de disponibilidade de verba.</p>
+      <div class="field">
+        <textarea id="fund4" rows="4" placeholder="Especificar a dotação orçamentária (ou deixar em branco se não houver acréscimo de valor)…" oninput="salvarRascunho()"></textarea>
+      </div>
+    </div>
+
+    <div class="fund-item" id="fund5wrap">
+      <div class="fund-label">Para a prorrogação de vigência — parecer da área técnica competente</div>
+      <p class="fund-hint">Necessário quando "Prorrogação de vigência" estiver assinalada. Deve atestar que a parceria foi executada a contento ou justificar o atraso no início da execução.</p>
+      <div class="field">
+        <textarea id="fund5" rows="4" placeholder="Inserir o parecer da área técnica sobre a prorrogação de vigência…" oninput="salvarRascunho()"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ BOTÃO COPIAR ═══════════════════════════════════════════ -->
+  <div class="section copy-section">
+    <button class="btn btn-copy" onclick="copiarHTML()" id="btnCopy2">📋 Copiar HTML para SEI</button>
+    <span class="copy-hint">Clique para copiar o HTML formatado → cole no editor de texto do SEI</span>
+    <span class="copy-status" id="copyStatus"></span>
+  </div>
+
+  <!-- ══ PRÉ-VISUALIZAÇÃO ═══════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title section-toggle" onclick="togglePreview()">
+      <span>👁 Pré-visualização do documento</span>
+      <span id="previewArrow" style="font-size:10px;">▶ mostrar</span>
+    </div>
+    <div id="previewContent" style="display:none;">
+      <div class="preview-wrap sei-preview" id="seiPreview"></div>
+    </div>
+  </div>
+
+  <!-- ══ CÓDIGO HTML ════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title section-toggle" onclick="toggleCodigo()">
+      <span>{ } Código HTML para SEI</span>
+      <span id="codigoArrow" style="font-size:10px;">▶ mostrar</span>
+    </div>
+    <div id="codigoContent" style="display:none;">
+      <p class="check-help" style="margin-bottom:8px;">Selecione tudo (Ctrl+A) e copie, ou use o botão acima.</p>
+      <div class="code-wrap">
+        <textarea id="htmlOutput" readonly onclick="this.select()"></textarea>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<script>
+'use strict';
+
+const LS_KEY = 'encaminhamento_rascunho';
+
+const TIPOS = [
+  'Nome do projeto',
+  'Nome da organização',
+  'CNPJ da organização',
+  'Nome do responsável legal',
+  'Objeto da parceria',
+  'Quantidade de beneficiários diretos',
+  'Faixa etária de beneficiários',
+  'Localização do projeto',
+  'Aumento de valor total da parceria',
+  'Redução de valor total da parceria',
+  'Conta bancária (FACC)',
+  'Prorrogação de vigência',
+  'Adequação de vigência',
+  'Redução de vigência da parceria',
+  'Suspensão de vigência da parceria',
+  'Retomada de vigência da parceria',
+  'Metas do projeto',
+  'Cronograma de execução',
+  'Justificativa do Projeto',
+  'Abrangência geográfica',
+  'Quantidade de beneficiários indiretos',
+  'Objetivo geral',
+  'Objetivo específico',
+  'Cronograma de desembolso',
+  'Endereço da sede da Organização',
+  'Pessoa gestora indicada pela administração pública',
+  'Cláusulas gerais',
+  'Alteração de norma geral aplicável',
+  'Alteração da dotação orçamentária',
+  'Erro material',
+];
+
+// Índice de "Prorrogação de vigência" na lista
+const IDX_PRORROGACAO = 11;
+
+function escHtml(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+function nl2p(text, cls) {
+  if (!text.trim()) return '';
+  return text.split(/\n+/).filter(l => l.trim()).map(l =>
+    `<p class="${cls}">${escHtml(l.trim())}</p>`
+  ).join('\n');
+}
+
+// ── Renderizar checkboxes ──────────────────────────────────────
+function renderChecks() {
+  const grid = document.getElementById('checkGrid');
+  grid.innerHTML = '';
+  TIPOS.forEach((tipo, i) => {
+    const lbl = document.createElement('label');
+    lbl.className = 'check-item';
+    lbl.id = `chk_wrap_${i}`;
+    lbl.innerHTML = `<input type="checkbox" id="chk_${i}" onchange="onCheckChange(${i})"><span>${escHtml(tipo)}</span>`;
+    grid.appendChild(lbl);
+  });
+}
+
+function onCheckChange(i) {
+  const cb   = document.getElementById(`chk_${i}`);
+  const wrap = document.getElementById(`chk_wrap_${i}`);
+  wrap.classList.toggle('checked', cb.checked);
+  // Destaque visual para fund5 se prorrogação for marcada
+  if (i === IDX_PRORROGACAO) {
+    document.getElementById('fund5wrap').style.borderLeftColor =
+      cb.checked ? '#E53935' : '#1565C0';
+  }
+  salvarRascunho();
+  atualizarOutputSeAberto();
+}
+
+function setCheck(i, val) {
+  const cb   = document.getElementById(`chk_${i}`);
+  const wrap = document.getElementById(`chk_wrap_${i}`);
+  if (!cb) return;
+  cb.checked = !!val;
+  wrap.classList.toggle('checked', !!val);
+  if (i === IDX_PRORROGACAO) {
+    document.getElementById('fund5wrap').style.borderLeftColor =
+      !!val ? '#E53935' : '#1565C0';
+  }
+}
+
+// ── Gerar HTML para SEI ────────────────────────────────────────
+function buildHtmlSEI() {
+  const checks = TIPOS.map((_, i) => !!document.getElementById(`chk_${i}`)?.checked);
+
+  const demarcacao    = document.getElementById('demarcacao').value.trim();
+  const fund1txt      = document.getElementById('fund1').value.trim();
+  const fund2txt      = document.getElementById('fund2').value.trim();
+  const fund3txt      = document.getElementById('fund3').value.trim();
+  const fund4txt      = document.getElementById('fund4').value.trim();
+  const fund5txt      = document.getElementById('fund5').value.trim();
+
+  const TJ = 'Texto_Justificado';
+  const CZ = 'Texto_Fundo_Cinza_Maiusculas_Negrito';
+
+  let html = '';
+
+  // Título
+  html += `<p align="center" class="MsoNormal" style="text-align:center; margin-bottom:13px">` +
+    `<span style="font-size:11pt"><span style="line-height:150%"><span style="font-family:Cambria,serif">` +
+    `<b><span style="font-size:14.0pt"><span style="line-height:150%">MODELO DE ENCAMINHAMENTO DE SOLICITAÇÃO DE ALTERAÇÕES` +
+    `</span></span></b></span></span></span><br>\n&nbsp;</p>\n\n`;
+
+  // Destinatário
+  html += `<p class="${CZ}">SMDHC/DP/DGP/ADIT</p>\n\n`;
+  html += `<p class="${CZ}">Senhora Diretora,</p>\n\n`;
+  html += `<p class="${TJ}">Segue para alteração demarcada abaixo:<br>\n&nbsp;</p>\n\n`;
+
+  // Tipos de alteração
+  html += `<p class="${TJ}"><b>Tipo de alteração solicitada (assinale as opções pertinentes):</b></p>\n\n`;
+  TIPOS.forEach((tipo, i) => {
+    const mark = checks[i] ? '(X)' : '(  )';
+    html += `<p class="${TJ}">${mark} ${escHtml(tipo)}</p>\n\n`;
+  });
+  html += `<p class="${TJ}">&nbsp;</p>\n\n`;
+
+  // Demarcação
+  html += `<p class="${TJ}"><b>Demarcação da(s) alteração(ões) solicitada(s):</b></p>\n\n`;
+  if (demarcacao) {
+    html += nl2p(demarcacao, TJ) + '\n\n';
+  } else {
+    html += `<p class="${TJ}">Descrever detalhadamente as alterações propostas, informando claramente o texto atual e a redação pretendida, ou outra forma de destacar as mudanças solicitadas (tais como novos valores ou datas). Se houver documentação complementar, incluir aqui ou referenciá-la.</p>\n\n`;
+  }
+  html += `<p class="${TJ}">&nbsp;</p>\n\n`;
+
+  // Fundamentação
+  html += `<p class="${TJ}"><b>Fundamentação e/ou Justificativa da Alteração:</b></p>\n\n`;
+  html += `<p class="${TJ}">Indicar as razões técnicas, jurídicas e administrativas que motivam a solicitação da alteração. Destaca-se que estas devem respeitar os artigos 61 e 62 do Decreto 57.575 de 2016, onde os setores técnicos competentes devem se manifestar acerca:</p>\n\n`;
+  html += `<p class="${TJ}">&nbsp;</p>\n\n`;
+
+  // Sub-item 1
+  html += `<p class="${TJ}"><b>- Do interesse público na alteração proposta. </b></p>\n\n`;
+  html += `<p class="${TJ}">A justificativa deve evidenciar se a alteração proposta beneficiará, direta ou indiretamente, o público-alvo do instrumento ou se é necessária para a plena execução do projeto.</p>\n\n`;
+  if (fund1txt) { html += nl2p(fund1txt, TJ) + '\n\n'; }
+  html += `<p class="${TJ}">&nbsp;</p>\n\n`;
+
+  // Sub-item 2
+  html += `<p class="${TJ}"><b>- Da proporcionalidade das contrapartidas, tendo em vista o inicialmente pactuado, se o caso.</b></p>\n\n`;
+  html += `<p class="${TJ}">Deve ser redigido fundamentação apenas no caso de o projeto ter contrapartida e haver algum regimento de proporcionalidade de cálculo. Por exemplo, a organização propôs 5% do valor total do objeto como contrapartida, pagos com verbas próprias. Essa mesma OSC propõe alteração do valor total do projeto, o qual será acrescido. Assim, o percentual oferecido de contrapartida, 5% deve ser mantido respeitando o novo valor total proposto.</p>\n\n`;
+  if (fund2txt) { html += nl2p(fund2txt, TJ) + '\n\n'; }
+  html += `<p class="${TJ}">&nbsp;</p>\n\n`;
+
+  // Sub-item 3
+  html += `<p class="${TJ}"><b>- Da capacidade técnica-operacional da organização da sociedade civil para cumprir a proposta.</b></p>\n\n`;
+  html += `<p class="${TJ}">Em casos de modificações (ampliação ou redução) nas metas do plano de trabalho, deve ser redigido justificativa que permita ou que comprove que a OSC tenha a capacidade técnica-operacional para a execução dessa nova definição solicitada.</p>\n\n`;
+  if (fund3txt) { html += nl2p(fund3txt, TJ) + '\n\n'; }
+  html += `<p class="${TJ}">&nbsp;</p>\n\n`;
+
+  // Sub-item 4
+  html += `<p class="${TJ}"><b>- Da existência de dotação orçamentária para execução da proposta.</b></p>\n\n`;
+  html += `<p class="${TJ}">Para os casos de alteração de acréscimo de valor, deverá ser especificada a dotação orçamentária adequada para consulta de disponibilidade de verba. Essa dotação pode ser identificada por meio de consulta prévia, por meio de e-mail, ao Departamento de Parcerias – DP.</p>\n\n`;
+  if (fund4txt) { html += nl2p(fund4txt, TJ) + '\n\n'; }
+  html += `<p class="${TJ}">&nbsp;</p>\n\n`;
+
+  // Sub-item 5
+  html += `<p class="${TJ}"><b>- Para a prorrogação de vigência das parcerias celebradas de acordo com as normas da Lei Federal nº 13.019, de 2014, e deste decreto, é necessário parecer da área técnica competente atestando que a parceria foi executada a contento ou justificando o atraso no início da execução.</b></p>\n\n`;
+  html += `<p class="${TJ}">Este parecer deve ser inserido no próprio campo de justificativa, contendo o ateste do cumprimento da execução.</p>\n\n`;
+  if (fund5txt) { html += nl2p(fund5txt, TJ) + '\n\n'; }
+
+  return html.trimEnd();
+}
+
+// ── Copiar para clipboard ──────────────────────────────────────
+function copiarHTML() {
+  const html = buildHtmlSEI();
+  atualizarOutputs(html);
+
+  const status = document.getElementById('copyStatus');
+  const btns   = [document.getElementById('btnCopy'), document.getElementById('btnCopy2')];
+
+  navigator.clipboard.writeText(html).then(() => {
+    btns.forEach(b => { if (b) { b.textContent = '✅ Copiado!'; b.classList.add('copied'); } });
+    status.textContent = '✅ HTML copiado para a área de transferência!';
+    setTimeout(() => {
+      btns.forEach(b => { if (b) { b.textContent = '📋 Copiar HTML para SEI'; b.classList.remove('copied'); } });
+      status.textContent = '';
+    }, 3000);
+  }).catch(() => {
+    // fallback: select textarea
+    const ta = document.getElementById('htmlOutput');
+    if (document.getElementById('codigoContent').style.display === 'none') toggleCodigo();
+    ta.select();
+    document.execCommand('copy');
+    status.textContent = 'HTML copiado (fallback). Se não funcionar, use o código abaixo.';
+  });
+}
+
+// ── Atualizar preview e código ─────────────────────────────────
+function atualizarOutputs(html) {
+  html = html || buildHtmlSEI();
+  document.getElementById('htmlOutput').value = html;
+  document.getElementById('seiPreview').innerHTML = html;
+}
+
+function atualizarOutputSeAberto() {
+  const previewAberto = document.getElementById('previewContent').style.display !== 'none';
+  const codigoAberto  = document.getElementById('codigoContent').style.display  !== 'none';
+  if (previewAberto || codigoAberto) atualizarOutputs();
+}
+
+// ── Toggle colapsáveis ─────────────────────────────────────────
+function togglePreview() {
+  const el  = document.getElementById('previewContent');
+  const arr = document.getElementById('previewArrow');
+  const open = el.style.display === 'none';
+  el.style.display = open ? 'block' : 'none';
+  arr.textContent  = open ? '▼ ocultar' : '▶ mostrar';
+  if (open) atualizarOutputs();
+}
+
+function toggleCodigo() {
+  const el  = document.getElementById('codigoContent');
+  const arr = document.getElementById('codigoArrow');
+  const open = el.style.display === 'none';
+  el.style.display = open ? 'block' : 'none';
+  arr.textContent  = open ? '▼ ocultar' : '▶ mostrar';
+  if (open) atualizarOutputs();
+}
+
+// ── Auto-save ─────────────────────────────────────────────────
+function salvarRascunho() {
+  const checks = TIPOS.map((_, i) => !!document.getElementById(`chk_${i}`)?.checked);
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({
+      demarcacao    : document.getElementById('demarcacao').value,
+      fund1         : document.getElementById('fund1').value,
+      fund2         : document.getElementById('fund2').value,
+      fund3         : document.getElementById('fund3').value,
+      fund4         : document.getElementById('fund4').value,
+      fund5         : document.getElementById('fund5').value,
+      checks,
+    }));
+    document.getElementById('autosaveLabel').textContent =
+      'Rascunho salvo automaticamente às ' + new Date().toLocaleTimeString('pt-BR');
+  } catch(e) {}
+  atualizarOutputSeAberto();
+}
+
+function restaurarRascunho() {
+  const raw = localStorage.getItem(LS_KEY);
+  if (!raw) return false;
+  try {
+    const d = JSON.parse(raw);
+    document.getElementById('demarcacao').value = d.demarcacao || '';
+    document.getElementById('fund1').value      = d.fund1      || '';
+    document.getElementById('fund2').value      = d.fund2      || '';
+    document.getElementById('fund3').value      = d.fund3      || '';
+    document.getElementById('fund4').value      = d.fund4      || '';
+    document.getElementById('fund5').value      = d.fund5      || '';
+    (d.checks || []).forEach((v, i) => setCheck(i, v));
+    return true;
+  } catch(e) { return false; }
+}
+
+function limparFormulario() {
+  if (!confirm('Limpar todos os campos? Esta ação não pode ser desfeita.')) return;
+  localStorage.removeItem(LS_KEY);
+  location.reload();
+}
+
+// ── Init ──────────────────────────────────────────────────────
+renderChecks();
+const restaurado = restaurarRascunho();
+document.getElementById('autosaveLabel').textContent = restaurado
+  ? 'Rascunho restaurado automaticamente.'
+  : 'Preencha os campos. O rascunho é salvo automaticamente.';
+</script>
+</body>
+</html>
