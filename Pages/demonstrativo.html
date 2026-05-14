@@ -119,8 +119,10 @@ h2.print-title { display: none; }
   <input type="file" id="fileOpen" accept=".json,.daf.json" onchange="abrirProjeto(event)">
   <button class="btn-secondary" onclick="salvarComo()">Salvar Como...</button>
   <div class="sep"></div>
-  <button class="btn-primary" onclick="window.print()">📄 Exportar PDF</button>
+  <button class="btn-primary" onclick="exportarPDFComValidacao()">📄 Exportar PDF</button>
   <button class="btn-secondary" onclick="exportarCSV()">📊 Exportar CSV</button>
+  <div class="sep"></div>
+  <button class="btn-green" onclick="concluirProjeto()" title="Concluir e exportar">✅ Concluir</button>
   <div class="sep"></div>
   <span class="dirty-indicator" id="dirtyFlag">● Alterações não salvas</span>
 </div>
@@ -187,11 +189,18 @@ h2.print-title { display: none; }
       <br><b>PRA</b> = max(0, (Executado − Previsto) / VTP) por célula. <b>PA</b> = soma de todos os PRA.
     </div>
 
-    <div class="instr-block" style="background:#FFEBEE;">
-      <b>💾 Salvar, Abrir e Exportar:</b><br>
-      <b>SALVAR (Ctrl+S)</b> gera um arquivo <code>.daf.json</code>. <b>Abrir (Ctrl+O)</b> carrega um arquivo salvo.
-      <b>Exportar PDF</b> imprime todas as abas ou use os botões por seção.
-      <b>Exportar CSV</b> gera 3 arquivos para Excel.
+    <div class="instr-block" style="background:#FFEBEE;border:3px solid #E53935;">
+      <b>💾 IMPORTANTE — Salvar, Abrir e Reutilizar seu Projeto:</b><br><br>
+      <b>⚠ O arquivo <code>.daf.json</code> é o coração do seu trabalho.</b> Ele armazena todos os dados preenchidos (cabeçalho, itens previstos, executados, justificativas) e permite que você retome o trabalho a qualquer momento.<br><br>
+      <ul style="margin:8px 0 0 18px;line-height:2;">
+        <li><b>SALVAR (Ctrl+S ou botão 💾):</b> Gera um arquivo <code>.daf.json</code> no seu computador. <u>Salve com frequência!</u> A cada alteração significativa, salve para não perder dados.</li>
+        <li><b>Abrir (Ctrl+O ou botão 📂):</b> Carrega um arquivo <code>.daf.json</code> salvo anteriormente, restaurando todos os dados do projeto.</li>
+        <li><b>Salvar Como...:</b> Permite escolher um novo nome para o arquivo, útil para criar versões (ex: <code>projeto_v2.daf.json</code>).</li>
+        <li><b>Onde guardar:</b> Salve o <code>.daf.json</code> em uma pasta segura (ex: pasta do projeto no SEI, OneDrive, etc.). É este arquivo que você carregará para continuar o trabalho.</li>
+        <li><b>Exportar PDF:</b> Imprime todas as abas para PDF. <u>O PDF é para assinatura/documentação</u>, não para reutilizar depois — para isso, use o <code>.daf.json</code>.</li>
+        <li><b>Exportar CSV:</b> Gera 3 arquivos (previsto, executado, alteração) para abrir no Excel.</li>
+      </ul><br>
+      <b style="color:#E53935;">🔴 Nunca dependa apenas do navegador.</b> O salvamento automático no navegador é temporário. Sempre salve o arquivo <code>.daf.json</code> no seu computador.
     </div>
 
     <div class="instr-block" style="background:#E3F2FD;">
@@ -287,6 +296,7 @@ h2.print-title { display: none; }
   <h2 class="print-title">5. Executado</h2>
   <div class="table-toolbar">
     <button class="btn-green" onclick="addExecOnly()">+ Só Executado</button>
+    <button class="btn-danger" onclick="removeExecOnly()" id="btnRemoveExec" style="display:none;">✕ Remover Só-Executado</button>
     <span style="font-size:11px;background:#FFF9C4;padding:4px 8px;border-radius:3px;margin-left:12px;">⬛ Célula amarela = valor executado excede o previsto</span>
     <button class="btn-secondary" style="margin-left:auto;" onclick="imprimirSecao('executado')">🖨 Imprimir esta seção</button>
   </div>
@@ -305,7 +315,7 @@ h2.print-title { display: none; }
   <div class="pa-banner ok" id="paBanner">PA: 0,00% — Remanejamento dentro do limite de autonomia</div>
   <div class="warnings-box" id="warningsBox"></div>
   <div class="table-toolbar">
-    <button class="btn-primary" onclick="window.print()">📄 Exportar PDF (todas abas)</button>
+    <button class="btn-primary" onclick="exportarPDFComValidacao()">📄 Exportar PDF (todas abas)</button>
     <button class="btn-secondary" onclick="exportarCSV()">📊 Exportar CSV</button>
     <button class="btn-secondary" onclick="imprimirSecao('alteracao')">🖨 Imprimir esta seção</button>
   </div>
@@ -483,10 +493,17 @@ function updateMesesLabel() {
   document.getElementById('vtpDisplay').textContent = `VTP: ${fmtMoney(data.Header.ValorTotalPrevisto)}`;
 }
 
+function getLastUsedElement() {
+  for (let i = data.Items.length - 1; i >= 0; i--) {
+    if (data.Items[i].ElementoDespesa) return data.Items[i].ElementoDespesa;
+  }
+  return ELEMENTOS[0];
+}
+
 function createItem(execOnly = false) {
   const item = {
     Id: uuid(),
-    ElementoDespesa: ELEMENTOS[0],
+    ElementoDespesa: getLastUsedElement(),
     Quantidade: 1,
     ItemDespesa: '',
     ValoresPrevisto: [],
@@ -618,7 +635,7 @@ function renderExecutado() {
     const tr = document.createElement('tr');
     if (item._execOnly) tr.classList.add('exec-only');
     if (realIdx === selectedExecIdx) tr.classList.add('selected');
-    tr.onclick = () => { selectedExecIdx = realIdx; highlightRow('execBody', realIdx); };
+    tr.onclick = () => { selectedExecIdx = realIdx; highlightRow('execBody', realIdx); updateExecRemoveBtn(); };
 
     if (item._execOnly) {
       let optHtml = ELEMENTOS.map(e => `<option${e === item.ElementoDespesa ? ' selected' : ''}>${e}</option>`).join('');
@@ -650,6 +667,7 @@ function renderExecutado() {
     tfoot.innerHTML += `<td style="text-align:right;">${fmtDecimal(colSum)}</td>`;
   }
   tfoot.innerHTML += `<td class="total-col">${fmtDecimal(grandTotal)}</td>`;
+  updateExecRemoveBtn();
 }
 
 function setExecValue(itemIdx, monthIdx, rawVal) {
@@ -720,7 +738,20 @@ function calcPRA(item, monthIdx, vtp) {
   const exec = item.ValoresExecutado[monthIdx] || 0;
   const prev = item.ValoresPrevisto[monthIdx] || 0;
   const diff = exec - prev;
-  return diff > 0 ? diff / vtp : 0;
+  if (diff <= 0) return 0;
+  // Desconta rendimentos proporcionalmente: excesso pode ser coberto por aplicação
+  const totalExecAll = data.Items.reduce((s, it) => s + it.ValoresExecutado.reduce((a, b) => a + b, 0), 0);
+  const totalPrevAll = data.Items.reduce((s, it) => s + it.ValoresPrevisto.reduce((a, b) => a + b, 0), 0);
+  const globalExcess = totalExecAll - totalPrevAll;
+  const rendimentos = data.Header.ValorAplicacao || 0;
+  // Se o excesso global é coberto por rendimentos, desconta proporcionalmente
+  if (rendimentos > 0 && globalExcess > 0) {
+    const coveredByRend = Math.min(rendimentos, globalExcess);
+    const ratio = coveredByRend / globalExcess;
+    const adjustedDiff = diff * (1 - ratio);
+    return adjustedDiff > 0 ? adjustedDiff / vtp : 0;
+  }
+  return diff / vtp;
 }
 
 function runValidations() {
@@ -901,7 +932,7 @@ function downloadText(fileName, content) {
 
 function imprimirSecao(secao) {
   const FIXED_COLS = 3;
-  const MAX_MONTH_COLS = 8;
+  const MAX_MONTH_COLS = 6;
   let tableId, titulo, isPercent;
   if (secao === 'previsto')  { tableId = 'prevTable'; titulo = '4. Previsto';        isPercent = false; }
   if (secao === 'executado') { tableId = 'execTable'; titulo = '5. Executado';       isPercent = false; }
@@ -992,6 +1023,80 @@ function imprimirSecao(secao) {
   else alert('Pop-up bloqueado. Permita pop-ups para este site e tente novamente.');
 }
 
+function removeExecOnly() {
+  if (selectedExecIdx < 0 || selectedExecIdx >= data.Items.length) return;
+  const item = data.Items[selectedExecIdx];
+  if (!item._execOnly) { alert('Só é possível remover itens "Só Executado" (linhas verdes).'); return; }
+  if (!confirm(`Remover o item "${item.ItemDespesa || '(sem nome)'}"?`)) return;
+  data.Items.splice(selectedExecIdx, 1);
+  selectedExecIdx = -1;
+  markDirty();
+  renderExecutado();
+  renderAlteracao();
+}
+
+function updateExecRemoveBtn() {
+  const btn = document.getElementById('btnRemoveExec');
+  if (selectedExecIdx >= 0 && selectedExecIdx < data.Items.length && data.Items[selectedExecIdx]._execOnly) {
+    btn.style.display = '';
+  } else {
+    btn.style.display = 'none';
+  }
+}
+
+function hasValidationErrors() {
+  const vtp = data.Header.ValorTotalPrevisto;
+  const totalPrev = data.Items.reduce((s, it) => s + it.ValoresPrevisto.reduce((a, b) => a + b, 0), 0);
+  return vtp > 0 && totalPrev > vtp;
+}
+
+function exportarPDFComValidacao() {
+  if (hasValidationErrors()) {
+    alert('⚠ Exportação bloqueada: o total previsto excede o VTP.\nCorreja os valores antes de exportar para assinatura.');
+    return;
+  }
+  window.print();
+}
+
+function concluirProjeto() {
+  if (hasValidationErrors()) {
+    alert('⚠ Não é possível concluir: o total previsto excede o VTP.\nCorreja os valores antes de concluir.');
+    return;
+  }
+  const opcao = prompt(
+    '✅ Concluir Projeto\n\n' +
+    'Escolha o formato de exportação:\n' +
+    '1 — PDF (impressão)\n' +
+    '2 — CSV (planilha)\n' +
+    '3 — JSON (.daf.json)\n' +
+    '4 — Todos (PDF + CSV + JSON)\n\n' +
+    'Após exportar, deseja limpar para novo projeto? (será perguntado)\n\n' +
+    'Digite 1, 2, 3 ou 4:'
+  );
+  if (!opcao) return;
+  const op = opcao.trim();
+  if (op === '1' || op === '4') window.print();
+  if (op === '2' || op === '4') exportarCSV();
+  if (op === '3' || op === '4') {
+    readHeaderFromForm();
+    const nome = data.Header.NomeProjeto || 'projeto';
+    downloadJSON(`${nome}_final.daf.json`);
+  }
+  setTimeout(() => {
+    if (confirm('Deseja limpar os dados e iniciar um novo projeto?')) {
+      localStorage.removeItem(LS_KEY);
+      data = createEmptyProject();
+      currentFileName = '';
+      selectedPrevIdx = -1;
+      selectedExecIdx = -1;
+      loadHeaderToForm();
+      clearDirty();
+      document.getElementById('statusFile').textContent = 'Nenhum arquivo aberto';
+      switchTab(0);
+    }
+  }, 500);
+}
+
 function autoSave() {
   try {
     readHeaderFromForm();
@@ -1018,6 +1123,40 @@ function tryRestoreAutoSave() {
 document.addEventListener('keydown', function(e) {
   if (e.ctrlKey && e.key === 's') { e.preventDefault(); salvarProjeto(); }
   if (e.ctrlKey && e.key === 'o') { e.preventDefault(); document.getElementById('fileOpen').click(); }
+
+  // Navegação por teclado nas tabelas
+  const active = document.activeElement;
+  if (!active || !active.closest('.data-table')) return;
+  const td = active.closest('td');
+  if (!td) return;
+  const tr = td.closest('tr');
+  const tbody = tr.closest('tbody');
+  if (!tbody) return;
+  const colIdx = Array.from(tr.children).indexOf(td);
+  const rowIdx = Array.from(tbody.children).indexOf(tr);
+
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    const nextRow = tbody.children[rowIdx + 1];
+    if (nextRow) {
+      const nextCell = nextRow.children[colIdx];
+      if (nextCell) { const inp = nextCell.querySelector('input,select'); if (inp) inp.focus(); }
+    }
+  } else if (e.key === 'ArrowUp' && !e.ctrlKey) {
+    const prevRow = tbody.children[rowIdx - 1];
+    if (prevRow) {
+      e.preventDefault();
+      const prevCell = prevRow.children[colIdx];
+      if (prevCell) { const inp = prevCell.querySelector('input,select'); if (inp) inp.focus(); }
+    }
+  } else if (e.key === 'ArrowDown' && !e.ctrlKey) {
+    const nextRow = tbody.children[rowIdx + 1];
+    if (nextRow) {
+      e.preventDefault();
+      const nextCell = nextRow.children[colIdx];
+      if (nextCell) { const inp = nextCell.querySelector('input,select'); if (inp) inp.focus(); }
+    }
+  }
 });
 
 window.addEventListener('beforeunload', function(e) {

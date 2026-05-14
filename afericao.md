@@ -1,0 +1,12 @@
+# Especificação de melhorias
+- Na linha de cabeçalho tanto do previsto, quanto do executado, inserir uma nova linha com a informação acerca do status do termo: se aquele período é "Base" ou "Aditivo", que pode ser Aditivo X (1, 2, 3...). Os cálculos de 15% também devem se restringir a esses períodos ou seja: vamos supor que os meses 1 a 12 tenha o valor total de R$ 1.000.000,00 (ou seja, 15% = R$ 150.000,00), e seja classificado como base. Ou seja, deve haver um cálculo isolado desse período quanto a percentuais de remanejamento. Caso esse período tenha acréscimo de valor: torne-se R$ 2.000.000,00, o valor de 15% sobe(R$ 300.000,00), porém é aplicável somente a esse período. Na ocasião em que haja prorrogação, e na linha de status, 12 meses sejam termo base, no valor de R$ 1.000.000,00, aqui temos que realizar cálculos de remanejamento de % só desse montante. Havendo mais 6 meses no valor de R$ 500.000,00, sendo Aditivo 1, haverá cálculo isolado desse montante no quesito de remanejamentos.
+- Construir um cronograma de desembolso baseado nos valores mensais da seção Previsto e Exeuctado, criando uma nova aba, na seção 6, comparando os valores de parcelas mensais de ambos, com possibilidade de criação de documento padrão para solicitação de alteração.
+- Construir uma função de listagem / autocomplete para as linhas, ou até um autocomplete total, baseado no último valor disponível da linha.
+- Botão enter desce pra baixo, seta pra cima vai pra cima na linha.
+- Botão de exclusão para itens do executado que não sejam espelhados no previsto (linhas adicionais).
+- Arrumar questão do valor de rendimentos (excesso do previsto executado), uma vez que está sendo contabilizado em percentual.
+- Falar sobre o JSON, salvar, a importância de salvar esse arquivo e o load do mesmo.
+- Padronizar o PDF em seis meses, na exportação, se possível.
+- Construir um botão de conclusão com PDF, csv ou json / limpar para começar novamente.
+- Construir campo de formulário, text, para justificativa de cada remanejamento que ultrapassou o valor. Todo o valor que foi remanejado, deve ser "clicável" para construção de justificativa, linha a linha. Essa "tabela inferior" deve ter dados como: item de despesa, mês, valor e percentual remanejado. Deve também compor os processos de exportação, save, etc.
+- Quando houver a mensagem de erro "• Total previsto (R$ 11.000,00) excede o VTP (R$ 10.000,00)." por exemplo, não deve permitir exportação de PDF para assinatura.

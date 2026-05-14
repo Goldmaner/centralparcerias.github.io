@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Parecer Técnico Conclusivo — Central de Parcerias</title>
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   RESET & BASE
+   ═══════════════════════════════════════════════════════════════ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #FAFAFA;
+  color: #212121;
+  font-size: 14px;
+}
+button { cursor: pointer; font-family: inherit; font-size: 13px; }
+input, select, textarea { font-family: inherit; font-size: 13px; }
+
+/* ═══════════════════════════════════════════════════════════════
+   HEADER & TOOLBAR
+   ═══════════════════════════════════════════════════════════════ */
+.app-header {
+  background: #1A237E;
+  color: #fff;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0,0,0,.12);
+}
+.app-header h1 { font-size: 16px; font-weight: 700; letter-spacing: .3px; }
+.app-subtitle { font-size: 12px; opacity: .8; }
+.header-left { flex: 1; }
+
+.toolbar {
+  background: #283593;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 4px rgba(0,0,0,.08);
+}
+.toolbar .sep { width: 1px; height: 28px; background: #5C6BC0; margin: 0 12px; }
+
+.btn-save  { background: #43A047; color: #fff; border: none; padding: 8px 16px; font-weight: bold; border-radius: 4px; }
+.btn-save:hover { background: #2E7D32; }
+.btn-primary { background: #3949AB; color: #fff; border: none; padding: 7px 14px; border-radius: 4px; font-weight: 600; }
+.btn-primary:hover { background: #1A237E; }
+.btn-secondary { background: #E0E0E0; color: #333; border: 1px solid #BDBDBD; padding: 6px 12px; border-radius: 4px; }
+.btn-secondary:hover { background: #BDBDBD; }
+.btn-back { background: rgba(255,255,255,.2); color: #fff; border: 1px solid rgba(255,255,255,.4); padding: 6px 12px; border-radius: 4px; font-size: 12px; }
+.btn-back:hover { background: rgba(255,255,255,.3); }
+
+.dirty-indicator { color: #FFEB3B; font-weight: bold; font-size: 12px; display: none; margin-left: auto; }
+.dirty-indicator.active { display: inline; }
+
+/* ═══════════════════════════════════════════════════════════════
+   CONTAINER
+   ═══════════════════════════════════════════════════════════════ */
+.container { max-width: 1000px; margin: 0 auto; padding: 24px 20px 80px; }
+
+/* ═══════════════════════════════════════════════════════════════
+   SECTIONS
+   ═══════════════════════════════════════════════════════════════ */
+.form-section {
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 4px rgba(0,0,0,.08);
+  border-left: 4px solid #3949AB;
+}
+.form-section h2 {
+  color: #1A237E;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #E8EAF6;
+}
+.form-section h3 {
+  color: #283593;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 20px 0 12px;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   FORM GROUPS
+   ═══════════════════════════════════════════════════════════════ */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.form-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.form-grid.cols-1 { grid-template-columns: 1fr; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+
+label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #555;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+label .req { color: #E53935; }
+
+input[type="text"],
+input[type="date"],
+input[type="email"],
+input[type="number"],
+select,
+textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #BDBDBD;
+  border-radius: 4px;
+  font-size: 13px;
+  color: #212121;
+  background: #fff;
+  transition: border-color .15s;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #3949AB;
+  box-shadow: 0 0 0 2px rgba(57,73,171,.12);
+}
+textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+textarea.tall { min-height: 140px; }
+
+/* ═══════════════════════════════════════════════════════════════
+   INFO / WARN BOXES
+   ═══════════════════════════════════════════════════════════════ */
+.info-box {
+  background: #E8EAF6;
+  border: 1px solid #9FA8DA;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #1A237E;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.warn-box {
+  background: #FFF8E1;
+  border: 1px solid #FFE082;
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-size: 12px;
+  color: #6D4C41;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.note-inline {
+  font-size: 11px;
+  color: #757575;
+  margin-top: 2px;
+  line-height: 1.4;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESULTADO CARD
+   ═══════════════════════════════════════════════════════════════ */
+.resultado-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 12px;
+  margin-top: 8px;
+}
+.resultado-card {
+  border: 2px solid #E0E0E0;
+  border-radius: 8px;
+  padding: 14px 16px;
+  cursor: pointer;
+  text-align: center;
+  transition: border-color .15s, background .15s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.resultado-card input[type="radio"] { display: none; }
+.resultado-card .rc-icon { font-size: 22px; }
+.resultado-card .rc-label { font-weight: 700; font-size: 13px; }
+.resultado-card .rc-desc { font-size: 11px; color: #757575; line-height: 1.4; }
+.resultado-card:has(input:checked).aprovado { border-color: #43A047; background: #E8F5E9; }
+.resultado-card:has(input:checked).ressalvas { border-color: #FFA000; background: #FFF8E1; }
+.resultado-card:has(input:checked).rejeicao  { border-color: #E53935; background: #FFEBEE; }
+.resultado-card.aprovado .rc-label { color: #2E7D32; }
+.resultado-card.ressalvas .rc-label { color: #E65100; }
+.resultado-card.rejeicao  .rc-label { color: #C62828; }
+
+/* ═══════════════════════════════════════════════════════════════
+   DOCUMENTAÇÃO TABLE
+   ═══════════════════════════════════════════════════════════════ */
+.doc-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 8px; }
+.doc-table th { background: #3949AB; color: #fff; padding: 8px 10px; text-align: left; font-weight: 600; }
+.doc-table td { padding: 7px 10px; border-bottom: 1px solid #E0E0E0; vertical-align: middle; }
+.doc-table tr:hover td { background: #F5F5F5; }
+.doc-table td input { width: 100%; padding: 4px 6px; border: 1px solid #BDBDBD; border-radius: 3px; font-size: 12px; }
+.btn-add-row { background: #43A047; color: #fff; border: none; padding: 6px 14px; border-radius: 4px; font-size: 12px; margin-top: 8px; }
+.btn-add-row:hover { background: #2E7D32; }
+.btn-del-row { background: #E53935; color: #fff; border: none; padding: 3px 8px; border-radius: 3px; font-size: 11px; cursor: pointer; }
+
+/* ═══════════════════════════════════════════════════════════════
+   TOGGLE SECTION (opcionais)
+   ═══════════════════════════════════════════════════════════════ */
+.toggle-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  padding: 8px 0;
+  border-bottom: 1px dashed #C5CAE9;
+  margin-bottom: 12px;
+  user-select: none;
+}
+.toggle-section-header span { font-size: 13px; font-weight: 600; color: #3949AB; }
+.toggle-section-header .toggle-arrow { font-size: 12px; color: #9FA8DA; transition: transform .2s; }
+.toggle-section-header.open .toggle-arrow { transform: rotate(180deg); }
+.toggle-section-body { display: none; }
+.toggle-section-body.open { display: block; }
+
+/* ═══════════════════════════════════════════════════════════════
+   STATUS BAR
+   ═══════════════════════════════════════════════════════════════ */
+.statusbar {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  background: #212121;
+  color: #fff;
+  font-size: 11px;
+  padding: 4px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 100;
+}
+.badge { padding: 2px 8px; border-radius: 3px; color: #fff; font-weight: 600; font-size: 11px; }
+.badge-ok { background: #43A047; }
+.badge-warn { background: #E65100; }
+.badge-info { background: #3949AB; }
+
+/* ═══════════════════════════════════════════════════════════════
+   FORM ACTIONS
+   ═══════════════════════════════════════════════════════════════ */
+.form-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   PRINT
+   ═══════════════════════════════════════════════════════════════ */
+@media print {
+  @page { size: A4; margin: 15mm; }
+  body { font-size: 10px !important; background: #fff !important; }
+  .toolbar, .statusbar, .form-actions, .app-header .btn-back,
+  .btn-add-row, .btn-del-row, .dirty-indicator { display: none !important; }
+  .app-header { background: #1A237E !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .container { padding: 0 !important; max-width: 100% !important; }
+  .form-section { box-shadow: none !important; border: 1px solid #ccc; page-break-inside: avoid; }
+  .form-section h2, .form-section h3 { color: #000 !important; }
+  input, select, textarea { border: 1px solid #ccc !important; font-size: 10px !important; }
+  .resultado-card { border: 1px solid #ccc !important; background: #fff !important; }
+  .resultado-card:has(input:checked) { border: 2px solid #333 !important; font-weight: bold; }
+  .toggle-section-body { display: block !important; }
+  textarea { height: auto !important; }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .form-grid.cols-3 { grid-template-columns: 1fr; }
+  .resultado-options { grid-template-columns: 1fr; }
+  .app-header { flex-direction: column; align-items: flex-start; gap: 8px; }
+  .toolbar { padding: 8px 12px; gap: 4px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ════════════════════════════════════════════════════ -->
+<div class="app-header">
+  <div class="header-left">
+    <h1>⚖️ Parecer Técnico Conclusivo de Análise de Prestação de Contas</h1>
+    <span class="app-subtitle">Portaria nº 021/SMDHC/2023, Arts. 75–78 — Central de Parcerias</span>
+  </div>
+  <div>
+    <button class="btn-back" onclick="voltarPainel()">← Voltar</button>
+  </div>
+</div>
+
+<!-- ═══ TOOLBAR ═══════════════════════════════════════════════════ -->
+<div class="toolbar">
+  <button class="btn-save" onclick="salvarParecer()" title="Ctrl+S">💾 SALVAR</button>
+  <button class="btn-primary" onclick="document.getElementById('fileOpen').click()">📂 Abrir</button>
+  <input type="file" id="fileOpen" accept=".json" style="display:none" onchange="abrirParecer(event)">
+  <button class="btn-secondary" onclick="salvarComo()">Salvar Como...</button>
+  <div class="sep"></div>
+  <button class="btn-primary" onclick="exportarPDF()">📄 Exportar PDF</button>
+  <span class="dirty-indicator" id="dirtyFlag">● Alterações não salvas</span>
+</div>
+
+<!-- ═══ CONTAINER ═════════════════════════════════════════════════ -->
+<div class="container">
+
+  <!-- ═══ 1. CABEÇALHO DO DOCUMENTO ═══════════════════════════════ -->
+  <div class="form-section">
+    <h2>1. Cabeçalho do Documento</h2>
+    <div class="info-box">
+      ℹ️ Preencha os dados de identificação do parecer. Todos os campos com <strong>*</strong> são obrigatórios.
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Data de Emissão do Parecer <span class="req">*</span></label>
+        <input type="date" id="dataEmissao" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Processo Administrativo <span class="req">*</span></label>
+        <input type="text" id="processoAdm" placeholder="6074.20XX/XXXXXXX-X" oninput="markDirty()">
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Processo de Pagamento</label>
+        <input type="text" id="processoPgto" placeholder="6074.20XX/XXXXXXX-X" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>OSC <span class="req">*</span></label>
+        <input type="text" id="nomeOSC" oninput="markDirty()">
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group full">
+        <label>Nome do Projeto/Atividade <span class="req">*</span></label>
+        <input type="text" id="nomeProjeto" oninput="markDirty()">
+      </div>
+    </div>
+
+    <div class="form-grid cols-3">
+      <div class="form-group">
+        <label>Instrumento da Parceria <span class="req">*</span></label>
+        <select id="instrumento" onchange="markDirty()">
+          <option value="">Selecione...</option>
+          <option value="Termo de Fomento">Termo de Fomento</option>
+          <option value="Termo de Colaboração">Termo de Colaboração</option>
+          <option value="Convênio">Convênio</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Número do Termo</label>
+        <input type="text" id="numeroTermo" placeholder="XX/20XX/SMDHC/xxx" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Data da Assinatura</label>
+        <input type="date" id="dataAssinatura" oninput="markDirty()">
+      </div>
+    </div>
+
+    <div class="form-grid cols-3">
+      <div class="form-group">
+        <label>Duração (meses)</label>
+        <input type="number" id="duracaoMeses" min="1" max="60" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Início da Vigência</label>
+        <input type="date" id="vigenciaInicio" oninput="calcularVigencia(); markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Término da Vigência</label>
+        <input type="date" id="vigenciaTermino" oninput="markDirty()">
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Valor Total da Parceria (R$) <span class="req">*</span></label>
+        <input type="text" id="valorTotal" placeholder="0,00" oninput="maskMoeda(this); markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Área Técnica Responsável</label>
+        <select id="areaTecnica" onchange="markDirty()">
+          <option value="">Selecione...</option>
+          <option>Assistência Social</option>
+          <option>Educação</option>
+          <option>Saúde</option>
+          <option>Cultura</option>
+          <option>Esportes</option>
+          <option>Direitos Humanos</option>
+          <option>Meio Ambiente</option>
+          <option>Outra</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 2. PESSOA GESTORA ════════════════════════════════════════ -->
+  <div class="form-section">
+    <h2>2. Pessoa Gestora</h2>
+    <div class="info-box">
+      ℹ️ Conforme Despacho Autorizatório publicado no DOC-SP.
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Nome da Pessoa Gestora <span class="req">*</span></label>
+        <input type="text" id="nomeGestora" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>RF da Pessoa Gestora <span class="req">*</span></label>
+        <input type="text" id="rfGestora" placeholder="XXX.XXX-X" oninput="markDirty()">
+      </div>
+    </div>
+
+    <div class="form-grid cols-3">
+      <div class="form-group">
+        <label>Nº do Despacho Autorizatório (SEI)</label>
+        <input type="text" id="seiDespacho" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Data de Publicação no DOC-SP</label>
+        <input type="date" id="dataPublicacao" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Página no DOC-SP</label>
+        <input type="text" id="paginaDoc" oninput="markDirty()">
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 3. ALTERAÇÕES CONTRATUAIS (opcional) ════════════════════ -->
+  <div class="form-section">
+    <div class="toggle-section-header" id="hdrAditamentos" onclick="toggleSection('aditamentos')">
+      <span>3. Alterações Contratuais Realizadas <em style="font-weight:400;color:#9FA8DA;">(opcional)</em></span>
+      <span class="toggle-arrow">▼</span>
+    </div>
+    <div class="toggle-section-body" id="bodyAditamentos">
+      <div class="warn-box">Preencha somente se houver Termos de Aditamento ou outras alterações contratuais.</div>
+      <div style="overflow-x:auto;">
+        <table class="doc-table" id="tabelaAditamentos">
+          <thead>
+            <tr>
+              <th style="width:12%;">Nº do Termo</th>
+              <th style="width:18%;">Nº SEI</th>
+              <th style="width:15%;">Data da Assinatura</th>
+              <th style="width:47%;">Objeto do Aditamento</th>
+              <th style="width:8%;"></th>
+            </tr>
+          </thead>
+          <tbody id="tabelaAditamentosBody"></tbody>
+        </table>
+      </div>
+      <button type="button" class="btn-add-row" onclick="addAditamento()">+ Adicionar Aditamento</button>
+    </div>
+  </div>
+
+  <!-- ═══ 4. DOCUMENTAÇÃO ═════════════════════════════════════════ -->
+  <div class="form-section">
+    <h2>4. Documentação de Referência</h2>
+    <p class="note-inline" style="margin-bottom:14px;">Informe a localização de cada documento no processo SEI (ex.: "SEI 12345678, folha 10"). Marque como "Não se aplica" quando o documento não existir.</p>
+
+    <h3>I — Relatório de Execução do Objeto e Cumprimento de Metas</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Localização no SEI</label>
+        <input type="text" id="docRelExecObj" placeholder="SEI XXXXXXXX, folha XX" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Situação</label>
+        <select id="docRelExecObjSit" onchange="markDirty()">
+          <option value="">Selecione...</option>
+          <option value="Apresentado">Apresentado</option>
+          <option value="Não apresentado">Não apresentado</option>
+          <option value="Não se aplica">Não se aplica</option>
+        </select>
+      </div>
+    </div>
+
+    <h3>II — Relatórios Técnicos de Monitoramento e Avaliação</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Localização no SEI</label>
+        <input type="text" id="docRelMonit" placeholder="SEI XXXXXXXX, folha XX" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Situação</label>
+        <select id="docRelMonitSit" onchange="markDirty()">
+          <option value="">Selecione...</option>
+          <option value="Apresentado">Apresentado</option>
+          <option value="Não apresentado">Não apresentado</option>
+          <option value="Não se aplica">Não se aplica</option>
+        </select>
+      </div>
+    </div>
+
+    <h3>III — Relatório de Execução Financeira</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Localização no SEI</label>
+        <input type="text" id="docRelFinanc" placeholder="SEI XXXXXXXX, folha XX — ou 'Não se aplica'" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Situação</label>
+        <select id="docRelFinancSit" onchange="markDirty()">
+          <option value="">Selecione...</option>
+          <option value="Apresentado">Apresentado</option>
+          <option value="Não apresentado">Não apresentado</option>
+          <option value="Não se aplica">Não se aplica</option>
+        </select>
+      </div>
+    </div>
+
+    <h3>IV — Manifestação dos Conselhos de Políticas Públicas</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Localização no SEI</label>
+        <input type="text" id="docConselhos" placeholder="SEI XXXXXXXX, folha XX — ou 'Não se aplica'" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Situação</label>
+        <select id="docConselhosSit" onchange="markDirty()">
+          <option value="">Selecione...</option>
+          <option value="Apresentado">Apresentado</option>
+          <option value="Não apresentado">Não apresentado</option>
+          <option value="Não se aplica">Não se aplica</option>
+        </select>
+      </div>
+    </div>
+
+    <h3>V — Manifestações de Órgãos de Controle</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Localização no SEI</label>
+        <input type="text" id="docOrgaosControle" placeholder="SEI XXXXXXXX, folha XX — ou 'Não se aplica'" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Situação</label>
+        <select id="docOrgaosControleSit" onchange="markDirty()">
+          <option value="">Selecione...</option>
+          <option value="Apresentado">Apresentado</option>
+          <option value="Não apresentado">Não apresentado</option>
+          <option value="Não se aplica">Não se aplica</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 5. ANÁLISE TÉCNICA ═══════════════════════════════════════ -->
+  <div class="form-section">
+    <h2>5. Análise Técnica</h2>
+    <div class="info-box">
+      ℹ️ Frente aos documentos elencados, descreva a análise de cada dimensão da parceria.
+    </div>
+
+    <h3>I — Resultados Alcançados e Cumprimento de Metas</h3>
+    <p class="note-inline" style="margin-bottom:8px;">Descreva os resultados alcançados verificando o cumprimento de metas por meio dos relatórios. Informe se as atividades foram realizadas conforme o plano de trabalho e se as metas foram atingidas; em caso de descumprimento, apresente a justificativa.</p>
+    <div class="form-group">
+      <textarea id="analiseResultados" class="tall" placeholder="Descreva os resultados alcançados pelo projeto..." oninput="markDirty()"></textarea>
+    </div>
+
+    <h3>II — Benefícios e Impactos Econômicos ou Sociais</h3>
+    <p class="note-inline" style="margin-bottom:8px;">Descreva os benefícios e impactos econômicos e/ou sociais alcançados, utilizando como direcionamento o Plano de Trabalho pactuado.</p>
+    <div class="form-group">
+      <textarea id="analiseBeneficios" class="tall" placeholder="Descreva os benefícios e impactos da parceria..." oninput="markDirty()"></textarea>
+    </div>
+
+    <h3>III — Grau de Satisfação do Público-Alvo</h3>
+    <p class="note-inline" style="margin-bottom:8px;">Descreva o grau de satisfação do público-alvo, quando aplicável.</p>
+    <div class="form-group">
+      <textarea id="analiseSatisfacao" placeholder="Descreva o grau de satisfação ou indique 'Não se aplica'..." oninput="markDirty()"></textarea>
+    </div>
+
+    <h3>IV — Sustentabilidade das Ações após a Conclusão do Objeto</h3>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Avaliação de Sustentabilidade</label>
+        <select id="sustentabilidadeOpcao" onchange="atualizarSustentabilidade(); markDirty()">
+          <option value="">Selecione...</option>
+          <option value="nao_aplica_colaboracao">Não se aplica — Termo de Colaboração (gestão de equipamento público)</option>
+          <option value="viavel">Viável — OSC demonstrou capacidade plena</option>
+          <option value="parcialmente_viavel">Parcialmente viável — OSC demonstrou capacidade intermediária</option>
+          <option value="inviavel">Inviável — OSC demonstrou capacidade insuficiente</option>
+          <option value="personalizado">Personalizado (redigir livremente)</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:10px;">
+      <label>Justificativa / Texto de Sustentabilidade</label>
+      <textarea id="analiseSustentabilidade" placeholder="Texto gerado automaticamente ao selecionar opção acima, ou redija livremente..." oninput="markDirty()"></textarea>
+    </div>
+  </div>
+
+  <!-- ═══ 6. RESULTADO DA ANÁLISE ══════════════════════════════════ -->
+  <div class="form-section">
+    <h2>6. Resultado da Análise Técnica da Prestação de Contas</h2>
+    <div class="info-box">
+      ℹ️ Com base no Art. 76 da Portaria nº 021/SMDHC/2023, o parecer concluirá pela <strong>aprovação</strong>, <strong>aprovação com ressalvas</strong> ou <strong>rejeição</strong>.
+    </div>
+
+    <!-- Cards de resultado -->
+    <div class="resultado-options">
+      <label class="resultado-card aprovado">
+        <input type="radio" name="resultadoParecer" value="Aprovação" onchange="markDirty(); atualizarResultado()">
+        <span class="rc-icon">✅</span>
+        <span class="rc-label">Aprovação</span>
+        <span class="rc-desc">Metas e resultados atingidos e regular utilização dos recursos, ou com justificativa aceitável.</span>
+      </label>
+      <label class="resultado-card ressalvas">
+        <input type="radio" name="resultadoParecer" value="Aprovação com Ressalvas" onchange="markDirty(); atualizarResultado()">
+        <span class="rc-icon">⚠️</span>
+        <span class="rc-label">Aprovação com Ressalvas</span>
+        <span class="rc-desc">Impropriedade ou falhas formais que não resultam em dano ao erário nem prejudicam metas.</span>
+      </label>
+      <label class="resultado-card rejeicao">
+        <input type="radio" name="resultadoParecer" value="Rejeição" onchange="markDirty(); atualizarResultado()">
+        <span class="rc-icon">❌</span>
+        <span class="rc-label">Rejeição</span>
+        <span class="rc-desc">Objeto não executado, metas não atingidas sem justificativa, ou recursos desviados.</span>
+      </label>
+    </div>
+
+    <div class="form-grid" style="margin-top:20px;">
+      <div class="form-group">
+        <label>Alcance das Metas <span class="req">*</span></label>
+        <select id="alcanceMetas" onchange="markDirty()">
+          <option value="">Selecione...</option>
+          <option value="atingiu integralmente">Atingiu integralmente</option>
+          <option value="atingiu parcialmente">Atingiu parcialmente</option>
+          <option value="não atingiu">Não atingiu</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Forma de Execução <span class="req">*</span></label>
+        <select id="formaExecucao" onchange="markDirty()">
+          <option value="">Selecione...</option>
+          <option value="satisfatória">Satisfatória</option>
+          <option value="parcialmente satisfatória">Parcialmente satisfatória</option>
+          <option value="insatisfatória">Insatisfatória</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-top:16px;">
+      <label>Fundamentação do Resultado (texto livre para complementar)</label>
+      <textarea id="fundamentacaoResultado" class="tall" placeholder="Descreva a fundamentação para o resultado da análise..." oninput="markDirty()"></textarea>
+    </div>
+  </div>
+
+  <!-- ═══ 7. DEVOLUÇÃO AO ERÁRIO (opcional) ═══════════════════════ -->
+  <div class="form-section">
+    <div class="toggle-section-header" id="hdrDevolucao" onclick="toggleSection('devolucao')">
+      <span>7. Devolução ao Erário <em style="font-weight:400;color:#9FA8DA;">(quando houver)</em></span>
+      <span class="toggle-arrow">▼</span>
+    </div>
+    <div class="toggle-section-body" id="bodyDevolucao">
+      <div class="warn-box">Preencha apenas se houver valor a ser devolvido ao erário.</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Valor a Devolver (R$)</label>
+          <input type="text" id="valorDevolucao" placeholder="0,00" oninput="maskMoeda(this); markDirty()">
+        </div>
+        <div class="form-group">
+          <label>Prazo para Devolução</label>
+          <input type="date" id="prazoDevolucao" oninput="markDirty()">
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:10px;">
+        <label>Justificativa / Detalhamento</label>
+        <textarea id="justDevolucao" placeholder="Detalhe o motivo e a base legal para a devolução..." oninput="markDirty()"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 8. BENS MÓVEIS (opcional) ═══════════════════════════════ -->
+  <div class="form-section">
+    <div class="toggle-section-header" id="hdrBens" onclick="toggleSection('bens')">
+      <span>8. Bens Móveis Permanentes <em style="font-weight:400;color:#9FA8DA;">(quando houver)</em></span>
+      <span class="toggle-arrow">▼</span>
+    </div>
+    <div class="toggle-section-body" id="bodyBens">
+      <div class="warn-box">Preencha apenas se houver equipamentos ou bens móveis adquiridos com verba da parceria.</div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label>Nº SEI da Tabela de Bens</label>
+          <input type="text" id="seiBens" placeholder="SEI XXXXXXXX" oninput="markDirty()">
+        </div>
+        <div class="form-group">
+          <label>Destinação dos Bens</label>
+          <select id="destinacaoBens" onchange="toggleTransferencia(); markDirty()">
+            <option value="">Selecione...</option>
+            <option value="Revertem ao Poder Público">Revertem ao Poder Público (regra geral)</option>
+            <option value="Transferência à OSC por doação">Transferência à OSC por doação (excepcional)</option>
+            <option value="Reversão parcial">Reversão parcial — parte reverte, parte é doada</option>
+          </select>
+        </div>
+      </div>
+      <div id="transferenciaGroup" style="display:none; margin-top:12px;">
+        <div class="form-group">
+          <label>Justificativa para Transferência à OSC</label>
+          <textarea id="justTransferencia" placeholder="Justifique com base no plano de trabalho aprovado e no interesse público para continuidade das ações..." oninput="markDirty()"></textarea>
+        </div>
+      </div>
+      <div class="form-group" style="margin-top:10px;">
+        <label>Observações sobre os Bens</label>
+        <textarea id="obsBens" placeholder="Outras observações relevantes sobre os bens móveis..." oninput="markDirty()"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ FORM ACTIONS ═════════════════════════════════════════════ -->
+  <div class="form-actions">
+    <button class="btn-save" onclick="salvarParecer()" title="Ctrl+S">💾 SALVAR</button>
+    <button class="btn-primary" onclick="exportarPDF()">📄 Exportar PDF</button>
+    <button class="btn-secondary" onclick="limparFormulario()">🔄 Limpar</button>
+    <button class="btn-back" onclick="voltarPainel()">← Voltar ao Painel</button>
+  </div>
+
+</div>
+
+<!-- ═══ STATUS BAR ═══════════════════════════════════════════════ -->
+<div class="statusbar">
+  <span id="statusFile">Nenhum arquivo aberto</span>
+  <span class="badge badge-info" id="statusInfo">Pronto para preencher</span>
+  <span id="statusDirty" style="display:none; color:#FFEB3B; font-weight:bold;">● Não salvo</span>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     JAVASCRIPT
+     ═══════════════════════════════════════════════════════════════ -->
+<script>
+'use strict';
+
+const LS_KEY = 'parecer_tecnico_autosave';
+let isDirty = false;
+let currentFileName = '';
+
+// ── Dirty state ───────────────────────────────────────────────
+function markDirty() {
+  isDirty = true;
+  document.getElementById('dirtyFlag').classList.add('active');
+  document.getElementById('statusDirty').style.display = 'inline';
+  autoSave();
+}
+function clearDirty() {
+  isDirty = false;
+  document.getElementById('dirtyFlag').classList.remove('active');
+  document.getElementById('statusDirty').style.display = 'none';
+}
+
+// ── Toggle sections ───────────────────────────────────────────
+function toggleSection(id) {
+  const body = document.getElementById('body' + id.charAt(0).toUpperCase() + id.slice(1));
+  const header = document.getElementById('hdr' + id.charAt(0).toUpperCase() + id.slice(1));
+  if (!body) return;
+  const open = body.classList.toggle('open');
+  header.classList.toggle('open', open);
+}
+
+// ── Mask moeda ────────────────────────────────────────────────
+function maskMoeda(el) {
+  let v = el.value.replace(/\D/g, '');
+  if (!v) { el.value = ''; return; }
+  v = (parseInt(v, 10) / 100).toFixed(2);
+  el.value = v.replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+}
+
+// ── Calcular vigência pelo nº de meses ────────────────────────
+function calcularVigencia() {
+  const inicio = document.getElementById('vigenciaInicio').value;
+  const meses = parseInt(document.getElementById('duracaoMeses').value, 10);
+  if (!inicio || isNaN(meses)) return;
+  const d = new Date(inicio);
+  d.setMonth(d.getMonth() + meses);
+  document.getElementById('vigenciaTermino').value = d.toISOString().split('T')[0];
+}
+document.getElementById('duracaoMeses').addEventListener('input', function() {
+  calcularVigencia();
+  markDirty();
+});
+
+// ── Sustentabilidade automática ───────────────────────────────
+function atualizarSustentabilidade() {
+  const opt = document.getElementById('sustentabilidadeOpcao').value;
+  const el = document.getElementById('analiseSustentabilidade');
+  const instrumento = document.getElementById('instrumento').value || '[instrumento]';
+  const texts = {
+    nao_aplica_colaboracao: `A análise de sustentabilidade das ações após a conclusão do objeto pactuado não se aplica, visto que a parceria propõe a gestão de equipamentos públicos, sendo constatado que a continuidade das ações cabe à municipalidade, responsável pela implementação do serviço.`,
+    viavel: `Após a conclusão do objeto pactuado, considera-se VIÁVEL a sustentabilidade das ações, visto que a OSC demonstrou de forma PLENA a capacidade de execução do projeto.`,
+    parcialmente_viavel: `Após a conclusão do objeto pactuado, considera-se PARCIALMENTE VIÁVEL a sustentabilidade das ações, visto que a OSC demonstrou de forma INTERMEDIÁRIA a capacidade de execução do projeto.`,
+    inviavel: `Após a conclusão do objeto pactuado, considera-se INVIÁVEL a sustentabilidade das ações, visto que a OSC demonstrou de forma INSUFICIENTE a capacidade de execução do projeto.`,
+    personalizado: ''
+  };
+  if (opt && opt !== 'personalizado') {
+    el.value = texts[opt];
+    el.readOnly = true;
+    el.style.background = '#F5F5F5';
+  } else {
+    el.readOnly = false;
+    el.style.background = '';
+    if (opt === 'personalizado') el.value = '';
+  }
+}
+
+// ── Resultado de análise ──────────────────────────────────────
+function atualizarResultado() {
+  // visual feedback only; text generated at PDF time
+}
+
+// ── Transferência de bens ─────────────────────────────────────
+function toggleTransferencia() {
+  const val = document.getElementById('destinacaoBens').value;
+  const g = document.getElementById('transferenciaGroup');
+  g.style.display = (val === 'Transferência à OSC por doação' || val === 'Reversão parcial') ? '' : 'none';
+}
+
+// ── Aditamentos ───────────────────────────────────────────────
+function addAditamento(data) {
+  const tbody = document.getElementById('tabelaAditamentosBody');
+  const tr = tbody.insertRow();
+  tr.innerHTML = `
+    <td><input type="text" placeholder="Nº xxx" value="${data ? escHtml(data.num||'') : ''}" oninput="markDirty()"></td>
+    <td><input type="text" placeholder="SEI XXXXXXXX" value="${data ? escHtml(data.sei||'') : ''}" oninput="markDirty()"></td>
+    <td><input type="date" value="${data ? escHtml(data.data||'') : ''}" oninput="markDirty()"></td>
+    <td><input type="text" placeholder="Descrição do objeto do aditamento" value="${data ? escHtml(data.objeto||'') : ''}" oninput="markDirty()"></td>
+    <td><button type="button" class="btn-del-row" onclick="this.closest('tr').remove(); markDirty()">✕</button></td>`;
+}
+function getAditamentos() {
+  return Array.from(document.querySelectorAll('#tabelaAditamentosBody tr')).map(tr => {
+    const i = tr.querySelectorAll('input');
+    return { num: i[0].value, sei: i[1].value, data: i[2].value, objeto: i[3].value };
+  });
+}
+function setAditamentos(rows) {
+  document.getElementById('tabelaAditamentosBody').innerHTML = '';
+  (rows||[]).forEach(r => addAditamento(r));
+}
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+// ── Collect / apply form data ─────────────────────────────────
+function getFormData() {
+  return {
+    _version: 1,
+    _form: 'parecer_tecnico',
+    dataEmissao: document.getElementById('dataEmissao').value,
+    processoAdm: document.getElementById('processoAdm').value,
+    processoPgto: document.getElementById('processoPgto').value,
+    nomeOSC: document.getElementById('nomeOSC').value,
+    nomeProjeto: document.getElementById('nomeProjeto').value,
+    instrumento: document.getElementById('instrumento').value,
+    numeroTermo: document.getElementById('numeroTermo').value,
+    dataAssinatura: document.getElementById('dataAssinatura').value,
+    duracaoMeses: document.getElementById('duracaoMeses').value,
+    vigenciaInicio: document.getElementById('vigenciaInicio').value,
+    vigenciaTermino: document.getElementById('vigenciaTermino').value,
+    valorTotal: document.getElementById('valorTotal').value,
+    areaTecnica: document.getElementById('areaTecnica').value,
+    nomeGestora: document.getElementById('nomeGestora').value,
+    rfGestora: document.getElementById('rfGestora').value,
+    seiDespacho: document.getElementById('seiDespacho').value,
+    dataPublicacao: document.getElementById('dataPublicacao').value,
+    paginaDoc: document.getElementById('paginaDoc').value,
+    aditamentos: getAditamentos(),
+    docRelExecObj: document.getElementById('docRelExecObj').value,
+    docRelExecObjSit: document.getElementById('docRelExecObjSit').value,
+    docRelMonit: document.getElementById('docRelMonit').value,
+    docRelMonitSit: document.getElementById('docRelMonitSit').value,
+    docRelFinanc: document.getElementById('docRelFinanc').value,
+    docRelFinancSit: document.getElementById('docRelFinancSit').value,
+    docConselhos: document.getElementById('docConselhos').value,
+    docConselhosSit: document.getElementById('docConselhosSit').value,
+    docOrgaosControle: document.getElementById('docOrgaosControle').value,
+    docOrgaosControleSit: document.getElementById('docOrgaosControleSit').value,
+    analiseResultados: document.getElementById('analiseResultados').value,
+    analiseBeneficios: document.getElementById('analiseBeneficios').value,
+    analiseSatisfacao: document.getElementById('analiseSatisfacao').value,
+    sustentabilidadeOpcao: document.getElementById('sustentabilidadeOpcao').value,
+    analiseSustentabilidade: document.getElementById('analiseSustentabilidade').value,
+    resultadoParecer: document.querySelector('input[name="resultadoParecer"]:checked')?.value || '',
+    alcanceMetas: document.getElementById('alcanceMetas').value,
+    formaExecucao: document.getElementById('formaExecucao').value,
+    fundamentacaoResultado: document.getElementById('fundamentacaoResultado').value,
+    valorDevolucao: document.getElementById('valorDevolucao').value,
+    prazoDevolucao: document.getElementById('prazoDevolucao').value,
+    justDevolucao: document.getElementById('justDevolucao').value,
+    seiBens: document.getElementById('seiBens').value,
+    destinacaoBens: document.getElementById('destinacaoBens').value,
+    justTransferencia: document.getElementById('justTransferencia').value,
+    obsBens: document.getElementById('obsBens').value
+  };
+}
+
+function setFormData(d) {
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v || ''; };
+  set('dataEmissao', d.dataEmissao);
+  set('processoAdm', d.processoAdm);
+  set('processoPgto', d.processoPgto);
+  set('nomeOSC', d.nomeOSC);
+  set('nomeProjeto', d.nomeProjeto);
+  set('instrumento', d.instrumento);
+  set('numeroTermo', d.numeroTermo);
+  set('dataAssinatura', d.dataAssinatura);
+  set('duracaoMeses', d.duracaoMeses);
+  set('vigenciaInicio', d.vigenciaInicio);
+  set('vigenciaTermino', d.vigenciaTermino);
+  set('valorTotal', d.valorTotal);
+  set('areaTecnica', d.areaTecnica);
+  set('nomeGestora', d.nomeGestora);
+  set('rfGestora', d.rfGestora);
+  set('seiDespacho', d.seiDespacho);
+  set('dataPublicacao', d.dataPublicacao);
+  set('paginaDoc', d.paginaDoc);
+  setAditamentos(d.aditamentos);
+  set('docRelExecObj', d.docRelExecObj);   set('docRelExecObjSit', d.docRelExecObjSit);
+  set('docRelMonit', d.docRelMonit);       set('docRelMonitSit', d.docRelMonitSit);
+  set('docRelFinanc', d.docRelFinanc);     set('docRelFinancSit', d.docRelFinancSit);
+  set('docConselhos', d.docConselhos);     set('docConselhosSit', d.docConselhosSit);
+  set('docOrgaosControle', d.docOrgaosControle); set('docOrgaosControleSit', d.docOrgaosControleSit);
+  set('analiseResultados', d.analiseResultados);
+  set('analiseBeneficios', d.analiseBeneficios);
+  set('analiseSatisfacao', d.analiseSatisfacao);
+  set('sustentabilidadeOpcao', d.sustentabilidadeOpcao);
+  set('analiseSustentabilidade', d.analiseSustentabilidade);
+  if (d.resultadoParecer) {
+    const r = document.querySelector(`input[name="resultadoParecer"][value="${d.resultadoParecer}"]`);
+    if (r) r.checked = true;
+  }
+  set('alcanceMetas', d.alcanceMetas);
+  set('formaExecucao', d.formaExecucao);
+  set('fundamentacaoResultado', d.fundamentacaoResultado);
+  set('valorDevolucao', d.valorDevolucao);
+  set('prazoDevolucao', d.prazoDevolucao);
+  set('justDevolucao', d.justDevolucao);
+  set('seiBens', d.seiBens);
+  set('destinacaoBens', d.destinacaoBens);
+  set('justTransferencia', d.justTransferencia);
+  set('obsBens', d.obsBens);
+  // Restore toggle state
+  if (d.aditamentos && d.aditamentos.length) toggleSection('aditamentos');
+  if (d.valorDevolucao) toggleSection('devolucao');
+  if (d.seiBens || d.destinacaoBens) toggleSection('bens');
+  toggleTransferencia();
+  // Restore sustentabilidade readonly
+  const sOpt = document.getElementById('sustentabilidadeOpcao').value;
+  if (sOpt && sOpt !== 'personalizado') {
+    document.getElementById('analiseSustentabilidade').readOnly = true;
+    document.getElementById('analiseSustentabilidade').style.background = '#F5F5F5';
+  }
+}
+
+// ── localStorage ──────────────────────────────────────────────
+function autoSave() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(getFormData())); } catch (_) {}
+}
+function tryRestoreAutoSave() {
+  try {
+    const saved = localStorage.getItem(LS_KEY);
+    if (saved && confirm('Encontrado rascunho anterior do Parecer Técnico. Deseja restaurar?')) {
+      setFormData(JSON.parse(saved));
+      clearDirty();
+    }
+  } catch (e) { console.warn('Restore failed:', e); }
+}
+
+// ── Salvar / Abrir ────────────────────────────────────────────
+function salvarParecer() {
+  if (!currentFileName) { salvarComo(); return; }
+  downloadJSON(currentFileName);
+  clearDirty();
+}
+function salvarComo() {
+  const osc = document.getElementById('nomeOSC').value || 'parecer';
+  const sugestao = `${osc}_parecer_tecnico.json`.replace(/[<>:"|?*\\/]/g, '_');
+  const filename = prompt('Nome do arquivo:', sugestao);
+  if (!filename) return;
+  currentFileName = filename.endsWith('.json') ? filename : filename + '.json';
+  downloadJSON(currentFileName);
+  clearDirty();
+  document.getElementById('statusFile').textContent = `Arquivo: ${currentFileName}`;
+}
+function downloadJSON(filename) {
+  const json = JSON.stringify(getFormData(), null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+function abrirParecer(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const d = JSON.parse(e.target.result);
+      setFormData(d);
+      currentFileName = file.name;
+      clearDirty();
+      document.getElementById('statusFile').textContent = `Arquivo: ${file.name}`;
+    } catch (err) { alert('Erro ao abrir arquivo: ' + err.message); }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+// ── Limpar ────────────────────────────────────────────────────
+function limparFormulario() {
+  if (!confirm('Limpar todos os dados do formulário?')) return;
+  document.querySelectorAll('input:not([type="radio"]), select, textarea').forEach(el => { el.value = ''; });
+  document.querySelectorAll('input[type="radio"]').forEach(el => { el.checked = false; });
+  document.getElementById('tabelaAditamentosBody').innerHTML = '';
+  document.getElementById('transferenciaGroup').style.display = 'none';
+  document.getElementById('analiseSustentabilidade').readOnly = false;
+  document.getElementById('analiseSustentabilidade').style.background = '';
+  markDirty();
+}
+
+// ── Navegação ─────────────────────────────────────────────────
+function voltarPainel() {
+  if (isDirty && !confirm('Há alterações não salvas. Deseja sair mesmo assim?')) return;
+  window.location.href = '../index.html#gestor';
+}
+
+// ── Exportar PDF ──────────────────────────────────────────────
+function exportarPDF() {
+  // Expandir seções opcionais antes de imprimir
+  ['aditamentos', 'devolucao', 'bens'].forEach(id => {
+    const body = document.getElementById('body' + id.charAt(0).toUpperCase() + id.slice(1));
+    if (body) body.classList.add('open');
+  });
+  window.print();
+}
+
+// ── Atalhos ───────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') { e.preventDefault(); salvarParecer(); }
+});
+window.addEventListener('beforeunload', e => {
+  if (isDirty) { e.preventDefault(); e.returnValue = ''; }
+});
+
+// ── PWA Service Worker ────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('../sw.js').then(reg => {
+    reg.update();
+    if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
+    reg.addEventListener('updatefound', () => {
+      const sw = reg.installing;
+      sw.addEventListener('statechange', () => {
+        if (sw.state === 'installed' && navigator.serviceWorker.controller)
+          sw.postMessage({ type: 'SKIP_WAITING' });
+      });
+    });
+  }).catch(() => {});
+}
+
+// ── Inicializar ───────────────────────────────────────────────
+(function init() {
+  document.getElementById('dataEmissao').value = new Date().toISOString().split('T')[0];
+  tryRestoreAutoSave();
+})();
+</script>
+
+</body>
+</html>

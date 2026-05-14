@@ -1,7 +1,7 @@
 {
-  "name": "Demonstrativo de Aferição de Remanejamento Orçamentário",
-  "short_name": "DAF Aferição",
-  "description": "Ferramenta para aferição de remanejamento orçamentário de parcerias",
+  "name": "Central de Parcerias",
+  "short_name": "Parcerias",
+  "description": "Plataforma web de gestão de parcerias entre OSCs e Unidades Gestoras públicas",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#FAFAFA",
@@ -9,7 +9,7 @@
   "orientation": "landscape",
   "icons": [
     {
-      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231565C0' width='100' height='100' rx='16'/><text x='50' y='68' text-anchor='middle' font-size='52' fill='white' font-family='sans-serif' font-weight='bold'>DA</text></svg>",
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect fill='%231565C0' width='100' height='100' rx='16'/><text x='50' y='68' text-anchor='middle' font-size='52' fill='white' font-family='sans-serif' font-weight='bold'>CP</text></svg>",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
