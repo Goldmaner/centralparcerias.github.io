@@ -1,0 +1,1056 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relatório de Execução do Objeto e Cumprimento de Metas — Central de Parcerias</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #FAFAFA;
+  color: #212121;
+  font-size: 14px;
+}
+button { cursor: pointer; font-family: inherit; font-size: 13px; }
+input, select, textarea { font-family: inherit; font-size: 13px; }
+
+/* ── HEADER ──────────────────────────────────────────────────── */
+.app-header {
+  background: #004D40;
+  color: #fff;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0,0,0,.15);
+}
+.app-header h1  { font-size: 16px; font-weight: 700; }
+.app-subtitle   { font-size: 12px; opacity: .8; }
+.header-left    { flex: 1; }
+
+.toolbar {
+  background: #00695C;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 4px rgba(0,0,0,.08);
+}
+.toolbar .sep { width: 1px; height: 28px; background: #4DB6AC; margin: 0 12px; }
+
+.btn-save      { background: #43A047; color: #fff; border: none; padding: 8px 16px; font-weight: bold; border-radius: 4px; }
+.btn-save:hover { background: #2E7D32; }
+.btn-primary   { background: #00897B; color: #fff; border: none; padding: 7px 14px; border-radius: 4px; font-weight: 600; }
+.btn-primary:hover { background: #00695C; }
+.btn-secondary { background: #E0E0E0; color: #333; border: 1px solid #BDBDBD; padding: 6px 12px; border-radius: 4px; }
+.btn-secondary:hover { background: #BDBDBD; }
+.btn-back { background: rgba(255,255,255,.2); color: #fff; border: 1px solid rgba(255,255,255,.4); padding: 6px 12px; border-radius: 4px; font-size: 12px; }
+.btn-back:hover { background: rgba(255,255,255,.3); }
+
+.dirty-indicator { color: #FFEB3B; font-weight: bold; font-size: 12px; display: none; margin-left: auto; }
+.dirty-indicator.active { display: inline; }
+
+/* ── CONTAINER ───────────────────────────────────────────────── */
+.container { max-width: 960px; margin: 0 auto; padding: 24px 20px 90px; }
+
+/* ── SECTIONS ────────────────────────────────────────────────── */
+.form-section {
+  background: #fff;
+  border-radius: 8px;
+  padding: 24px;
+  margin-bottom: 22px;
+  box-shadow: 0 2px 4px rgba(0,0,0,.08);
+  border-left: 4px solid #00897B;
+}
+.form-section h2 {
+  color: #004D40;
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 18px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #E0F2F1;
+}
+.form-section h3 {
+  color: #00695C;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 20px 0 12px;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+}
+
+/* ── FORM GROUPS ─────────────────────────────────────────────── */
+.form-grid  { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.form-grid.cols-1 { grid-template-columns: 1fr; }
+.form-group { display: flex; flex-direction: column; gap: 6px; }
+.form-group.full { grid-column: 1 / -1; }
+
+label { font-size: 12px; font-weight: 600; color: #555; }
+label .req { color: #E53935; }
+input[type="text"], input[type="date"], input[type="number"], select, textarea {
+  width: 100%; padding: 8px 10px;
+  border: 1px solid #BDBDBD; border-radius: 4px;
+  font-size: 13px; color: #212121; background: #fff;
+  transition: border-color .15s;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none; border-color: #00897B;
+  box-shadow: 0 0 0 2px rgba(0,137,123,.12);
+}
+textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+textarea.tall { min-height: 140px; }
+textarea.short { min-height: 70px; }
+
+/* ── METAS TABLE ─────────────────────────────────────────────── */
+.metas-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 6px; }
+.metas-table th { background: #00897B; color: #fff; padding: 9px 10px; text-align: left; font-weight: 600; }
+.metas-table td { padding: 7px 8px; border-bottom: 1px solid #E0E0E0; vertical-align: top; }
+.metas-table tr:hover td { background: #F5FAFA; }
+.metas-table td input  { width: 100%; padding: 4px 6px; border: 1px solid #BDBDBD; border-radius: 3px; font-size: 12px; }
+.metas-table td select { width: 100%; padding: 4px 6px; border: 1px solid #BDBDBD; border-radius: 3px; font-size: 12px; }
+.metas-table td textarea { min-height: 50px; width: 100%; padding: 4px 6px; border: 1px solid #BDBDBD; border-radius: 3px; font-size: 12px; }
+.btn-add-row { background: #43A047; color: #fff; border: none; padding: 6px 14px; border-radius: 4px; font-size: 12px; margin-top: 8px; }
+.btn-add-row:hover { background: #2E7D32; }
+.btn-del-row { background: #E53935; color: #fff; border: none; padding: 3px 8px; border-radius: 3px; font-size: 11px; cursor: pointer; }
+
+/* ── DESPESAS TABLE ──────────────────────────────────────────── */
+.desp-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 6px; }
+.desp-table th { background: #00897B; color: #fff; padding: 9px 10px; text-align: left; font-weight: 600; }
+.desp-table td { padding: 7px 8px; border-bottom: 1px solid #E0E0E0; vertical-align: middle; }
+.desp-table tr:hover td { background: #F5FAFA; }
+.desp-table td input  { width: 100%; padding: 4px 6px; border: 1px solid #BDBDBD; border-radius: 3px; font-size: 12px; }
+.desp-table td select { width: 100%; padding: 4px 6px; border: 1px solid #BDBDBD; border-radius: 3px; font-size: 12px; }
+.desp-total { background: #E0F2F1; font-weight: 700; }
+
+/* ── RECURSOS CARD ───────────────────────────────────────────── */
+.recursos-card {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.rec-item {
+  background: #E0F2F1;
+  border: 1px solid #80CBC4;
+  border-radius: 6px;
+  padding: 12px;
+  text-align: center;
+}
+.rec-item.saldo { background: #E8F5E9; border-color: #A5D6A7; }
+.rec-item.saldo.negativo { background: #FFEBEE; border-color: #EF9A9A; }
+.rec-item label { font-size: 11px; font-weight: 600; color: #00695C; display: block; margin-bottom: 6px; }
+.rec-item input { text-align: right; background: rgba(255,255,255,.7); border: 1px solid #80CBC4; font-size: 14px; font-weight: 700; }
+.rec-item .rec-calc { font-size: 18px; font-weight: 700; color: #004D40; }
+
+/* ── INFO / WARN / ALERT BOXES ───────────────────────────────── */
+.info-box  { background: #E0F2F1; border: 1px solid #80CBC4; border-radius: 6px; padding: 10px 14px; font-size: 12px; color: #004D40; margin-bottom: 14px; line-height: 1.5; }
+.warn-box  { background: #FFF8E1; border: 1px solid #FFE082; border-radius: 6px; padding: 10px 14px; font-size: 12px; color: #6D4C41; margin-bottom: 14px; line-height: 1.5; }
+.alert-extrato {
+  background: #FFF3E0;
+  border: 2px solid #FF8F00;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.alert-extrato .ae-icon  { font-size: 22px; }
+.alert-extrato .ae-title { font-weight: 700; color: #E65100; font-size: 13px; margin-bottom: 4px; }
+.alert-extrato .ae-body  { font-size: 12px; color: #5D4037; line-height: 1.5; }
+
+/* ── DOCUMENTOS CHECK LIST ───────────────────────────────────── */
+.doc-check-list { display: flex; flex-direction: column; gap: 6px; }
+.doc-check-item {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 8px 12px; border: 1px solid #E0E0E0; border-radius: 5px; background: #FAFAFA;
+}
+.doc-check-item input[type="checkbox"] { margin-top: 2px; width: 16px; height: 16px; accent-color: #00897B; }
+.doc-check-item .dc-label { font-size: 13px; font-weight: 600; color: #212121; line-height: 1.4; }
+.doc-check-item .dc-desc  { font-size: 11px; color: #757575; }
+
+/* ── STATUS BAR ──────────────────────────────────────────────── */
+.statusbar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: #212121; color: #fff; font-size: 11px;
+  padding: 4px 16px; display: flex; align-items: center; gap: 16px; z-index: 100;
+}
+.badge { padding: 2px 8px; border-radius: 3px; color: #fff; font-weight: 600; font-size: 11px; }
+.badge-ok { background: #43A047; }
+.badge-info { background: #00897B; }
+
+/* ── PRINT ───────────────────────────────────────────────────── */
+@media print {
+  @page { size: A4; margin: 15mm; }
+  body  { font-size: 10px !important; background: #fff !important; }
+  .toolbar, .statusbar, .btn-add-row, .btn-del-row,
+  .form-actions, .dirty-indicator { display: none !important; }
+  .app-header { background: #004D40 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .container  { padding: 0 !important; max-width: 100% !important; }
+  .form-section { box-shadow: none !important; border: 1px solid #ccc; page-break-inside: avoid; }
+  input, select, textarea { border: 1px solid #ccc !important; font-size: 10px !important; }
+  textarea { height: auto !important; }
+  .recursos-card { grid-template-columns: repeat(4, 1fr) !important; }
+}
+
+@media (max-width: 768px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .form-grid.cols-3 { grid-template-columns: 1fr; }
+  .recursos-card { grid-template-columns: 1fr 1fr; }
+}
+
+/* ── LEGAL REFERENCE BOX ─────────────────────────────────── */
+.legal-ref-box {
+  background: #fff;
+  border: 1px solid #B2DFDB;
+  border-left: 4px solid #00897B;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  font-size: 12px;
+  color: #212121;
+  line-height: 1.6;
+}
+.legal-ref-box summary {
+  font-weight: 700;
+  font-size: 13px;
+  color: #004D40;
+  cursor: pointer;
+  padding: 2px 0;
+  user-select: none;
+}
+.legal-ref-box summary:hover { color: #00695C; }
+.legal-ref-box .lrb-art {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid #E0F2F1;
+}
+.legal-ref-box .lrb-art h4 {
+  font-size: 12px;
+  font-weight: 700;
+  color: #00695C;
+  margin-bottom: 8px;
+}
+.legal-ref-box ol, .legal-ref-box ul { padding-left: 20px; }
+.legal-ref-box li { margin-bottom: 4px; }
+.legal-ref-box .lrb-par {
+  background: #FFF8E1;
+  border: 1px solid #FFE082;
+  border-radius: 4px;
+  padding: 8px 12px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: #5D4037;
+}
+.legal-ref-box .lrb-par strong { color: #E65100; }
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ════════════════════════════════════════════════ -->
+<div class="app-header">
+  <div class="header-left">
+    <h1>📄 Relatório de Execução do Objeto e Cumprimento de Metas</h1>
+    <span class="app-subtitle">Organização da Sociedade Civil (OSC) — Portaria 021/SMDHC/2023 | Portaria 090/SMDHC/2023</span>
+  </div>
+  <button class="btn-back" onclick="voltarPainel()">← Voltar</button>
+</div>
+
+<!-- ═══ TOOLBAR ═══════════════════════════════════════════════ -->
+<div class="toolbar">
+  <button class="btn-save" onclick="salvar()" title="Ctrl+S">💾 SALVAR</button>
+  <button class="btn-primary" onclick="document.getElementById('fileOpen').click()">📂 Abrir</button>
+  <input type="file" id="fileOpen" accept=".json" style="display:none" onchange="abrirArquivo(event)">
+  <button class="btn-secondary" onclick="salvarComo()">Salvar Como...</button>
+  <div class="sep"></div>
+  <button class="btn-primary" onclick="exportarPDF()">🖨️ Imprimir / PDF</button>
+  <span class="dirty-indicator" id="dirtyFlag">● Não salvo</span>
+</div>
+
+<!-- ═══ CONTAINER ═════════════════════════════════════════════ -->
+<div class="container">
+
+  <!-- ALERTA EXTRATO ───────────────────────────────────────── -->
+  <div class="alert-extrato">
+    <span class="ae-icon">🏦</span>
+    <div>
+      <div class="ae-title">Atenção — Envio obrigatório dos Extratos Bancários</div>
+      <div class="ae-body">
+        Junto a este relatório, a OSC <strong>deverá encaminhar</strong> os extratos bancários completos da <strong>conta corrente da parceria</strong> e da <strong>conta de aplicação financeira</strong> (quando houver), cobrindo todo o período de referência.<br>
+        A ausência dos extratos poderá resultar em não aprovação da prestação de contas (<strong>Art. 56 da Portaria 021/SMDHC/2023</strong> | <strong>Art. 74, VIII da Portaria 090/SMDHC/2023</strong>).
+      </div>
+    </div>
+  </div>
+
+  <!-- REFERÊNCIA LEGAL ──────────────────────────────────────── -->
+  <details class="legal-ref-box">
+    <summary>⚖️ Referência Legal — Conteúdo obrigatório do Relatório de Execução (Portaria 021 e 090)</summary>
+
+    <div class="lrb-art">
+      <h4>Art. 65 da Portaria 021/SMDHC/2023 — O Relatório de Execução do Objeto deve conter:</h4>
+      <ol>
+        <li>Descrição pormenorizada das atividades realizadas;</li>
+        <li>Comparativo entre as metas propostas e os resultados alcançados;</li>
+        <li>Memória de cálculo do rateio das despesas, quando houver;</li>
+        <li>Relação dos bens adquiridos, produzidos ou transformados com recursos da parceria;</li>
+        <li>Justificativa para o não cumprimento de metas, quando for o caso;</li>
+        <li>Informações sobre a participação de outros órgãos públicos;</li>
+        <li>Informações sobre monitoramento realizado pelo órgão de controle;</li>
+        <li>Extrato bancário da conta específica vinculada à execução da parceria.</li>
+      </ol>
+    </div>
+
+    <div class="lrb-art">
+      <h4>Art. 74 da Portaria 090/SMDHC/2023 — O Relatório de Execução do Objeto deve conter:</h4>
+      <ol>
+        <li>Descrição pormenorizada das atividades realizadas;</li>
+        <li>Material comprobatório da execução do objeto e de seus resultados, tais como <em>listas de presença, fotos, vídeos</em>, dentre outros;</li>
+        <li>O comparativo de metas propostas com os resultados alcançados;</li>
+        <li>Justificativa da não realização de atividades previstas no Plano de Trabalho ou do não cumprimento das metas, quando for o caso;</li>
+        <li>Comprovação de contrapartidas, quando for o caso;</li>
+        <li>Relação de bens adquiridos, produzidos ou transformados, quando for o caso;</li>
+        <li>Memória de cálculo do rateio das despesas, quando for o caso;</li>
+        <li>Extrato bancário da conta específica vinculada à execução da parceria.</li>
+      </ol>
+      <div class="lrb-par">
+        <strong>§1º — Devolução de saldo remanescente:</strong> Na ocasião da apresentação do Relatório <em>Final</em> de Execução do Objeto, havendo saldo bancário remanescente correspondente a recursos não utilizados, a OSC deverá efetuar sua <strong>devolução em até 30 (trinta) dias corridos</strong>, à conta bancária do fundo específico, e acrescentar o comprovante ao Relatório.
+      </div>
+      <div class="lrb-par" style="margin-top:6px;">
+        <strong>§2º — Conciliação bancária:</strong> Em caso de dúvidas quanto à utilização de recursos, o gestor poderá solicitar, em até <strong>10 (dez) dias corridos</strong> após a apresentação do Relatório Final, a apresentação do relatório sintético de conciliação bancária com indicação de despesas e receitas, que deverá ser apresentado pela OSC em até <strong>5 (cinco) dias úteis</strong>.
+      </div>
+    </div>
+
+    <div class="lrb-art">
+      <h4>Art. 75 da Portaria 090/SMDHC/2023 — Guarda de documentos:</h4>
+      <p>A OSC deverá manter a <strong>guarda dos documentos originais</strong> relativos à execução das parcerias pelo prazo de <strong>10 (dez) anos</strong>, contado do dia útil seguinte ao da apresentação da prestação de contas final ou do término do prazo para a apresentação da prestação de contas.</p>
+      <p style="margin-top:6px;"><em>Parágrafo único:</em> Os documentos assinados de forma eletrônica pela OSC, desde que possuam garantia da origem e de seu signatário por certificação digital, serão considerados originais para os efeitos de prestação de contas.</p>
+    </div>
+  </details>
+
+  <!-- ═══ 1. IDENTIFICAÇÃO ════════════════════════════════════ -->
+  <div class="form-section">
+    <h2>1. Identificação da Parceria</h2>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Nome da OSC <span class="req">*</span></label>
+        <input type="text" id="nomeOSC" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>CNPJ da OSC</label>
+        <input type="text" id="cnpjOSC" placeholder="XX.XXX.XXX/XXXX-XX" oninput="markDirty()">
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Nome do Projeto / Atividade <span class="req">*</span></label>
+        <input type="text" id="nomeProjeto" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Área Técnica da SMDHC</label>
+        <input type="text" id="areaTecnica" oninput="markDirty()">
+      </div>
+    </div>
+    <div class="form-grid cols-3">
+      <div class="form-group">
+        <label>Instrumento da Parceria <span class="req">*</span></label>
+        <select id="instrumento" onchange="markDirty()">
+          <option value="">Selecione...</option>
+          <option>Termo de Fomento</option>
+          <option>Termo de Colaboração</option>
+          <option>Convênio</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Número do Instrumento</label>
+        <input type="text" id="numInstrumento" placeholder="XX/20XX/SMDHC/xxx" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Processo SEI <span class="req">*</span></label>
+        <input type="text" id="processoSEI" placeholder="6074.20XX/XXXXXXX-X" oninput="markDirty()">
+      </div>
+    </div>
+    <div class="form-grid cols-3">
+      <div class="form-group">
+        <label>Vigência — Início</label>
+        <input type="date" id="vigenciaInicio" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Vigência — Término</label>
+        <input type="date" id="vigenciaTermino" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Período de Referência do Relatório <span class="req">*</span></label>
+        <input type="text" id="periodoRef" placeholder="1º semestre/2025" oninput="markDirty()">
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Data de Elaboração do Relatório <span class="req">*</span></label>
+        <input type="date" id="dataElaboracao" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Responsável pela Elaboração na OSC <span class="req">*</span></label>
+        <input type="text" id="respElaboracao" oninput="markDirty()">
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Cargo/Função do Responsável</label>
+        <input type="text" id="cargoResp" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>E-mail para Contato</label>
+        <input type="text" id="emailOSC" placeholder="contato@osc.org.br" oninput="markDirty()">
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 2. DESCRIÇÃO DAS ATIVIDADES REALIZADAS ══════════════ -->
+  <div class="form-section">
+    <h2>2. Descrição das Atividades Realizadas no Período</h2>
+    <div class="info-box">
+      Descreva as atividades realizadas no período de referência, relacionando-as às previstas no Plano de Trabalho. Para cada atividade, informe o período de realização e o número de beneficiários atendidos.
+    </div>
+
+    <h3>2.1 Atividades Previstas × Realizadas</h3>
+    <div style="overflow-x:auto;">
+      <table class="metas-table" id="tabelaAtividades">
+        <thead>
+          <tr>
+            <th style="width:20%;">Atividade (conforme Plano de Trabalho)</th>
+            <th style="width:12%;">Período Previsto</th>
+            <th style="width:12%;">Período Realizado</th>
+            <th style="width:10%;">Situação</th>
+            <th style="width:38%;">Descrição / Justificativa (se não realizada)</th>
+            <th style="width:8%;"></th>
+          </tr>
+        </thead>
+        <tbody id="tabelaAtividadesBody"></tbody>
+      </table>
+    </div>
+    <button type="button" class="btn-add-row" onclick="addAtividade()">+ Adicionar Atividade</button>
+
+    <h3 style="margin-top:24px;">2.2 Narrativa Geral das Atividades Realizadas</h3>
+    <p style="font-size:12px;color:#757575;margin-bottom:8px;">Descreva de forma narrativa as principais atividades, iniciativas e resultados do período.</p>
+    <div class="form-group">
+      <textarea id="narrativaAtividades" class="tall" placeholder="Descreva as atividades realizadas no período, incluindo metodologias utilizadas, parcerias firmadas, eventos, atendimentos, etc." oninput="markDirty()"></textarea>
+    </div>
+  </div>
+
+  <!-- ═══ 3. CUMPRIMENTO DE METAS ═════════════════════════════ -->
+  <div class="form-section">
+    <h2>3. Cumprimento de Metas e Indicadores</h2>
+    <div class="info-box">
+      Informe para cada meta pactuada no Plano de Trabalho o resultado alcançado no período. Em caso de não cumprimento, apresente justificativa.
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table class="metas-table" id="tabelaMetas">
+        <thead>
+          <tr>
+            <th style="width:22%;">Meta (conforme Plano de Trabalho)</th>
+            <th style="width:10%;">Indicador</th>
+            <th style="width:10%;">Previsto</th>
+            <th style="width:10%;">Realizado</th>
+            <th style="width:10%;">% Cumprimento</th>
+            <th style="width:10%;">Situação</th>
+            <th style="width:28%;">Justificativa (se parcial ou não atingida)</th>
+          </tr>
+        </thead>
+        <tbody id="tabelaMetasBody"></tbody>
+      </table>
+    </div>
+    <button type="button" class="btn-add-row" onclick="addMeta()">+ Adicionar Meta</button>
+
+    <h3 style="margin-top:20px;">3.1 Análise do Cumprimento de Metas</h3>
+    <div class="form-group">
+      <textarea id="analiseMetasTexto" class="tall" placeholder="Analise os resultados alcançados, destacando as metas cumpridas, as não cumpridas e os fatores que influenciaram positiva ou negativamente os resultados." oninput="markDirty()"></textarea>
+    </div>
+  </div>
+
+  <!-- ═══ 4. IMPACTO SOCIAL ════════════════════════════════════ -->
+  <div class="form-section">
+    <h2>4. Análise das Atividades Realizadas e do Impacto Social</h2>
+    <div class="info-box">Conforme Art. 65, II da Portaria 021/SMDHC/2023 — com base nos indicadores do Plano de Trabalho.</div>
+
+    <div class="form-group" style="margin-bottom:16px;">
+      <label>Beneficiários Previstos no Período</label>
+      <input type="number" id="benefPrev" min="0" oninput="markDirty(); calcBenef()" style="max-width:180px;">
+    </div>
+    <div class="form-group" style="margin-bottom:16px;">
+      <label>Beneficiários Efetivamente Atendidos no Período</label>
+      <input type="number" id="benefReal" min="0" oninput="markDirty(); calcBenef()" style="max-width:180px;">
+    </div>
+    <div id="benefPercWrap" style="display:none; margin-bottom:16px;">
+      <span style="font-size:12px; font-weight:700; color:#00897B;" id="benefPercText"></span>
+    </div>
+
+    <div class="form-group" style="margin-bottom:16px;">
+      <label>Impacto Social Identificado no Período</label>
+      <textarea id="impactoSocial" class="tall" placeholder="Descreva os impactos sociais verificados no período, com base nos indicadores pactuados. Inclua dados qualitativos e quantitativos relevantes." oninput="markDirty()"></textarea>
+    </div>
+
+    <div class="form-group">
+      <label>Grau de Satisfação do Público-Alvo (quando disponível)</label>
+      <textarea id="satisfacaoPublico" class="short" placeholder="Descreva eventuais avaliações, pesquisas de satisfação ou depoimentos do público-alvo. Se não houver mecanismo formal, indique 'Não aplicado no período'." oninput="markDirty()"></textarea>
+    </div>
+  </div>
+
+  <!-- ═══ 5. RECURSOS FINANCEIROS ═════════════════════════════ -->
+  <div class="form-section">
+    <h2>5. Recursos Financeiros — Execução do Período</h2>
+    <div class="warn-box">⚠️ Os valores abaixo devem ser compatíveis com os <strong>extratos bancários</strong> anexados (conta corrente e conta de aplicação). Em caso de divergência, justifique no campo de observações.</div>
+
+    <div class="info-box" style="border-left-color:#FF8F00; background:#FFF8E1;">
+      <strong>📌 Atenção — Relatório Final com saldo remanescente (Art. 74 §1º, Portaria 090):</strong> Se este for o relatório final da parceria e houver saldo bancário não utilizado, a OSC deverá devolvê-lo à conta do fundo específico em até <strong>30 dias corridos</strong> após a apresentação do relatório, juntando o comprovante de devolução.
+      <br><br>
+      <strong>📌 Conciliação bancária (Art. 74 §2º, Portaria 090):</strong> O gestor pode solicitar relatório sintético de conciliação bancária em até 10 dias após o relatório final. A OSC terá 5 dias úteis para apresentá-lo.
+    </div>
+
+    <div class="recursos-card">
+      <div class="rec-item">
+        <label>Total Repassado pela SMDHC (R$)</label>
+        <input type="text" id="valRepassado" placeholder="0,00" oninput="maskMoeda(this); calcSaldo(); markDirty()">
+      </div>
+      <div class="rec-item">
+        <label>Total Utilizado no Período (R$)</label>
+        <input type="text" id="valUtilizado" placeholder="0,00" oninput="maskMoeda(this); calcSaldo(); markDirty()">
+      </div>
+      <div class="rec-item">
+        <label>Devoluções Realizadas (R$)</label>
+        <input type="text" id="valDevolucao" placeholder="0,00" oninput="maskMoeda(this); calcSaldo(); markDirty()">
+      </div>
+      <div class="rec-item saldo" id="saldoCard">
+        <label>Saldo Disponível (R$)</label>
+        <div class="rec-calc" id="saldoCalc">—</div>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-bottom:16px;">
+      <label>Rendimentos de Aplicação Financeira no Período (R$)</label>
+      <input type="text" id="valRendimentos" placeholder="0,00 (informar mesmo que seja zero)" oninput="maskMoeda(this); markDirty()" style="max-width:280px;">
+    </div>
+
+    <h3>5.1 Despesas Realizadas por Categoria</h3>
+    <div style="overflow-x:auto;">
+      <table class="desp-table" id="tabelaDespesas">
+        <thead>
+          <tr>
+            <th style="width:30%;">Rubrica / Categoria</th>
+            <th style="width:15%;">Previsto no Plano (R$)</th>
+            <th style="width:15%;">Realizado no Período (R$)</th>
+            <th style="width:15%;">Nº Doc. Comprobatório</th>
+            <th style="width:25%;">Observação</th>
+            <th style="width:5%;"></th>
+          </tr>
+        </thead>
+        <tbody id="tabelaDespesasBody">
+          <tr class="desp-total" id="trTotalDespesas">
+            <td><strong>TOTAL</strong></td>
+            <td id="totalPrevisto">—</td>
+            <td id="totalRealizado">—</td>
+            <td colspan="3"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <button type="button" class="btn-add-row" onclick="addDespesa()">+ Adicionar Rubrica</button>
+
+    <div class="form-group" style="margin-top:16px;">
+      <label>Observações sobre a Execução Financeira</label>
+      <textarea id="obsFinanceiro" class="short" placeholder="Descreva eventuais divergências, remanejamentos de rubricas, saldo não utilizado e sua destinação, ou outras observações relevantes sobre a execução financeira." oninput="markDirty()"></textarea>
+    </div>
+  </div>
+
+  <!-- ═══ 6. DOCUMENTAÇÃO COMPROBATÓRIA ═══════════════════════ -->
+  <div class="form-section">
+    <h2>6. Declaração de Documentação Comprobatória</h2>
+    <div class="info-box">Indique quais documentos comprobatórios estão sendo encaminhados junto a este relatório (ou já constam no processo SEI). <strong>Art. 56 da Portaria 021</strong> | <strong>Art. 74, I–VIII da Portaria 090</strong>.</div>
+
+    <div class="doc-check-list">
+      <div class="doc-check-item">
+        <input type="checkbox" id="docListas" onchange="markDirty()">
+        <div>
+          <div class="dc-label">Listas de Presença / Frequência de Beneficiários</div>
+          <div class="dc-desc">Listas assinadas pelos participantes das atividades realizadas no período.</div>
+        </div>
+      </div>
+      <div class="doc-check-item">
+        <input type="checkbox" id="docNotas" onchange="markDirty()">
+        <div>
+          <div class="dc-label">Notas Fiscais e/ou Recibos das Despesas</div>
+          <div class="dc-desc">Documentação fiscal das despesas realizadas com recursos da parceria, emitidas em nome da OSC.</div>
+        </div>
+      </div>
+      <div class="doc-check-item">
+        <input type="checkbox" id="docExtratoCC" onchange="markDirty()">
+        <div>
+          <div class="dc-label">Extrato Bancário — Conta Corrente da Parceria</div>
+          <div class="dc-desc">Extrato completo do período de referência.</div>
+        </div>
+      </div>
+      <div class="doc-check-item">
+        <input type="checkbox" id="docExtratoApl" onchange="markDirty()">
+        <div>
+          <div class="dc-label">Extrato Bancário — Conta de Aplicação Financeira</div>
+          <div class="dc-desc">Extrato completo do período, incluindo rendimentos e resgates.</div>
+        </div>
+      </div>
+      <div class="doc-check-item">
+        <input type="checkbox" id="docFolhaPagto" onchange="markDirty()">
+        <div>
+          <div class="dc-label">Folhas de Pagamento / Holerites (quando houver pessoal)</div>
+          <div class="dc-desc">Folhas de pagamento dos profissionais remunerados com recursos da parceria.</div>
+        </div>
+      </div>
+      <div class="doc-check-item">
+        <input type="checkbox" id="docEncargos" onchange="markDirty()">
+        <div>
+          <div class="dc-label">Comprovantes de Recolhimento de FGTS, INSS e ISS</div>
+          <div class="dc-desc">Guias e comprovantes de recolhimento dos tributos e encargos sobre a folha de pagamento e serviços.</div>
+        </div>
+      </div>
+      <div class="doc-check-item">
+        <input type="checkbox" id="docContratos" onchange="markDirty()">
+        <div>
+          <div class="dc-label">Contratos de Prestação de Serviços (quando aplicável)</div>
+          <div class="dc-desc">Contratos firmados com fornecedores ou prestadores de serviços com recursos da parceria.</div>
+        </div>
+      </div>
+      <div class="doc-check-item">
+        <input type="checkbox" id="docFotos" onchange="markDirty()">
+        <div>
+          <div class="dc-label">Registros Fotográficos / Evidências das Atividades</div>
+          <div class="dc-desc">Fotos, vídeos ou outros registros comprobatórios da realização das atividades previstas (Art. 74, II — Portaria 090).</div>
+        </div>
+      </div>
+      <div class="doc-check-item">
+        <input type="checkbox" id="docMemoriaCalculo" onchange="markDirty()">
+        <div>
+          <div class="dc-label">Memória de Cálculo do Rateio das Despesas (quando aplicável)</div>
+          <div class="dc-desc">Quando os recursos da parceria cobrirem apenas parte de uma despesa, apresentar o cálculo proporcional da parte correspondente à parceria (Art. 65, III — Portaria 021 | Art. 74, VII — Portaria 090).</div>
+        </div>
+      </div>
+      <div class="doc-check-item">
+        <input type="checkbox" id="docRelacaoBens" onchange="markDirty()">
+        <div>
+          <div class="dc-label">Relação de Bens Adquiridos, Produzidos ou Transformados (quando aplicável)</div>
+          <div class="dc-desc">Lista descritiva dos bens adquiridos, produzidos ou transformados com recursos da parceria no período (Art. 65, IV — Portaria 021 | Art. 74, VI — Portaria 090).</div>
+        </div>
+      </div>
+      <div class="doc-check-item">
+        <input type="checkbox" id="docContrapartida" onchange="markDirty()">
+        <div>
+          <div class="dc-label">Comprovação de Contrapartidas (quando aplicável)</div>
+          <div class="dc-desc">Documentação comprobatória das contrapartidas da OSC previstas no instrumento da parceria (Art. 74, V — Portaria 090).</div>
+        </div>
+      </div>
+      <div class="doc-check-item">
+        <input type="checkbox" id="docComprovDevolucao" onchange="markDirty()">
+        <div>
+          <div class="dc-label">Comprovante de Devolução de Saldo Remanescente (apenas Relatório Final com saldo)</div>
+          <div class="dc-desc">Comprovante de transferência do saldo não utilizado de volta à conta do fundo específico, no prazo de 30 dias corridos (Art. 74, §1º — Portaria 090).</div>
+        </div>
+      </div>
+      <div class="doc-check-item">
+        <input type="checkbox" id="docOutros" onchange="markDirty()">
+        <div>
+          <div class="dc-label">Outros documentos</div>
+          <div class="dc-desc">Documentos adicionais não listados acima.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group" style="margin-top:14px;">
+      <label>Descrição de Outros Documentos Encaminhados</label>
+      <textarea id="outrosDocsDesc" class="short" placeholder="Descreva outros documentos que estão sendo encaminhados e que não constam na lista acima." oninput="markDirty()"></textarea>
+    </div>
+
+    <div class="form-group" style="margin-top:10px;">
+      <label>Localização no Processo SEI (nº SEI dos documentos comprobatórios)</label>
+      <input type="text" id="locSEIDocs" placeholder="SEI XXXXXXXX, YYYYYYYY..." oninput="markDirty()">
+    </div>
+  </div>
+
+  <!-- ═══ 7. JUSTIFICATIVAS (quando houver) ═══════════════════ -->
+  <div class="form-section">
+    <h2>7. Justificativas para Descumprimento de Metas ou Atividades</h2>
+    <div class="warn-box">Preencha esta seção apenas quando houver metas ou atividades não cumpridas integralmente. Art. 65, V da Portaria 021.</div>
+    <div class="form-group">
+      <textarea id="justDescumprimento" class="tall" placeholder="Apresente as justificativas para o descumprimento total ou parcial de metas e atividades previstas, incluindo os fatores que impediram a plena execução e as medidas adotadas ou a adotar para regularização. Deixe em branco se não houver descumprimento." oninput="markDirty()"></textarea>
+    </div>
+  </div>
+
+  <!-- ═══ 8. MEDIDAS ADOTADAS ══════════════════════════════════ -->
+  <div class="form-section">
+    <h2>8. Providências e Próximos Passos</h2>
+    <div class="form-group" style="margin-bottom:16px;">
+      <label>Providências Adotadas para Regularização de Pendências (se houver)</label>
+      <textarea id="providenciasAdotadas" class="short" placeholder="Descreva as medidas já tomadas para corrigir eventuais irregularidades ou descumprimentos identificados." oninput="markDirty()"></textarea>
+    </div>
+    <div class="form-group">
+      <label>Plano de Ação para o Próximo Período</label>
+      <textarea id="planoAcaoProx" class="short" placeholder="Descreva as principais atividades e iniciativas previstas para o próximo período de execução da parceria." oninput="markDirty()"></textarea>
+    </div>
+  </div>
+
+  <!-- ═══ 9. DECLARAÇÃO FINAL ══════════════════════════════════ -->
+  <div class="form-section" style="border-left-color: #FF8F00;">
+    <h2 style="color: #E65100;">9. Declaração e Ciência</h2>
+    <div class="warn-box">
+      <strong>Declaração de Veracidade:</strong> Ao salvar e encaminhar este relatório, o responsável pela OSC declara que as informações prestadas são verídicas e que a documentação comprobatória está disponível para verificação pela administração pública e órgãos de controle, conforme Art. 56 da Portaria 021/SMDHC/2023.
+    </div>
+
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Nome do Responsável Legal pela OSC <span class="req">*</span></label>
+        <input type="text" id="respLegal" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>CPF do Responsável Legal</label>
+        <input type="text" id="cpfRespLegal" placeholder="XXX.XXX.XXX-XX" oninput="markDirty()">
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Data da Declaração <span class="req">*</span></label>
+        <input type="date" id="dataDeclaracao" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Telefone para Contato</label>
+        <input type="text" id="telefoneOSC" placeholder="(11) XXXXX-XXXX" oninput="markDirty()">
+      </div>
+    </div>
+    <div class="form-group" style="margin-top:10px;">
+      <label>Observações Finais</label>
+      <textarea id="obsFinais" class="short" placeholder="Registre quaisquer informações adicionais relevantes para a análise deste relatório pela SMDHC." oninput="markDirty()"></textarea>
+    </div>
+
+    <div class="warn-box" style="margin-top:16px; margin-bottom:0;">
+      🏦 <strong>Lembrete final:</strong> Não se esqueça de encaminhar os <strong>extratos bancários completos</strong> (conta corrente + conta de aplicação financeira, quando houver) cobrindo todo o período de referência. Eles são obrigatórios e serão confrontados com os valores declarados neste relatório.
+    </div>
+  </div>
+
+  <!-- AÇÕES ────────────────────────────────────────────────── -->
+  <div class="form-actions" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;">
+    <button class="btn-save" onclick="salvar()">💾 SALVAR</button>
+    <button class="btn-primary" onclick="exportarPDF()">🖨️ Imprimir / PDF</button>
+    <button class="btn-secondary" onclick="limpar()">🔄 Limpar</button>
+    <button class="btn-back" onclick="voltarPainel()">← Voltar</button>
+  </div>
+
+</div>
+
+<!-- ═══ STATUS BAR ════════════════════════════════════════════ -->
+<div class="statusbar">
+  <span id="statusFile">Novo Relatório</span>
+  <span class="badge badge-info" id="statusInfo">Pronto</span>
+  <span id="statusDirty" style="display:none; color:#FFEB3B; font-weight:bold;">● Não salvo</span>
+</div>
+
+<script>
+'use strict';
+const LS_KEY = 'relatorio_execucao_autosave';
+let isDirty = false;
+let currentFileName = '';
+
+// ── Dirty ──────────────────────────────────────────────────
+function markDirty() {
+  isDirty = true;
+  document.getElementById('dirtyFlag').classList.add('active');
+  document.getElementById('statusDirty').style.display = 'inline';
+  autoSave();
+}
+function clearDirty() {
+  isDirty = false;
+  document.getElementById('dirtyFlag').classList.remove('active');
+  document.getElementById('statusDirty').style.display = 'none';
+}
+
+// ── Máscara moeda ──────────────────────────────────────────
+function maskMoeda(el) {
+  let v = el.value.replace(/\D/g,'');
+  if (!v) { el.value = ''; return; }
+  v = (parseInt(v,10)/100).toFixed(2);
+  el.value = v.replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+}
+function parseMoeda(s) {
+  if (!s) return 0;
+  return parseFloat(s.replace(/\./g,'').replace(',','.')) || 0;
+}
+function formatMoeda(n) {
+  return n.toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+}
+
+// ── Saldo automático ───────────────────────────────────────
+function calcSaldo() {
+  const rep = parseMoeda(document.getElementById('valRepassado').value);
+  const utl = parseMoeda(document.getElementById('valUtilizado').value);
+  const dev = parseMoeda(document.getElementById('valDevolucao').value);
+  const saldo = rep - utl - dev;
+  const el = document.getElementById('saldoCalc');
+  const card = document.getElementById('saldoCard');
+  el.textContent = 'R$ ' + formatMoeda(saldo);
+  el.style.color = saldo < 0 ? '#C62828' : '#004D40';
+  card.classList.toggle('negativo', saldo < 0);
+  calcTotalDespesas();
+}
+
+// ── Total despesas ──────────────────────────────────────────
+function calcTotalDespesas() {
+  const rows = document.querySelectorAll('#tabelaDespesasBody tr:not(#trTotalDespesas)');
+  let sumPrev = 0, sumReal = 0;
+  rows.forEach(tr => {
+    const inputs = tr.querySelectorAll('input');
+    sumPrev += parseMoeda(inputs[1]?.value || '');
+    sumReal += parseMoeda(inputs[2]?.value || '');
+  });
+  document.getElementById('totalPrevisto').textContent = 'R$ ' + formatMoeda(sumPrev);
+  document.getElementById('totalRealizado').textContent = 'R$ ' + formatMoeda(sumReal);
+}
+
+// ── Cálculo beneficiários ───────────────────────────────────
+function calcBenef() {
+  const prev = parseInt(document.getElementById('benefPrev').value, 10);
+  const real = parseInt(document.getElementById('benefReal').value, 10);
+  const wrap = document.getElementById('benefPercWrap');
+  const el   = document.getElementById('benefPercText');
+  if (prev > 0 && real >= 0) {
+    const pct = Math.round(real / prev * 100);
+    el.textContent = `${real} de ${prev} beneficiários atendidos = ${pct}% da meta`;
+    wrap.style.display = 'block';
+  } else {
+    wrap.style.display = 'none';
+  }
+}
+
+// ── Atividades ─────────────────────────────────────────────
+function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function addAtividade(data) {
+  const tr = document.getElementById('tabelaAtividadesBody').insertRow();
+  const sit = ['Realizada', 'Realizada parcialmente', 'Não realizada', 'Em andamento'];
+  tr.innerHTML = `
+    <td><input type="text" placeholder="Ex: Oficinas semanais" value="${data?escHtml(data.ativ||''):''}" oninput="markDirty()"></td>
+    <td><input type="text" placeholder="mm/yyyy" value="${data?escHtml(data.previsto||''):''}" oninput="markDirty()"></td>
+    <td><input type="text" placeholder="mm/yyyy" value="${data?escHtml(data.realizado||''):''}" oninput="markDirty()"></td>
+    <td><select oninput="markDirty()">${sit.map(s=>`<option${data&&data.sit===s?' selected':''}>${s}</option>`).join('')}</select></td>
+    <td><input type="text" placeholder="Descreva ou justifique..." value="${data?escHtml(data.desc||''):''}" oninput="markDirty()"></td>
+    <td><button type="button" class="btn-del-row" onclick="this.closest('tr').remove();markDirty()">✕</button></td>`;
+}
+function getAtividades() {
+  return [...document.querySelectorAll('#tabelaAtividadesBody tr')].map(tr => {
+    const i=tr.querySelectorAll('input,select');
+    return { ativ:i[0]?.value, previsto:i[1]?.value, realizado:i[2]?.value, sit:i[3]?.value, desc:i[4]?.value };
+  });
+}
+function setAtividades(rows) {
+  document.getElementById('tabelaAtividadesBody').innerHTML='';
+  (rows||[]).forEach(r=>addAtividade(r));
+}
+
+// ── Metas ──────────────────────────────────────────────────
+function addMeta(data) {
+  const tr = document.getElementById('tabelaMetasBody').insertRow();
+  const sits = ['Atingida','Parcialmente atingida','Não atingida'];
+  const prev = data?.previsto || '';
+  const real = data?.realizado || '';
+  const pct = (prev && real) ? Math.round(parseInt(real)/parseInt(prev)*100)+'%' : '';
+  tr.innerHTML = `
+    <td><input type="text" placeholder="Ex: 60 beneficiários/mês" value="${data?escHtml(data.meta||''):''}" oninput="markDirty()"></td>
+    <td><input type="text" placeholder="Ex: nº atend." value="${data?escHtml(data.indicador||''):''}" oninput="markDirty()"></td>
+    <td><input type="number" min="0" placeholder="0" value="${escHtml(prev)}" oninput="calcMetaRow(this);markDirty()"></td>
+    <td><input type="number" min="0" placeholder="0" value="${escHtml(real)}" oninput="calcMetaRow(this);markDirty()"></td>
+    <td class="pct-cell" style="font-weight:700;text-align:center;">${pct}</td>
+    <td><select oninput="markDirty()">${sits.map(s=>`<option${data&&data.sit===s?' selected':''}>${s}</option>`).join('')}</select></td>
+    <td><input type="text" placeholder="Justificativa..." value="${data?escHtml(data.just||''):''}" oninput="markDirty()"></td>`;
+}
+function calcMetaRow(inp) {
+  const tr   = inp.closest('tr');
+  const nums = tr.querySelectorAll('input[type="number"]');
+  const prev = parseInt(nums[0].value, 10);
+  const real = parseInt(nums[1].value, 10);
+  const pctEl = tr.querySelector('.pct-cell');
+  if (pctEl && prev > 0 && !isNaN(real)) pctEl.textContent = Math.round(real/prev*100)+'%';
+}
+function getMetas() {
+  return [...document.querySelectorAll('#tabelaMetasBody tr')].map(tr => {
+    const i=tr.querySelectorAll('input,select');
+    return { meta:i[0]?.value, indicador:i[1]?.value, previsto:i[2]?.value, realizado:i[3]?.value, sit:i[4]?.value, just:i[5]?.value };
+  });
+}
+function setMetas(rows) {
+  document.getElementById('tabelaMetasBody').innerHTML='';
+  (rows||[]).forEach(r=>addMeta(r));
+}
+
+// ── Despesas ───────────────────────────────────────────────
+function addDespesa(data) {
+  const tr = document.getElementById('tabelaDespesasBody').insertRow(
+    document.getElementById('tabelaDespesasBody').rows.length - 1
+  );
+  tr.innerHTML = `
+    <td><input type="text" placeholder="Ex: Pessoal/RH" value="${data?escHtml(data.rubrica||''):''}" oninput="markDirty()"></td>
+    <td><input type="text" placeholder="0,00" value="${data?escHtml(data.previsto||''):''}" oninput="maskMoeda(this);calcTotalDespesas();markDirty()"></td>
+    <td><input type="text" placeholder="0,00" value="${data?escHtml(data.realizado||''):''}" oninput="maskMoeda(this);calcTotalDespesas();markDirty()"></td>
+    <td><input type="text" placeholder="NF nº..." value="${data?escHtml(data.nrDoc||''):''}" oninput="markDirty()"></td>
+    <td><input type="text" placeholder="Observação..." value="${data?escHtml(data.obs||''):''}" oninput="markDirty()"></td>
+    <td><button type="button" class="btn-del-row" onclick="this.closest('tr').remove();calcTotalDespesas();markDirty()">✕</button></td>`;
+}
+function getDespesas() {
+  const rows = [...document.querySelectorAll('#tabelaDespesasBody tr:not(#trTotalDespesas)')];
+  return rows.map(tr => {
+    const i=tr.querySelectorAll('input');
+    return { rubrica:i[0]?.value, previsto:i[1]?.value, realizado:i[2]?.value, nrDoc:i[3]?.value, obs:i[4]?.value };
+  });
+}
+function setDespesas(rows) {
+  [...document.querySelectorAll('#tabelaDespesasBody tr:not(#trTotalDespesas)')].forEach(r=>r.remove());
+  (rows||[]).forEach(r=>addDespesa(r));
+  calcTotalDespesas();
+}
+
+// ── Checkboxes doc ─────────────────────────────────────────
+const DOC_IDS = ['docListas','docNotas','docExtratoCC','docExtratoApl','docFolhaPagto','docEncargos','docContratos','docFotos','docMemoriaCalculo','docRelacaoBens','docContrapartida','docComprovDevolucao','docOutros'];
+function getCheckboxes() {
+  const r = {}; DOC_IDS.forEach(id => { r[id] = document.getElementById(id)?.checked || false; }); return r;
+}
+function setCheckboxes(obj) {
+  if (!obj) return;
+  DOC_IDS.forEach(id => { const el=document.getElementById(id); if(el) el.checked = obj[id]||false; });
+}
+
+// ── getFormData / setFormData ──────────────────────────────
+function getFormData() {
+  const set = id => document.getElementById(id)?.value || '';
+  return {
+    _version: 1, _form: 'relatorio_execucao_objeto',
+    nomeOSC: set('nomeOSC'), cnpjOSC: set('cnpjOSC'),
+    nomeProjeto: set('nomeProjeto'), areaTecnica: set('areaTecnica'),
+    instrumento: set('instrumento'), numInstrumento: set('numInstrumento'),
+    processoSEI: set('processoSEI'),
+    vigenciaInicio: set('vigenciaInicio'), vigenciaTermino: set('vigenciaTermino'),
+    periodoRef: set('periodoRef'), dataElaboracao: set('dataElaboracao'),
+    respElaboracao: set('respElaboracao'), cargoResp: set('cargoResp'), emailOSC: set('emailOSC'),
+    atividades: getAtividades(),
+    narrativaAtividades: set('narrativaAtividades'),
+    metas: getMetas(),
+    analiseMetasTexto: set('analiseMetasTexto'),
+    benefPrev: set('benefPrev'), benefReal: set('benefReal'),
+    impactoSocial: set('impactoSocial'), satisfacaoPublico: set('satisfacaoPublico'),
+    valRepassado: set('valRepassado'), valUtilizado: set('valUtilizado'),
+    valDevolucao: set('valDevolucao'), valRendimentos: set('valRendimentos'),
+    despesas: getDespesas(),
+    obsFinanceiro: set('obsFinanceiro'),
+    checkboxesDocs: getCheckboxes(),
+    outrosDocsDesc: set('outrosDocsDesc'), locSEIDocs: set('locSEIDocs'),
+    justDescumprimento: set('justDescumprimento'),
+    providenciasAdotadas: set('providenciasAdotadas'), planoAcaoProx: set('planoAcaoProx'),
+    respLegal: set('respLegal'), cpfRespLegal: set('cpfRespLegal'),
+    dataDeclaracao: set('dataDeclaracao'), telefoneOSC: set('telefoneOSC'),
+    obsFinais: set('obsFinais')
+  };
+}
+function setFormData(d) {
+  const set = (id,v) => { const el=document.getElementById(id); if(el) el.value=v||''; };
+  set('nomeOSC',d.nomeOSC); set('cnpjOSC',d.cnpjOSC);
+  set('nomeProjeto',d.nomeProjeto); set('areaTecnica',d.areaTecnica);
+  set('instrumento',d.instrumento); set('numInstrumento',d.numInstrumento);
+  set('processoSEI',d.processoSEI);
+  set('vigenciaInicio',d.vigenciaInicio); set('vigenciaTermino',d.vigenciaTermino);
+  set('periodoRef',d.periodoRef); set('dataElaboracao',d.dataElaboracao);
+  set('respElaboracao',d.respElaboracao); set('cargoResp',d.cargoResp); set('emailOSC',d.emailOSC);
+  setAtividades(d.atividades); set('narrativaAtividades',d.narrativaAtividades);
+  setMetas(d.metas); set('analiseMetasTexto',d.analiseMetasTexto);
+  set('benefPrev',d.benefPrev); set('benefReal',d.benefReal); calcBenef();
+  set('impactoSocial',d.impactoSocial); set('satisfacaoPublico',d.satisfacaoPublico);
+  set('valRepassado',d.valRepassado); set('valUtilizado',d.valUtilizado);
+  set('valDevolucao',d.valDevolucao); set('valRendimentos',d.valRendimentos); calcSaldo();
+  setDespesas(d.despesas); set('obsFinanceiro',d.obsFinanceiro);
+  setCheckboxes(d.checkboxesDocs);
+  set('outrosDocsDesc',d.outrosDocsDesc); set('locSEIDocs',d.locSEIDocs);
+  set('justDescumprimento',d.justDescumprimento);
+  set('providenciasAdotadas',d.providenciasAdotadas); set('planoAcaoProx',d.planoAcaoProx);
+  set('respLegal',d.respLegal); set('cpfRespLegal',d.cpfRespLegal);
+  set('dataDeclaracao',d.dataDeclaracao); set('telefoneOSC',d.telefoneOSC);
+  set('obsFinais',d.obsFinais);
+}
+
+// ── Auto-save ──────────────────────────────────────────────
+function autoSave() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(getFormData())); } catch(_) {}
+}
+function tryRestore() {
+  try {
+    const s = localStorage.getItem(LS_KEY);
+    if (s && confirm('Encontrado rascunho salvo do Relatório de Execução. Deseja restaurar?')) {
+      setFormData(JSON.parse(s)); clearDirty();
+    }
+  } catch(e) { console.warn(e); }
+}
+
+// ── Salvar / Abrir ─────────────────────────────────────────
+function salvar() { if (!currentFileName) { salvarComo(); return; } downloadJSON(currentFileName); clearDirty(); }
+function salvarComo() {
+  const osc = document.getElementById('nomeOSC').value || 'relatorio';
+  const per = document.getElementById('periodoRef').value || '';
+  const sug = `${osc}_execucao_objeto${per?'_'+per:''}.json`.replace(/[<>:"|?*\\/]/g,'_');
+  const fn = prompt('Nome do arquivo:', sug);
+  if (!fn) return;
+  currentFileName = fn.endsWith('.json') ? fn : fn+'.json';
+  downloadJSON(currentFileName);
+  clearDirty();
+  document.getElementById('statusFile').textContent = currentFileName;
+}
+function downloadJSON(fn) {
+  const blob = new Blob([JSON.stringify(getFormData(),null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download=fn; a.click();
+  URL.revokeObjectURL(url);
+}
+function abrirArquivo(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    try {
+      setFormData(JSON.parse(ev.target.result));
+      currentFileName = file.name; clearDirty();
+      document.getElementById('statusFile').textContent = file.name;
+    } catch(err) { alert('Erro ao abrir: '+err.message); }
+  };
+  r.readAsText(file); e.target.value='';
+}
+function limpar() {
+  if (!confirm('Limpar todos os dados do formulário?')) return;
+  document.querySelectorAll('input:not([type="checkbox"]), select, textarea').forEach(el=>el.value='');
+  DOC_IDS.forEach(id=>{ const el=document.getElementById(id); if(el) el.checked=false; });
+  ['tabelaAtividadesBody','tabelaMetasBody'].forEach(id=>{ const el=document.getElementById(id); if(el) el.innerHTML=''; });
+  [...document.querySelectorAll('#tabelaDespesasBody tr:not(#trTotalDespesas)')].forEach(r=>r.remove());
+  calcSaldo(); markDirty();
+}
+function exportarPDF() { window.print(); }
+function voltarPainel() {
+  if (isDirty && !confirm('Há alterações não salvas. Sair mesmo assim?')) return;
+  window.location.href = '../index.html';
+}
+
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey||e.metaKey) && e.key==='s') { e.preventDefault(); salvar(); }
+});
+window.addEventListener('beforeunload', e => { if(isDirty){e.preventDefault();e.returnValue='';} });
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('../sw.js').catch(()=>{});
+}
+
+(function init() {
+  document.getElementById('dataElaboracao').value = new Date().toISOString().split('T')[0];
+  document.getElementById('dataDeclaracao').value = new Date().toISOString().split('T')[0];
+  tryRestore();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist de Conferência da Prestação de Contas — Central de Parcerias</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #FAFAFA;
+  color: #212121;
+  font-size: 14px;
+}
+button { cursor: pointer; font-family: inherit; font-size: 13px; }
+input, select, textarea { font-family: inherit; font-size: 13px; }
+
+/* ── HEADER ──────────────────────────────────────────────────── */
+.app-header {
+  background: #1A237E;
+  color: #fff;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0,0,0,.12);
+}
+.app-header h1 { font-size: 16px; font-weight: 700; }
+.app-subtitle   { font-size: 12px; opacity: .8; }
+.header-left    { flex: 1; }
+
+.toolbar {
+  background: #283593;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  box-shadow: 0 2px 4px rgba(0,0,0,.08);
+}
+.toolbar .sep { width: 1px; height: 28px; background: #5C6BC0; margin: 0 12px; }
+
+.btn-save      { background: #43A047; color: #fff; border: none; padding: 8px 16px; font-weight: bold; border-radius: 4px; }
+.btn-save:hover { background: #2E7D32; }
+.btn-primary   { background: #3949AB; color: #fff; border: none; padding: 7px 14px; border-radius: 4px; font-weight: 600; }
+.btn-primary:hover { background: #1A237E; }
+.btn-secondary { background: #E0E0E0; color: #333; border: 1px solid #BDBDBD; padding: 6px 12px; border-radius: 4px; }
+.btn-secondary:hover { background: #BDBDBD; }
+.btn-back      { background: rgba(255,255,255,.2); color: #fff; border: 1px solid rgba(255,255,255,.4); padding: 6px 12px; border-radius: 4px; font-size: 12px; }
+.btn-back:hover { background: rgba(255,255,255,.3); }
+.btn-email     { background: #00897B; color: #fff; border: none; padding: 8px 18px; border-radius: 4px; font-weight: bold; }
+.btn-email:hover { background: #00695C; }
+
+.dirty-indicator { color: #FFEB3B; font-weight: bold; font-size: 12px; display: none; margin-left: auto; }
+.dirty-indicator.active { display: inline; }
+
+/* ── CONTAINER ───────────────────────────────────────────────── */
+.container { max-width: 900px; margin: 0 auto; padding: 24px 20px 90px; }
+
+/* ── PROGRESS BAR ────────────────────────────────────────────── */
+.progress-bar-wrap {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,.08);
+  border-left: 4px solid #3949AB;
+}
+.progress-label { font-size: 12px; font-weight: 600; color: #555; margin-bottom: 8px; display: flex; justify-content: space-between; }
+.progress-track { height: 8px; background: #E8EAF6; border-radius: 4px; overflow: hidden; }
+.progress-fill  { height: 100%; background: #43A047; border-radius: 4px; transition: width .3s; }
+.progress-sub   { font-size: 11px; color: #757575; margin-top: 6px; }
+
+/* ── SECTION ─────────────────────────────────────────────────── */
+.form-section {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,.08);
+  border-left: 4px solid #3949AB;
+}
+.form-section h2 {
+  color: #1A237E;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 2px solid #E8EAF6;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-badge { font-size: 11px; background: #E8EAF6; color: #3949AB; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+.section-badge.done { background: #E8F5E9; color: #2E7D32; }
+
+/* ── FORM FIELDS (identificação) ─────────────────────────────── */
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+.form-grid.cols-1 { grid-template-columns: 1fr; }
+.form-grid.cols-3 { grid-template-columns: 1fr 1fr 1fr; }
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group.full { grid-column: 1 / -1; }
+label { font-size: 12px; font-weight: 600; color: #555; }
+input[type="text"], input[type="date"], select, textarea {
+  width: 100%; padding: 7px 10px;
+  border: 1px solid #BDBDBD; border-radius: 4px;
+  font-size: 13px; color: #212121; background: #fff;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none; border-color: #3949AB;
+  box-shadow: 0 0 0 2px rgba(57,73,171,.12);
+}
+textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
+
+/* ── CHECKLIST ITEM ──────────────────────────────────────────── */
+.checklist-group { display: flex; flex-direction: column; gap: 6px; margin-top: 4px; }
+.checklist-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 14px;
+  border-radius: 6px;
+  border: 1px solid #E0E0E0;
+  background: #FAFAFA;
+  cursor: pointer;
+  transition: background .12s, border-color .12s;
+  user-select: none;
+}
+.checklist-item:hover { background: #F3F4FD; border-color: #9FA8DA; }
+.checklist-item.checked { background: #E8F5E9; border-color: #A5D6A7; }
+.checklist-item.na     { background: #F5F5F5; border-color: #E0E0E0; opacity: .7; }
+.checklist-item input[type="checkbox"] { display: none; }
+
+.ci-box {
+  width: 22px; height: 22px; min-width: 22px;
+  border: 2px solid #BDBDBD;
+  border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  transition: border-color .12s, background .12s;
+}
+.checklist-item.checked .ci-box { border-color: #43A047; background: #43A047; color: #fff; }
+.checklist-item.na      .ci-box { border-color: #BDBDBD; background: #E0E0E0; color: #9E9E9E; }
+
+.ci-content { flex: 1; }
+.ci-title   { font-size: 13px; font-weight: 600; color: #212121; line-height: 1.4; }
+.ci-desc    { font-size: 11px; color: #757575; margin-top: 2px; line-height: 1.4; }
+.ci-ref     { font-size: 10px; color: #9FA8DA; margin-top: 2px; font-style: italic; }
+
+.ci-actions { display: flex; gap: 6px; align-items: center; margin-top: 6px; }
+.btn-na     { font-size: 11px; background: #F5F5F5; border: 1px solid #BDBDBD; color: #757575; padding: 2px 8px; border-radius: 3px; }
+.btn-na.active { background: #EEEEEE; color: #424242; }
+
+.ci-obs-wrap { margin-top: 8px; display: none; }
+.ci-obs-wrap.open { display: block; }
+.ci-obs-wrap textarea { min-height: 60px; font-size: 12px; width: 100%; background: #fff; }
+/* ── SEPARADORES DE GRUPO ─────────────────────────────────────── */
+.ci-group-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .4px; padding: 8px 4px 4px; margin-top: 4px; border-bottom: 1px solid; }
+.ci-group-label.obrig    { color: #C62828; border-color: #FFCDD2; }
+.ci-group-label.opcional { color: #757575; border-color: #E0E0E0; }
+
+/* ── ALERTA EXTRATO ──────────────────────────────────────────── */
+.alert-extrato {
+  background: #FFF3E0;
+  border: 2px solid #FF8F00;
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.alert-extrato .ae-icon { font-size: 22px; }
+.alert-extrato .ae-title { font-weight: 700; color: #E65100; font-size: 13px; margin-bottom: 4px; }
+.alert-extrato .ae-body { font-size: 12px; color: #5D4037; line-height: 1.5; }
+
+/* ── INFORMAÇÕES / CAIXAS ────────────────────────────────────── */
+.info-box { background: #E8EAF6; border: 1px solid #9FA8DA; border-radius: 6px; padding: 10px 14px; font-size: 12px; color: #1A237E; margin-bottom: 14px; line-height: 1.5; }
+.warn-box { background: #FFF8E1; border: 1px solid #FFE082; border-radius: 6px; padding: 10px 14px; font-size: 12px; color: #6D4C41; margin-bottom: 14px; line-height: 1.5; }
+.ok-box   { background: #E8F5E9; border: 1px solid #A5D6A7; border-radius: 6px; padding: 10px 14px; font-size: 12px; color: #1B5E20; margin-bottom: 14px; line-height: 1.5; }
+
+/* ── RESULTADO FINAL ─────────────────────────────────────────── */
+.resultado-wrap {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0,0,0,.08);
+  border-left: 4px solid #00897B;
+}
+.resultado-wrap h2 { color: #00695C; font-size: 14px; font-weight: 700; margin-bottom: 16px; padding-bottom: 10px; border-bottom: 2px solid #E0F2F1; }
+
+.resultado-options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.resultado-card {
+  border: 2px solid #E0E0E0; border-radius: 8px; padding: 12px 14px;
+  cursor: pointer; text-align: center; transition: border-color .15s, background .15s;
+  display: flex; flex-direction: column; align-items: center; gap: 6px;
+}
+.resultado-card input[type="radio"] { display: none; }
+.resultado-card .rc-icon   { font-size: 20px; }
+.resultado-card .rc-label  { font-weight: 700; font-size: 12px; }
+.resultado-card .rc-desc   { font-size: 11px; color: #757575; }
+.resultado-card:has(input:checked).aprovado  { border-color: #43A047; background: #E8F5E9; }
+.resultado-card:has(input:checked).ressalvas { border-color: #FFA000; background: #FFF8E1; }
+.resultado-card:has(input:checked).reprovado { border-color: #E53935; background: #FFEBEE; }
+.resultado-card.aprovado  .rc-label { color: #2E7D32; }
+.resultado-card.ressalvas .rc-label { color: #E65100; }
+.resultado-card.reprovado .rc-label { color: #C62828; }
+
+/* ── MODAL EMAIL ─────────────────────────────────────────────── */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.55);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-box {
+  background: #fff;
+  border-radius: 10px;
+  padding: 28px 32px;
+  max-width: 700px;
+  width: 96%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 32px rgba(0,0,0,.2);
+}
+.modal-box h3 { color: #1A237E; font-size: 15px; margin-bottom: 16px; border-bottom: 2px solid #E8EAF6; padding-bottom: 10px; }
+.email-field  { margin-bottom: 12px; }
+.email-field label { font-size: 12px; font-weight: 600; color: #555; display: block; margin-bottom: 4px; }
+.email-field input, .email-field textarea { width: 100%; padding: 8px 10px; border: 1px solid #BDBDBD; border-radius: 4px; font-size: 13px; }
+.email-field textarea { min-height: 200px; font-family: 'Segoe UI', sans-serif; line-height: 1.6; }
+.modal-actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+.btn-copy { background: #3949AB; color: #fff; border: none; padding: 8px 16px; border-radius: 4px; font-weight: 600; }
+.btn-close-modal { background: #E0E0E0; color: #333; border: 1px solid #BDBDBD; padding: 8px 14px; border-radius: 4px; }
+
+/* ── STATUS BAR ──────────────────────────────────────────────── */
+.statusbar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: #212121; color: #fff; font-size: 11px;
+  padding: 4px 16px; display: flex; align-items: center; gap: 16px; z-index: 100;
+}
+.badge { padding: 2px 8px; border-radius: 3px; color: #fff; font-weight: 600; font-size: 11px; }
+.badge-ok   { background: #43A047; }
+.badge-warn { background: #E65100; }
+.badge-info { background: #3949AB; }
+
+/* ── PRINT ───────────────────────────────────────────────────── */
+@media print {
+  @page { size: A4; margin: 15mm; }
+  body { font-size: 10px !important; background: #fff !important; }
+  .toolbar, .statusbar, .progress-bar-wrap, .btn-email,
+  .modal-overlay, .dirty-indicator { display: none !important; }
+  .app-header { background: #1A237E !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .container { padding: 0 !important; max-width: 100% !important; }
+  .form-section, .resultado-wrap { box-shadow: none !important; border: 1px solid #ccc; page-break-inside: avoid; }
+  .checklist-item { break-inside: avoid; }
+  .ci-obs-wrap { display: block !important; }
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────────────── */
+@media (max-width: 700px) {
+  .form-grid { grid-template-columns: 1fr; }
+  .resultado-options { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══ HEADER ════════════════════════════════════════════════ -->
+<div class="app-header">
+  <div class="header-left">
+    <h1>✅ Checklist de Conferência de Prestação de Contas</h1>
+    <span class="app-subtitle">Pessoa Gestora — Portaria nº 021/SMDHC/2023, Arts. 53–67</span>
+  </div>
+  <button class="btn-back" onclick="voltarPainel()">← Voltar</button>
+</div>
+
+<!-- ═══ TOOLBAR ═══════════════════════════════════════════════ -->
+<div class="toolbar">
+  <button class="btn-save" onclick="salvar()" title="Ctrl+S">💾 SALVAR</button>
+  <button class="btn-primary" onclick="document.getElementById('fileOpen').click()">📂 Abrir</button>
+  <input type="file" id="fileOpen" accept=".json" style="display:none" onchange="abrirArquivo(event)">
+  <button class="btn-secondary" onclick="salvarComo()">Salvar Como...</button>
+  <div class="sep"></div>
+  <button class="btn-email" onclick="abrirModalEmail()">📧 Gerar E-mail de Retorno à OSC</button>
+  <button class="btn-primary" onclick="exportarPDF()">🖨️ Imprimir / PDF</button>
+  <span class="dirty-indicator" id="dirtyFlag">● Não salvo</span>
+</div>
+
+<!-- ═══ CONTAINER ═════════════════════════════════════════════ -->
+<div class="container">
+
+  <!-- ALERTA EXTRATO ───────────────────────────────────────── -->
+  <div class="alert-extrato">
+    <span class="ae-icon">🏦</span>
+    <div>
+      <div class="ae-title">Atenção — Conferência dos Extratos Bancários (obrigatório)</div>
+      <div class="ae-body">
+        Verifique se a OSC anexou ao processo <strong>todos os extratos bancários</strong> da conta da parceria, incluindo a <strong>conta de aplicação financeira</strong> (quando houver), cobrindo todo o período de vigência ou o período de prestação de contas em análise.<br>
+        A ausência de extratos é motivo de <strong>não aprovação</strong> da prestação de contas (Art. 56 c/c Portaria 021).
+      </div>
+    </div>
+  </div>
+
+  <!-- PROGRESSO ────────────────────────────────────────────── -->
+  <div class="progress-bar-wrap">
+    <div class="progress-label">
+      <span>Progresso do Checklist</span>
+      <span id="progressText">0 / 0 itens conferidos</span>
+    </div>
+    <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    <div class="progress-sub" id="progressSub">Preencha os dados de identificação e marque os itens conferidos.</div>
+  </div>
+
+  <!-- ═══ 1. IDENTIFICAÇÃO ════════════════════════════════════ -->
+  <div class="form-section">
+    <h2>📋 1. Identificação da Parceria
+      <span class="section-badge" id="badge-ident">Pendente</span>
+    </h2>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>OSC *</label>
+        <input type="text" id="nomeOSC" oninput="markDirty(); atualizarBadgeIdent()">
+      </div>
+      <div class="form-group">
+        <label>Nome do Projeto ou Atividade *</label>
+        <input type="text" id="nomeProjeto" oninput="markDirty(); atualizarBadgeIdent()">
+      </div>
+    </div>
+    <div class="form-grid cols-3">
+      <div class="form-group">
+        <label>Nº do Termo</label>
+        <input type="text" id="numInstrumento" placeholder="XX/20XX/SMDHC/xxx" oninput="markDirty()">
+      </div>
+      <div class="form-group">
+        <label>Período de Referência — Início *</label>
+        <input type="date" id="periodoInicio" oninput="markDirty(); atualizarBadgeIdent()">
+      </div>
+      <div class="form-group">
+        <label>Período de Referência — Fim *</label>
+        <input type="date" id="periodoFim" oninput="markDirty(); atualizarBadgeIdent()">
+      </div>
+    </div>
+    <div class="form-grid cols-3">
+      <div class="form-group">
+        <label>Data de Recebimento dos Docs.</label>
+        <input type="date" id="dataRecebimento" oninput="markDirty()">
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-group">
+        <label>Pessoa Gestora *</label>
+        <input type="text" id="nomeGestora" oninput="markDirty(); atualizarBadgeIdent()">
+      </div>
+      <div class="form-group">
+        <label>RF da Pessoa Gestora</label>
+        <input type="text" id="rfGestora" placeholder="XXX.XXX-X" oninput="markDirty()">
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══ 2. DOCUMENTAÇÃO RECEBIDA ════════════════════════════ -->
+  <div class="form-section">
+    <h2>📂 2. Documentação Recebida
+      <span class="section-badge" id="badge-docs">0/5</span>
+    </h2>
+    <div class="info-box">Marque cada documento conforme o recebimento. Itens <strong>obrigatórios</strong> devem estar presentes. Use <strong>N/A</strong> para itens que não se aplicam à parceria.</div>
+    <div class="checklist-group" id="grupo-docs">
+
+      <div class="ci-group-label obrig">⚠ Documentação Obrigatória</div>
+
+      <div class="checklist-item" data-group="docs" onclick="toggleItem(this)">
+        <div class="ci-box">✓</div>
+        <div class="ci-content">
+          <div class="ci-title">Relatório de Execução do Objeto e Cumprimento de Metas</div>
+          <div class="ci-desc">Relatório descrevendo as atividades realizadas, metas atingidas e resultados obtidos no período de referência.</div>
+          <div class="ci-ref">Art. 65, I e II — Portaria 021/SMDHC/2023 | Art. 74 — Portaria 090/SMDHC/2023</div>
+          <div class="ci-obs-wrap"><textarea placeholder="Observação (opcional)..." oninput="markDirty()" onclick="event.stopPropagation()"></textarea></div>
+        </div>
+      </div>
+
+      <div class="checklist-item" data-group="docs" onclick="toggleItem(this)">
+        <div class="ci-box">✓</div>
+        <div class="ci-content">
+          <div class="ci-title">Extratos Bancários — Conta Corrente da Parceria</div>
+          <div class="ci-desc">Extrato completo da conta bancária da parceria, cobrindo todo o período de referência em análise.</div>
+          <div class="ci-ref">Art. 56 — Portaria 021/SMDHC/2023 | Art. 74, VIII — Portaria 090/SMDHC/2023</div>
+          <div class="ci-obs-wrap"><textarea placeholder="Observação (opcional)..." oninput="markDirty()" onclick="event.stopPropagation()"></textarea></div>
+        </div>
+      </div>
+
+      <div class="checklist-item" data-group="docs" onclick="toggleItem(this)">
+        <div class="ci-box">✓</div>
+        <div class="ci-content">
+          <div class="ci-title">Extratos Bancários — Conta de Aplicação Financeira</div>
+          <div class="ci-desc">Extrato da conta de aplicação do período, incluindo rendimentos e resgates. Use N/A se não houve aplicação financeira.</div>
+          <div class="ci-ref">Art. 56 — Portaria 021/SMDHC/2023 | Art. 74, VIII — Portaria 090/SMDHC/2023</div>
+          <div class="ci-actions"><button class="btn-na" onclick="toggleNA(event, this)">N/A</button></div>
+          <div class="ci-obs-wrap"><textarea placeholder="Observação (opcional)..." oninput="markDirty()" onclick="event.stopPropagation()"></textarea></div>
+        </div>
+      </div>
+
+      <div class="ci-group-label opcional">Documentação Complementar (quando aplicável)</div>
+
+      <div class="checklist-item" data-group="docs" onclick="toggleItem(this)">
+        <div class="ci-box">✓</div>
+        <div class="ci-content">
+          <div class="ci-title">Listas de Presença / Frequência de Beneficiários</div>
+          <div class="ci-desc">Listas assinadas pelos participantes/beneficiários atendidos no período de referência.</div>
+          <div class="ci-ref">Art. 56 — Portaria 021/SMDHC/2023 | Art. 74, II — Portaria 090/SMDHC/2023</div>
+          <div class="ci-actions"><button class="btn-na" onclick="toggleNA(event, this)">N/A</button></div>
+          <div class="ci-obs-wrap"><textarea placeholder="Observação (opcional)..." oninput="markDirty()" onclick="event.stopPropagation()"></textarea></div>
+        </div>
+      </div>
+
+      <div class="checklist-item" data-group="docs" onclick="toggleItem(this)">
+        <div class="ci-box">✓</div>
+        <div class="ci-content">
+          <div class="ci-title">Guias e Comprovações de Pagamento</div>
+          <div class="ci-desc">Inclui: holerites e folhas de pagamento, notas fiscais e recibos de serviços, guias de recolhimento de impostos e contribuições (FGTS, INSS, ISS), comprovantes de pagamento e transferências, contratos com fornecedores e prestadores de serviço.</div>
+          <div class="ci-ref">Art. 59, II — Portaria 021/SMDHC/2023</div>
+          <div class="ci-actions"><button class="btn-na" onclick="toggleNA(event, this)">N/A</button></div>
+          <div class="ci-obs-wrap"><textarea placeholder="Observação (opcional)..." oninput="markDirty()" onclick="event.stopPropagation()"></textarea></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══ 6. RESULTADO E PROVIDÊNCIAS ═════════════════════════ -->
+  <div class="resultado-wrap">
+    <h2>📊 6. Resultado da Conferência</h2>
+
+    <div class="resultado-options" style="margin-bottom:18px;">
+      <label class="resultado-card aprovado">
+        <input type="radio" name="resultadoConf" value="completo" onchange="markDirty(); atualizarResultado()">
+        <span class="rc-icon">✅</span>
+        <span class="rc-label">Todos os documentos entregues</span>
+        <span class="rc-desc">Documentação completa recebida conforme o previsto.</span>
+      </label>
+      <label class="resultado-card ressalvas">
+        <input type="radio" name="resultadoConf" value="parcial" onchange="markDirty(); atualizarResultado()">
+        <span class="rc-icon">⚠️</span>
+        <span class="rc-label">Documentos parcialmente entregues</span>
+        <span class="rc-desc">Um ou mais documentos estão ausentes ou com inconsistências.</span>
+      </label>
+    </div>
+
+    <div id="pendenciasWrap" style="display:none; margin-bottom:14px;">
+      <div class="form-group">
+        <label>Documentos Pendentes e Inconsistências Identificadas</label>
+        <textarea id="pendencias" placeholder="Liste os documentos ausentes ou incompletos. Indique o documento, a inconsistência e o que é necessário para regularização." oninput="markDirty()" style="min-height:100px;"></textarea>
+      </div>
+      <div class="form-grid" style="margin-top:10px;">
+        <div class="form-group">
+          <label>Prazo para Entrega dos Documentos Pendentes</label>
+          <input type="date" id="prazoPendencias" oninput="markDirty()">
+        </div>
+        <div class="form-group"></div>
+      </div>
+    </div>
+
+    <div class="form-grid cols-1" style="margin-top:10px;">
+      <div class="form-group">
+        <label>Observações e Orientações à OSC</label>
+        <textarea id="recomendacoes" placeholder="Observações gerais, orientações ou recomendações a encaminhar à OSC..." oninput="markDirty()" style="min-height:80px;"></textarea>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- AÇÕES FINAIS ──────────────────────────────────────────── -->
+  <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;">
+    <button class="btn-save" onclick="salvar()">💾 SALVAR</button>
+    <button class="btn-email" onclick="abrirModalEmail()">📧 Gerar E-mail de Retorno à OSC</button>
+    <button class="btn-primary" onclick="exportarPDF()">🖨️ Imprimir / PDF</button>
+    <button class="btn-secondary" onclick="limpar()">🔄 Limpar</button>
+    <button class="btn-back" onclick="voltarPainel()">← Voltar</button>
+  </div>
+
+</div>
+
+<!-- ═══ MODAL DE E-MAIL ════════════════════════════════════════ -->
+<div class="modal-overlay" id="modalEmail">
+  <div class="modal-box">
+    <h3>📧 Modelo de E-mail de Retorno à OSC</h3>
+    <div class="email-field">
+      <label>Assunto</label>
+      <input type="text" id="emailAssunto" readonly>
+    </div>
+    <div class="email-field">
+      <label>Corpo do E-mail (edite antes de copiar)</label>
+      <textarea id="emailCorpo" style="min-height:320px;"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-copy" onclick="copiarEmail()">📋 Copiar E-mail</button>
+      <button class="btn-close-modal" onclick="fecharModalEmail()">Fechar</button>
+    </div>
+    <p style="font-size:11px;color:#9E9E9E;margin-top:10px;">⚠️ Revise o texto antes de enviar. O e-mail é um modelo editável e não substitui o encaminhamento formal pelo SEI.</p>
+  </div>
+</div>
+
+<!-- ═══ STATUS BAR ════════════════════════════════════════════ -->
+<div class="statusbar">
+  <span id="statusFile">Novo checklist</span>
+  <span class="badge badge-info" id="statusInfo">Pronto</span>
+  <span id="statusDirty" style="display:none; color:#FFEB3B; font-weight:bold;">● Não salvo</span>
+</div>
+
+<script>
+'use strict';
+const LS_KEY = 'checklist_prestacao_autosave';
+let isDirty = false;
+let currentFileName = '';
+
+// ── Dirty ──────────────────────────────────────────────────
+function markDirty() {
+  isDirty = true;
+  document.getElementById('dirtyFlag').classList.add('active');
+  document.getElementById('statusDirty').style.display = 'inline';
+  autoSave();
+  atualizarProgresso();
+}
+function clearDirty() {
+  isDirty = false;
+  document.getElementById('dirtyFlag').classList.remove('active');
+  document.getElementById('statusDirty').style.display = 'none';
+}
+
+// ── Checklist logic ────────────────────────────────────────
+function toggleItem(el) {
+  if (el.classList.contains('na')) return;
+  const wasChecked = el.classList.contains('checked');
+  el.classList.toggle('checked', !wasChecked);
+  // toggle obs
+  const obs = el.querySelector('.ci-obs-wrap');
+  if (obs) obs.classList.toggle('open', !wasChecked);
+  markDirty();
+  atualizarBadges();
+}
+function toggleNA(e, btn) {
+  e.stopPropagation();
+  const item = btn.closest('.checklist-item');
+  const isNA = item.classList.toggle('na');
+  item.classList.toggle('checked', false);
+  btn.classList.toggle('active', isNA);
+  markDirty();
+  atualizarBadges();
+}
+
+// ── Progresso e badges ──────────────────────────────────────
+const GROUPS = ['docs'];
+const BADGE_IDS = { docs: 'badge-docs' };
+
+function atualizarBadges() {
+  GROUPS.forEach(g => {
+    const items = document.querySelectorAll(`[data-group="${g}"]`);
+    const total = items.length;
+    const done  = [...items].filter(i => i.classList.contains('checked') || i.classList.contains('na')).length;
+    const el = document.getElementById(BADGE_IDS[g]);
+    if (!el) return;
+    el.textContent = `${done}/${total}`;
+    el.className = 'section-badge' + (done === total ? ' done' : '');
+  });
+}
+function atualizarProgresso() {
+  const allItems = document.querySelectorAll('.checklist-item');
+  const total = allItems.length;
+  const done  = [...allItems].filter(i => i.classList.contains('checked') || i.classList.contains('na')).length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `${done} / ${total} itens conferidos`;
+  document.getElementById('progressSub').textContent =
+    pct === 100 ? '✅ Todos os itens conferidos! Gere o e-mail de retorno à OSC.' :
+    pct >= 50 ? `${pct}% concluído — continue a conferência.` :
+    'Marque os itens conferidos ao longo da análise.';
+}
+function atualizarBadgeIdent() {
+  const osc  = document.getElementById('nomeOSC').value.trim();
+  const proj = document.getElementById('nomeProjeto').value.trim();
+  const per  = document.getElementById('periodoInicio').value.trim();
+  const gest = document.getElementById('nomeGestora').value.trim();
+  const el = document.getElementById('badge-ident');
+  const ok = osc && proj && per && gest;
+  el.textContent = ok ? 'Preenchido' : 'Pendente';
+  el.className = 'section-badge' + (ok ? ' done' : '');
+}
+function atualizarResultado() {
+  const val = document.querySelector('input[name="resultadoConf"]:checked')?.value;
+  document.getElementById('pendenciasWrap').style.display = val === 'parcial' ? 'block' : 'none';
+}
+
+// ── Serializar/desserializar itens ─────────────────────────
+function getChecklistState() {
+  const items = document.querySelectorAll('.checklist-item');
+  return [...items].map((item, i) => ({
+    i,
+    checked: item.classList.contains('checked'),
+    na: item.classList.contains('na'),
+    obs: item.querySelector('textarea')?.value || ''
+  }));
+}
+function setChecklistState(state) {
+  if (!state) return;
+  const items = document.querySelectorAll('.checklist-item');
+  state.forEach(s => {
+    const item = items[s.i];
+    if (!item) return;
+    item.classList.toggle('checked', s.checked);
+    item.classList.toggle('na', s.na);
+    const obsWrap = item.querySelector('.ci-obs-wrap');
+    if (obsWrap) obsWrap.classList.toggle('open', s.checked || !!s.obs);
+    const ta = item.querySelector('textarea');
+    if (ta) ta.value = s.obs || '';
+    const btn = item.querySelector('.btn-na');
+    if (btn) btn.classList.toggle('active', s.na);
+  });
+}
+
+// ── getFormData / setFormData ──────────────────────────────
+function getFormData() {
+  return {
+    _version: 1,
+    _form: 'checklist_prestacao',
+    nomeOSC: document.getElementById('nomeOSC').value,
+    nomeProjeto: document.getElementById('nomeProjeto').value,
+    numInstrumento: document.getElementById('numInstrumento').value,
+    periodoInicio: document.getElementById('periodoInicio').value,
+    periodoFim: document.getElementById('periodoFim').value,
+    dataRecebimento: document.getElementById('dataRecebimento').value,
+    nomeGestora: document.getElementById('nomeGestora').value,
+    rfGestora: document.getElementById('rfGestora').value,
+    checklistState: getChecklistState(),
+    resultadoConf: document.querySelector('input[name="resultadoConf"]:checked')?.value || '',
+    pendencias: document.getElementById('pendencias').value,
+    recomendacoes: document.getElementById('recomendacoes').value,
+    prazoPendencias: document.getElementById('prazoPendencias').value
+  };
+}
+function setFormData(d) {
+  const set = (id, v) => { const el = document.getElementById(id); if(el) el.value = v||''; };
+  set('nomeOSC', d.nomeOSC);
+  set('nomeProjeto', d.nomeProjeto);
+  set('numInstrumento', d.numInstrumento);
+  set('periodoInicio', d.periodoInicio);
+  set('periodoFim', d.periodoFim);
+  set('dataRecebimento', d.dataRecebimento);
+  set('nomeGestora', d.nomeGestora);
+  set('rfGestora', d.rfGestora);
+  setChecklistState(d.checklistState);
+  if (d.resultadoConf) {
+    const r = document.querySelector(`input[name="resultadoConf"][value="${d.resultadoConf}"]`);
+    if (r) r.checked = true;
+  }
+  set('pendencias', d.pendencias);
+  set('recomendacoes', d.recomendacoes);
+  set('prazoPendencias', d.prazoPendencias);
+  atualizarBadges();
+  atualizarProgresso();
+  atualizarBadgeIdent();
+  atualizarResultado();
+}
+
+// ── Auto-save ──────────────────────────────────────────────
+function autoSave() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(getFormData())); } catch(_) {}
+}
+function tryRestore() {
+  try {
+    const s = localStorage.getItem(LS_KEY);
+    if (s) { setFormData(JSON.parse(s)); clearDirty(); }
+  } catch(e) { console.warn(e); }
+}
+
+// ── Salvar ─────────────────────────────────────────────────
+function salvar() { if (!currentFileName) { salvarComo(); return; } downloadJSON(currentFileName); clearDirty(); }
+function salvarComo() {
+  const osc = document.getElementById('nomeOSC').value || 'checklist';
+  const per = document.getElementById('periodoInicio').value || '';
+  const perFim = document.getElementById('periodoFim').value || '';
+  const perLabel = per && perFim ? per.split('-').reverse().join('/') + ' a ' + perFim.split('-').reverse().join('/') : (per ? per : '');
+  const sug = `${osc}_checklist_pc${perLabel ? '_'+perLabel : ''}.json`.replace(/[<>:"|?*\\/]/g,'_');
+  const fn = prompt('Nome do arquivo:', sug);
+  if (!fn) return;
+  currentFileName = fn.endsWith('.json') ? fn : fn + '.json';
+  downloadJSON(currentFileName);
+  clearDirty();
+  document.getElementById('statusFile').textContent = currentFileName;
+}
+function downloadJSON(fn) {
+  const blob = new Blob([JSON.stringify(getFormData(), null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = fn; a.click();
+  URL.revokeObjectURL(url);
+}
+function abrirArquivo(e) {
+  const file = e.target.files[0]; if (!file) return;
+  const r = new FileReader();
+  r.onload = ev => {
+    try {
+      setFormData(JSON.parse(ev.target.result));
+      currentFileName = file.name; clearDirty();
+      document.getElementById('statusFile').textContent = file.name;
+    } catch(err) { alert('Erro ao abrir: ' + err.message); }
+  };
+  r.readAsText(file); e.target.value = '';
+}
+function limpar() {
+  if (!confirm('Limpar todos os dados?')) return;
+  document.querySelectorAll('input:not([type="radio"]), select, textarea').forEach(el => el.value = '');
+  document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
+  document.querySelectorAll('.checklist-item').forEach(item => {
+    item.classList.remove('checked','na');
+    const obs = item.querySelector('.ci-obs-wrap'); if (obs) obs.classList.remove('open');
+    const ta  = item.querySelector('textarea');     if (ta)  ta.value = '';
+    const btn = item.querySelector('.btn-na');      if (btn) btn.classList.remove('active');
+  });
+  atualizarBadges(); atualizarProgresso(); atualizarResultado(); markDirty();
+}
+
+// ── Modal E-mail ───────────────────────────────────────────
+function abrirModalEmail() {
+  const osc    = document.getElementById('nomeOSC').value || '[nome da OSC]';
+  const proj   = document.getElementById('nomeProjeto').value || '[nome do projeto]';
+  const perIni = document.getElementById('periodoInicio').value;
+  const perFim = document.getElementById('periodoFim').value;
+  const per    = perIni && perFim
+    ? new Date(perIni+'T12:00:00').toLocaleDateString('pt-BR') + ' a ' + new Date(perFim+'T12:00:00').toLocaleDateString('pt-BR')
+    : perIni ? new Date(perIni+'T12:00:00').toLocaleDateString('pt-BR') : '[período]';
+  const num    = document.getElementById('numInstrumento').value || '[nº instrumento]';
+  const gest   = document.getElementById('nomeGestora').value || '[pessoa gestora]';
+  const prazo  = document.getElementById('prazoPendencias').value
+                   ? new Date(document.getElementById('prazoPendencias').value + 'T12:00:00').toLocaleDateString('pt-BR')
+                   : '[data]';
+  const result = document.querySelector('input[name="resultadoConf"]:checked')?.value || '';
+  const pend   = document.getElementById('pendencias').value.trim();
+  const rec    = document.getElementById('recomendacoes').value.trim();
+
+  const resultLabel = { completo: 'COM TODA A DOCUMENTAÇÃO ENTREGUE', parcial: 'COM DOCUMENTAÇÃO PARCIALMENTE ENTREGUE' };
+  const assunto = `[Central de Parcerias] Análise de Prestação de Contas — ${osc} — ${proj} — ${per}`;
+
+  let corpo = `Prezado(a) Responsável pela ${osc},\n\n`;
+  corpo += `Informamos que foi realizada a conferência da prestação de contas referente ao período de ${per}, do projeto "${proj}", no âmbito do instrumento ${num}.\n\n`;
+
+  if (result) {
+    corpo += `A análise preliminar da documentação recebida resulta em: PRESTAÇÃO DE CONTAS ${resultLabel[result] || result.toUpperCase()}.\n\n`;
+  }
+
+  if (pend) {
+    corpo += `────────────────────────────────────────\nPENDÊNCIAS E IRREGULARIDADES IDENTIFICADAS:\n────────────────────────────────────────\n${pend}\n\n`;
+    corpo += `Solicitamos que as pendências acima sejam sanadas no prazo de 5 (cinco) dias úteis a contar do recebimento deste comunicado${prazo !== '[data]' ? `, ou seja, até ${prazo}` : ''}, conforme Art. 67 da Portaria nº 021/SMDHC/2023.\n\n`;
+  }
+
+  if (rec) {
+    corpo += `────────────────────────────────────────\nRECOMENDAÇÕES E ORIENTAÇÕES:\n────────────────────────────────────────\n${rec}\n\n`;
+  }
+
+  if (retn && retn !== 'Não') {
+    corpo += `────────────────────────────────────────\nINFORMAÇÃO SOBRE REPASSE SUBSEQUENTE:\n────────────────────────────────────────\n`;
+    corpo += `Em razão das pendências identificadas, informamos a possibilidade de desconto ou retenção do próximo repasse, conforme Art. 64 da Portaria nº 021/SMDHC/2023.\n`;
+    if (justRet) corpo += `Justificativa: ${justRet}\n`;
+    corpo += `\nA OSC poderá apresentar recurso em até 5 (cinco) dias úteis após o recebimento deste comunicado.\n\n`;
+  }
+
+  corpo += `Em caso de dúvidas ou divergências, manifestá-las em até 5 (cinco) dias úteis junto à pessoa gestora, conforme Art. 67 da Portaria nº 021/SMDHC/2023.\n\n`;
+  corpo += `Atenciosamente,\n${gest}\nPessoa Gestora — SMDHC\n`;
+
+  document.getElementById('emailAssunto').value = assunto;
+  document.getElementById('emailCorpo').value = corpo;
+  document.getElementById('modalEmail').classList.add('open');
+}
+function fecharModalEmail() { document.getElementById('modalEmail').classList.remove('open'); }
+async function copiarEmail() {
+  const assunto = document.getElementById('emailAssunto').value;
+  const corpo   = document.getElementById('emailCorpo').value;
+  const texto = `Assunto: ${assunto}\n\n${corpo}`;
+  try {
+    await navigator.clipboard.writeText(texto);
+    alert('E-mail copiado para a área de transferência!');
+  } catch(_) {
+    document.getElementById('emailCorpo').select();
+    document.execCommand('copy');
+    alert('E-mail copiado!');
+  }
+}
+
+// ── PDF ────────────────────────────────────────────────────
+function exportarPDF() { window.print(); }
+
+// ── Navegação ──────────────────────────────────────────────
+function voltarPainel() {
+  if (isDirty && !confirm('Há alterações não salvas. Sair mesmo assim?')) return;
+  window.location.href = '../index.html#gestor';
+}
+
+// ── Atalhos ────────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey||e.metaKey) && e.key === 's') { e.preventDefault(); salvar(); }
+});
+window.addEventListener('beforeunload', e => { if (isDirty) { e.preventDefault(); e.returnValue=''; } });
+
+// ── PWA ────────────────────────────────────────────────────
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('../sw.js').catch(()=>{});
+}
+
+// ── Init ───────────────────────────────────────────────────
+(function init() {
+  atualizarBadges();
+  atualizarProgresso();
+  tryRestore();
+})();
+</script>
+</body>
+</html>

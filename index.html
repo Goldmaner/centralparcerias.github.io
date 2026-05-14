@@ -6,6 +6,7 @@
 <title>Central de Parcerias — Gestão de Parcerias</title>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#1565C0">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 /* ═══════════════════════════════════════════════════════════════
    RESET & BASE
@@ -239,12 +240,113 @@ h2.print-title { display: none; }
 
 /* Esconde o app enquanto landing está visível */
 #appShell { display: none; }
+
+/* ═════════════════════════════════════════════════════
+   AUTH — LOGIN & SOLICITAR CADASTRO
+   ═════════════════════════════════════════════════════ */
+.auth-overlay { min-height: 100vh; background: linear-gradient(160deg, #0D47A1 0%, #1565C0 40%, #1976D2 70%, #1E88E5 100%); display: flex; align-items: center; justify-content: center; padding: 20px; }
+.auth-card { background: #fff; border-radius: 16px; padding: 40px 36px; width: 100%; max-width: 380px; box-shadow: 0 8px 40px rgba(0,0,0,.2); display: flex; flex-direction: column; align-items: center; gap: 0; }
+.auth-logo { font-size: 48px; margin-bottom: 8px; }
+.auth-title { font-size: 18px; font-weight: 700; color: #0D47A1; margin-bottom: 4px; text-align: center; }
+.auth-subtitle { font-size: 12px; color: #888; margin-bottom: 24px; text-align: center; }
+.auth-form { width: 100%; display: flex; flex-direction: column; gap: 12px; }
+.auth-form label { font-size: 12px; font-weight: 600; color: #555; }
+.auth-form input { width: 100%; padding: 10px 12px; border: 1px solid #BDBDBD; border-radius: 6px; font-size: 14px; font-family: inherit; }
+.auth-form input:focus { outline: none; border-color: #1565C0; box-shadow: 0 0 0 2px rgba(21,101,192,.15); }
+.btn-login { background: #1565C0; color: #fff; border: none; padding: 11px; border-radius: 6px; font-weight: 700; font-size: 14px; font-family: inherit; cursor: pointer; width: 100%; }
+.btn-login:hover { background: #0D47A1; }
+.auth-msg { border-radius: 6px; padding: 8px 12px; font-size: 12px; width: 100%; display: none; }
+.auth-msg.active { display: block; }
+.auth-msg.error { background: #FFEBEE; color: #C62828; }
+.auth-msg.info  { background: #E8F5E9; color: #2E7D32; }
+.auth-divider { width: 100%; text-align: center; color: #ccc; font-size: 12px; margin: 8px 0; position: relative; }
+.auth-divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #E0E0E0; }
+.auth-divider span { background: #fff; padding: 0 8px; position: relative; }
+.btn-solicitar { background: transparent; color: #1565C0; border: 1.5px solid #1565C0; padding: 9px; border-radius: 6px; font-weight: 600; font-size: 13px; font-family: inherit; cursor: pointer; width: 100%; margin-top: 2px; }
+.btn-solicitar:hover { background: #E3F2FD; }
+/* Modal */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: none; align-items: center; justify-content: center; z-index: 1000; }
+.modal-overlay.active { display: flex; }
+.modal-card { background: #fff; border-radius: 12px; padding: 32px 28px; width: 100%; max-width: 480px; max-height: 90vh; overflow-y: auto; box-shadow: 0 8px 40px rgba(0,0,0,.25); }
+.modal-title { font-size: 16px; font-weight: 700; color: #0D47A1; margin-bottom: 4px; }
+.modal-subtitle { font-size: 12px; color: #888; margin-bottom: 20px; }
+.modal-form { display: flex; flex-direction: column; gap: 12px; }
+.modal-form label { font-size: 12px; font-weight: 600; color: #555; }
+.modal-form input, .modal-form select { width: 100%; padding: 9px 12px; border: 1px solid #BDBDBD; border-radius: 6px; font-size: 13px; font-family: inherit; }
+.modal-form input:focus, .modal-form select:focus { outline: none; border-color: #1565C0; box-shadow: 0 0 0 2px rgba(21,101,192,.15); }
+.modal-actions { display: flex; gap: 10px; margin-top: 8px; }
+.modal-actions button { flex: 1; padding: 10px; border-radius: 6px; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.modal-error { background: #FFEBEE; color: #C62828; border-radius: 6px; padding: 8px 12px; font-size: 12px; display: none; }
+.modal-error.active { display: block; }
+/* User badge fixo */
+.user-badge-fixed { position: fixed; top: 10px; right: 14px; background: rgba(13,71,161,.85); backdrop-filter: blur(4px); color: #fff; border-radius: 20px; padding: 5px 14px; font-size: 12px; z-index: 500; display: none; align-items: center; gap: 10px; }
+.user-badge-fixed.active { display: flex; }
+.user-badge-fixed a { color: rgba(255,255,255,.75); cursor: pointer; font-size: 11px; }
+.user-badge-fixed a:hover { color: #fff; text-decoration: underline; }
 </style>
 </head>
 <body>
 
+<!-- ═══ USER BADGE FIXO ══════════════════════════════════════ -->
+<div class="user-badge-fixed" id="userBadge">
+  <span id="userBadgeText">👤</span>
+  <a onclick="handleLogout()">Sair</a>
+</div>
+
+<!-- ═══ LOGIN SCREEN ══════════════════════════════════════════ -->
+<div class="auth-overlay" id="loginScreen">
+  <div class="auth-card">
+    <div class="auth-logo">🏙️</div>
+    <div class="auth-title">Central de Parcerias</div>
+    <div class="auth-subtitle">Departamento de Direitos Humanos</div>
+    <form class="auth-form" id="loginForm" onsubmit="handleLogin(event)">
+      <div>
+        <label for="loginEmail">E-mail</label>
+        <input type="email" id="loginEmail" autocomplete="email" required placeholder="seu@email.com">
+      </div>
+      <div>
+        <label for="loginPass">Senha</label>
+        <input type="password" id="loginPass" autocomplete="current-password" required placeholder="••••••••">
+      </div>
+      <div class="auth-msg error" id="loginError"></div>
+      <div class="auth-msg info"  id="loginInfo"></div>
+      <button type="submit" class="btn-login" id="btnLogin">Entrar</button>
+    </form>
+    <div class="auth-divider"><span>ou</span></div>
+    <button class="btn-solicitar" onclick="abrirModalSolicitar()">Solicitar Cadastro</button>
+  </div>
+</div>
+
+<!-- ═══ MODAL SOLICITAR CADASTRO ════════════════════════════ -->
+<div class="modal-overlay" id="modalSolicitar">
+  <div class="modal-card">
+    <div class="modal-title">✏️ Solicitar Cadastro</div>
+    <div class="modal-subtitle">Preencha os dados abaixo. Seu acesso ficará pendente até aprovação do administrador.</div>
+    <form class="modal-form" id="solicitarForm" onsubmit="handleSolicitar(event)">
+      <div><label>Nome completo *</label><input type="text" id="sNome" required placeholder="João da Silva"></div>
+      <div><label>RF (Registro Funcional)</label><input type="text" id="sRF" placeholder="Ex: 1234567"></div>
+      <div><label>E-mail *</label><input type="email" id="sEmail" required placeholder="seu@prefeitura.sp.gov.br"></div>
+      <div><label>Senha *</label><input type="password" id="sSenha" required minlength="6" placeholder="Mínimo 6 caracteres"></div>
+      <div>
+        <label>Tipo de acesso *</label>
+        <select id="sTipo" required>
+          <option value="">-- Selecione --</option>
+          <option value="gestora">Pessoa Gestora</option>
+          <option value="osc">OSC</option>
+        </select>
+      </div>
+      <div><label>Vínculo / Unidade</label><input type="text" id="sVinculo" placeholder="Ex: DDH / SMDHC"></div>
+      <div class="modal-error" id="solicitarError"></div>
+      <div class="modal-actions">
+        <button type="button" onclick="fecharModalSolicitar()" style="background:#E0E0E0;color:#333;border:none;">Cancelar</button>
+        <button type="submit" id="btnSolicitarSubmit" style="background:#1565C0;color:#fff;border:none;">Enviar Solicitação</button>
+      </div>
+    </form>
+  </div>
+</div>
+
 <!-- ═══ LANDING PAGE ══════════════════════════════════════════ -->
-<div class="landing" id="landingPage">
+<div class="landing" id="landingPage" style="display:none;">
 
   <div class="landing-header">
     <span class="landing-logo">🏙️</span>
@@ -304,11 +406,10 @@ h2.print-title { display: none; }
       <div class="landing-card-desc">Geração de relatórios periódicos de execução físico-financeira da parceria.</div>
     </div>
 
-    <div class="landing-card landing-card-disabled">
-      <div class="landing-card-badge">EM BREVE</div>
-      <div class="landing-card-icon">🧳</div>
-      <div class="landing-card-title">Prestação de Contas</div>
-      <div class="landing-card-desc">Organização e checklist de documentos para prestação de contas parcial e final.</div>
+    <div class="landing-card" onclick="window.location='Pages/relatorio_execucao_objeto.html'">
+      <div class="landing-card-icon">📄</div>
+      <div class="landing-card-title">Relatório de Execução do Objeto e Cumprimento de Metas</div>
+      <div class="landing-card-desc">Elaboração do relatório de execução das atividades, metas atingidas e documentação comprobatória.</div>
     </div>
 
   </div>
@@ -353,6 +454,18 @@ h2.print-title { display: none; }
       <div class="landing-card-icon">⚖️</div>
       <div class="landing-card-title">Parecer Técnico Conclusivo de Análise da Prestação de Contas</div>
       <div class="landing-card-desc">Elaboração do parecer técnico conclusivo para análise de prestações de contas (Arts. 75–78, Portaria 021).</div>
+    </div>
+
+    <div class="landing-card" onclick="window.location='Pages/checklist_prestacao_contas.html'">
+      <div class="landing-card-icon">✅</div>
+      <div class="landing-card-title">Checklist de Conferência de Prestação de Contas</div>
+      <div class="landing-card-desc">Conferência da documentação recebida da OSC com geração de e-mail de retorno e protocolo de análise.</div>
+    </div>
+
+    <div class="landing-card" id="adminCard" style="display:none;" onclick="window.location='Pages/admin_usuarios.html'">
+      <div class="landing-card-icon">⚙️</div>
+      <div class="landing-card-title">Administração de Usuários</div>
+      <div class="landing-card-desc">Gerencie solicitações de cadastro e permissões de acesso ao sistema.</div>
     </div>
 
   </div>
@@ -627,6 +740,140 @@ h2.print-title { display: none; }
      ═══════════════════════════════════════════════════════════ -->
 <script>
 'use strict';
+
+// ── Supabase ──────────────────────────────────────────────────
+// TODO: Reativar após configurar RLS em todas as tabelas
+// const SUPA_URL = 'https://myhxxxjjqlzxikaitmhe.supabase.co';
+// const SUPA_KEY = 'sb_publishable_yShZJNplsZzk1IbdRVfg7g_vU489ngd';
+// const { createClient } = supabase;
+// const sb = createClient(SUPA_URL, SUPA_KEY);
+let currentUser    = null;
+let currentProfile = null;
+
+async function checkAuthAndStart() {
+  // TODO: Reativar após configurar RLS em todas as tabelas
+  // const { data: { session } } = await sb.auth.getSession();
+  // if (session) { ... }
+  // showLoginScreen();
+
+  // ── MODO SEM LOGIN (temporário) ─────────────────────────────
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('landingPage').style.display = 'flex';
+}
+
+async function loadProfile() {
+  // TODO: Reativar após configurar RLS em todas as tabelas
+  // console.log('[DEBUG] UUID do usuário logado:', currentUser?.id);
+  // const { data, error } = await sb.schema('pessoa_gestora').from('pg_usuarios')
+  //   .select('*').eq('auth_user_id', currentUser.id).maybeSingle();
+  // console.log('[DEBUG] Resultado do select pg_usuarios:', data, error);
+  // if (!error && data) currentProfile = data;
+}
+
+async function enterApp() {
+  // TODO: Reativar após configurar RLS em todas as tabelas
+  // const nome = currentProfile.usuario_nome || currentUser.email;
+  // const tipo = currentProfile.usuario_tipo || '';
+  // document.getElementById('userBadgeText').textContent = `👤 ${nome} (${tipo})`;
+  // document.getElementById('userBadge').classList.add('active');
+  // const adminCard = document.getElementById('adminCard');
+  // if (adminCard) adminCard.style.display = currentProfile.usuario_tipo === 'admin' ? 'flex' : 'none';
+  // sb.schema('pessoa_gestora').from('pg_usuarios')
+  //   .update({ data_ultimo_login: new Date().toISOString() })
+  //   .eq('auth_user_id', currentUser.id).then(() => {});
+  document.getElementById('loginScreen').style.display = 'none';
+  const h = location.hash;
+  if (h === '#osc') {
+    document.getElementById('landingOSC').style.display = 'flex';
+    history.replaceState(null, '', location.pathname);
+  } else if (h === '#gestor') {
+    document.getElementById('landingGestor').style.display = 'flex';
+    history.replaceState(null, '', location.pathname);
+  } else {
+    document.getElementById('landingPage').style.display = 'flex';
+  }
+}
+
+function showLoginScreen() {
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('landingPage').style.display = 'none';
+  document.getElementById('landingOSC').style.display = 'none';
+  document.getElementById('landingGestor').style.display = 'none';
+}
+
+function showLoginMsg(type, msg) {
+  const errEl  = document.getElementById('loginError');
+  const infoEl = document.getElementById('loginInfo');
+  errEl.classList.remove('active');
+  infoEl.classList.remove('active');
+  if (type === 'error')     { errEl.textContent  = msg; errEl.classList.add('active'); }
+  else if (type === 'info') { infoEl.textContent = msg; infoEl.classList.add('active'); }
+}
+
+async function handleLogin(e) {
+  // TODO: Reativar após configurar RLS em todas as tabelas
+  e.preventDefault();
+}
+
+async function handleLogout() {
+  // TODO: Reativar após configurar RLS em todas as tabelas
+  // await sb.auth.signOut();
+  currentUser = null; currentProfile = null;
+  document.getElementById('userBadge').classList.remove('active');
+}
+
+function abrirModalSolicitar() {
+  document.getElementById('modalSolicitar').classList.add('active');
+}
+
+function fecharModalSolicitar() {
+  document.getElementById('modalSolicitar').classList.remove('active');
+  document.getElementById('solicitarForm').reset();
+  document.getElementById('solicitarError').classList.remove('active');
+}
+
+async function handleSolicitar(e) {
+  e.preventDefault();
+  const nome    = document.getElementById('sNome').value.trim();
+  const rf      = document.getElementById('sRF').value.trim();
+  const email   = document.getElementById('sEmail').value.trim();
+  const senha   = document.getElementById('sSenha').value;
+  const tipo    = document.getElementById('sTipo').value;
+  const vinculo = document.getElementById('sVinculo').value.trim();
+  const errEl   = document.getElementById('solicitarError');
+  const btn     = document.getElementById('btnSolicitarSubmit');
+  errEl.classList.remove('active');
+  btn.disabled = true; btn.textContent = 'Enviando...';
+  const { data: signData, error: signError } = await sb.auth.signUp({ email, password: senha });
+  if (signError) {
+    const msg = signError.message.toLowerCase().includes('already registered')
+      ? 'Este e-mail já possui cadastro. Tente fazer login.'
+      : 'Erro ao criar conta: ' + signError.message;
+    errEl.textContent = msg; errEl.classList.add('active');
+    btn.disabled = false; btn.textContent = 'Enviar Solicitação'; return;
+  }
+  const userId = signData.user?.id;
+  if (!userId) {
+    errEl.textContent = 'Erro inesperado. Tente novamente.';
+    errEl.classList.add('active');
+    btn.disabled = false; btn.textContent = 'Enviar Solicitação'; return;
+  }
+  const { error: insertError } = await sb.schema('pessoa_gestora').from('pg_usuarios').insert({
+    auth_user_id: userId, usuario_nome: nome, usuario_rf: rf,
+    usuario_email: email, usuario_senha: '', usuario_tipo: tipo,
+    usuario_status: 'pendente', usuario_vinculo: vinculo,
+    data_criacao: new Date().toISOString()
+  });
+  if (insertError) {
+    errEl.textContent = 'Conta criada, mas erro ao registrar perfil: ' + insertError.message;
+    errEl.classList.add('active');
+    btn.disabled = false; btn.textContent = 'Enviar Solicitação'; return;
+  }
+  await sb.auth.signOut();
+  fecharModalSolicitar();
+  showLoginMsg('info', '✅ Solicitação enviada! Aguarde a aprovação do administrador.');
+  btn.disabled = false; btn.textContent = 'Enviar Solicitação';
+}
 
 // ── Constantes ────────────────────────────────────────────────
 const ELEMENTOS = ['Pessoal','Materiais','Administrativas','Serviços de Terceiros','Outras Despesas','Imobilizado','Implantação'];
@@ -1467,30 +1714,11 @@ window.addEventListener('beforeunload', function(e) {
 
 // ── PWA Service Worker ────────────────────────────────────────
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('sw.js').then(reg => {
-    // Força verificação imediata de nova versão do SW
-    reg.update();
-    // Se já há um SW esperando (waiting), ativa imediatamente
-    if (reg.waiting) reg.waiting.postMessage({ type: 'SKIP_WAITING' });
-    // Quando encontrar nova versão, ativa automaticamente
-    reg.addEventListener('updatefound', () => {
-      const sw = reg.installing;
-      sw.addEventListener('statechange', () => {
-        if (sw.state === 'installed' && navigator.serviceWorker.controller) {
-          sw.postMessage({ type: 'SKIP_WAITING' });
-        }
-      });
-    });
-  }).catch(() => {});
-  // Recarrega a página quando um novo SW assume o controle
-  let _swRefreshing = false;
-  navigator.serviceWorker.addEventListener('controllerchange', () => {
-    if (!_swRefreshing) { _swRefreshing = true; location.reload(); }
-  });
+  navigator.serviceWorker.register('sw.js').catch(() => {});
 }
 
 // ── Inicialização ─────────────────────────────────────────────
-(function init() {
+(async function init() {
   // Definir datas padrão
   const now = new Date();
   document.getElementById('hDataInicio').value = `${now.getFullYear()}-01-01`;
@@ -1501,10 +1729,7 @@ if ('serviceWorker' in navigator) {
   loadHeaderToForm();
   updateMesesLabel();
 
-  // Restaurar landing correta ao voltar de página terciária
-  const h = location.hash;
-  if (h === '#osc') { showLandingOSC(); history.replaceState(null, '', location.pathname); }
-  else if (h === '#gestor') { showLandingGestor(); history.replaceState(null, '', location.pathname); }
+  await checkAuthAndStart();
 })();
 
 // ── Navegação landing ↔ app ─────────────────────────────────

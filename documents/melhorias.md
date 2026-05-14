@@ -138,3 +138,63 @@
 **Problema atual:** Os campos "Alcance das Metas" são apenas selects qualitativos.  
 **Sugestão:** Adicionar campos numéricos opcionais "Metas previstas" e "Metas atingidas" com cálculo automático do percentual (ex.: "3 de 5 = 60%"), tornando a análise mais objetiva e rastreável.
 
+---
+
+## 7. Melhorias — Checklist de Conferência de Prestação de Contas (`checklist_prestacao_contas.html`)
+
+### 7.1 Protocolo numerado de conferência
+**Problema atual:** O checklist não gera um número de protocolo, dificultando o rastreamento das análises.  
+**Sugestão:** Gerar automaticamente um número de protocolo no formato `CHECK-{ANO}-{SEQ}` (sequencial por localStorage), exibido no cabeçalho e no e-mail gerado, permitindo que a OSC faça referência ao número nas suas respostas.
+
+### 7.2 Histórico de conferências por OSC
+**Problema atual:** Cada checklist é independente; não é possível visualizar o histórico de análises de uma OSC.  
+**Sugestão:** Criar um índice local (localStorage) que registra os checklists salvos por OSC, com data, período, resultado e nome do arquivo JSON. Exibir no painel da gestora como "Conferências recentes".
+
+### 7.3 Cálculo de prazo de resposta da OSC
+**Problema atual:** O campo de prazo é apenas uma data avulsa, sem cálculo automático.  
+**Sugestão:** Calcular automaticamente a data-limite de 5 dias úteis a partir da data de recebimento dos documentos (Art. 67 da Portaria 021), exibindo a data calculada e um alerta se o prazo estiver próximo do vencimento.
+
+### 7.4 Rastreamento do status do recurso (Art. 64)
+**Problema atual:** Não há campo para acompanhar se a OSC apresentou recurso à decisão desfavorável.  
+**Sugestão:** Adicionar seção "Recurso da OSC" com campos: data do recurso, conteúdo, posição da gestora (mantida/reformada) e, se mantida, encaminhamento à autoridade competente, com campos de prazo e resultado.
+
+### 7.5 Vinculação com relatório de monitoramento
+**Problema atual:** O checklist é preenchido isoladamente.  
+**Sugestão:** Adicionar campo "Importar dados de relatório de monitoramento" (upload do JSON do Relatório de Monitoramento e Avaliação). Pré-preencher automaticamente OSC, projeto, período e dados financeiros para conferência cruzada.
+
+### 7.6 Exportação do e-mail em formato .eml
+**Problema atual:** O e-mail gerado é apenas copiado para a área de transferência.  
+**Sugestão:** Disponibilizar botão "Abrir no cliente de e-mail" usando `mailto:` com assunto e corpo pré-preenchidos, ou gerar link `data:` para download do arquivo `.eml`, facilitando o envio sem copiar e colar.
+
+### 7.7 Assinatura configurável da gestora
+**Problema atual:** A assinatura do e-mail gerado usa apenas o nome digitado no campo, sem bloco de assinatura completo.  
+**Sugestão:** Integrar com o "Perfil da Pessoa Gestora" (melhoria 1.3) para incluir cargo, e-mail institucional e telefone na assinatura do e-mail gerado automaticamente.
+
+---
+
+## 8. Melhorias — Relatório de Execução do Objeto e Cumprimento de Metas (`relatorio_execucao_objeto.html`)
+
+### 8.1 Upload de documentos (futuro — requer storage)
+**Problema atual:** A OSC não consegue anexar documentos comprobatórios diretamente no sistema.  
+**Sugestão futura:** Quando houver integração com Supabase Storage, adicionar upload de PDFs para notas fiscais, listas de presença, extratos e outros documentos comprobatórios, com link gerado para inclusão no processo SEI. Por enquanto, os campos de localização SEI são suficientes.
+
+### 8.2 Modelo de e-mail de encaminhamento do relatório
+**Problema atual:** Ao finalizar o relatório, a OSC não tem um modelo de e-mail para encaminhar à gestora.  
+**Sugestão:** Adicionar botão "Gerar E-mail de Envio para SMDHC" com texto padrão informando o período de referência, a data de elaboração e os documentos anexados, pronto para copiar e enviar.
+
+### 8.3 Validação de consistência financeira
+**Problema atual:** A OSC pode declarar valores inconsistentes sem alerta.  
+**Sugestão:** Alertar quando o Total Utilizado for maior que o Total Repassado, ou quando o saldo calculado for negativo, ou quando o total das rubricas na tabela de despesas divergir do campo "Total Utilizado".
+
+### 8.4 Importação de dados do contrato/plano de trabalho
+**Problema atual:** A OSC preenche manualmente os dados do instrumento a cada relatório.  
+**Sugestão:** Permitir que a OSC carregue um arquivo JSON de "Dados do Contrato" (criado uma vez no painel) com OSC, CNPJ, instrumento, vigência e metas do plano de trabalho. O formulário pré-preenche automaticamente, reduzindo erros e retrabalho.
+
+### 8.5 Indicador visual de completude antes de exportar
+**Problema atual:** A OSC pode exportar o PDF sem preencher campos obrigatórios.  
+**Sugestão:** Antes do `window.print()`, verificar os campos críticos (nome OSC, projeto, período, responsável, data, extratos bancários marcados) e exibir lista de itens pendentes com destaque visual.
+
+### 8.6 Assinatura digital simplificada (hash)
+**Problema atual:** O relatório não tem nenhum mecanismo de autenticidade.  
+**Sugestão:** Ao finalizar, gerar um hash SHA-256 dos dados do formulário e incluí-lo no JSON salvo e no rodapé do PDF impresso. Isso não é assinatura jurídica, mas permite verificar que o PDF não foi alterado após a exportação.
+

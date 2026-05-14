@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Administração de Usuários — Central de Parcerias</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #FAFAFA; color: #212121; font-size: 14px; }
+button { cursor: pointer; font-family: inherit; font-size: 13px; }
+input, select { font-family: inherit; font-size: 13px; }
+
+/* Toolbar */
+.toolbar { background: #4A148C; padding: 8px 16px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.toolbar .sep { width: 1px; height: 28px; background: rgba(255,255,255,.3); margin: 0 8px; }
+.btn-primary { background: #7B1FA2; color: #fff; border: none; padding: 7px 14px; border-radius: 4px; font-weight: 600; }
+.btn-primary:hover { background: #6A1B9A; }
+.btn-secondary { background: #E0E0E0; color: #333; border: 1px solid #BDBDBD; padding: 6px 12px; border-radius: 4px; }
+.btn-secondary:hover { background: #BDBDBD; }
+.btn-green  { background: #388E3C; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-weight: 600; }
+.btn-green:hover  { background: #2E7D32; }
+.btn-danger { background: #E53935; color: #fff; border: none; padding: 6px 12px; border-radius: 4px; font-weight: 600; }
+.btn-danger:hover { background: #C62828; }
+.btn-back { background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.4); padding: 7px 14px; border-radius: 4px; font-weight: 600; }
+.btn-back:hover { background: rgba(255,255,255,.25); }
+
+/* App header */
+.app-header { background: #38006B; color: #fff; padding: 8px 16px; display: flex; align-items: center; justify-content: space-between; }
+.app-header h1 { font-size: 15px; font-weight: 700; }
+.app-header .sub { font-size: 11px; opacity: .75; }
+
+/* Tabs */
+.tabs { display: flex; border-bottom: 2px solid #7B1FA2; background: #F3E5F5; flex-wrap: wrap; }
+.tab-btn { padding: 10px 20px; border: none; background: transparent; font-size: 13px; font-weight: 600; color: #7B1FA2; border-bottom: 3px solid transparent; transition: all .15s; }
+.tab-btn:hover { background: #E1BEE7; }
+.tab-btn.active { background: #7B1FA2; color: #fff; border-bottom-color: #4A148C; }
+.tab-content { display: none; padding: 16px; }
+.tab-content.active { display: block; }
+
+/* Table */
+.table-toolbar { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+.table-toolbar input[type="text"] { padding: 7px 10px; border: 1px solid #BDBDBD; border-radius: 4px; min-width: 220px; }
+.table-wrapper { overflow-x: auto; border: 1px solid #E0E0E0; border-radius: 4px; }
+.data-table { border-collapse: collapse; width: 100%; }
+.data-table th { background: #7B1FA2; color: #fff; padding: 8px 10px; font-size: 12px; font-weight: 600; white-space: nowrap; text-align: left; }
+.data-table td { padding: 7px 10px; border-bottom: 1px solid #F0F0F0; font-size: 13px; white-space: nowrap; }
+.data-table tr:hover { background: #F8F0FF; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table .actions { display: flex; gap: 6px; }
+
+/* Status badges */
+.badge { display: inline-block; padding: 2px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+.badge-pendente  { background: #FFF3E0; color: #E65100; }
+.badge-ativo     { background: #E8F5E9; color: #2E7D32; }
+.badge-rejeitado { background: #FFEBEE; color: #C62828; }
+.badge-inativo   { background: #ECEFF1; color: #546E7A; }
+
+/* Empty state */
+.empty-state { text-align: center; padding: 60px 20px; color: #888; }
+.empty-state .icon { font-size: 48px; margin-bottom: 12px; }
+
+/* Loading overlay */
+.loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,.8); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 999; gap: 12px; font-size: 15px; color: #555; }
+.loading-overlay.hidden { display: none; }
+.spinner { width: 36px; height: 36px; border: 4px solid #E0E0E0; border-top-color: #7B1FA2; border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* Inline tipo select */
+.tipo-select { border: 1px solid #BDBDBD; border-radius: 4px; padding: 4px 6px; font-size: 12px; background: #fff; }
+
+/* Toast */
+.toast { position: fixed; bottom: 20px; right: 20px; background: #323232; color: #fff; padding: 10px 18px; border-radius: 6px; font-size: 13px; z-index: 9999; opacity: 0; transition: opacity .25s; pointer-events: none; }
+.toast.show { opacity: 1; }
+.toast.success { background: #2E7D32; }
+.toast.error   { background: #C62828; }
+</style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loadingOverlay">
+  <div class="spinner"></div>
+  <span>Verificando acesso...</span>
+</div>
+
+<!-- Toolbar -->
+<div class="toolbar">
+  <button class="btn-back" onclick="window.location='../index.html#gestor'">← Painel Gestor</button>
+  <div class="sep"></div>
+  <button class="btn-primary" onclick="carregarUsuarios()">🔄 Atualizar</button>
+  <span style="color:rgba(255,255,255,.7);font-size:12px;margin-left:auto;" id="toolbarUser"></span>
+</div>
+
+<!-- App Header -->
+<div class="app-header">
+  <div>
+    <h1>⚙️ Administração de Usuários</h1>
+    <span class="sub">Gerencie solicitações de cadastro e permissões de acesso</span>
+  </div>
+</div>
+
+<!-- Tabs -->
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab(0)">⏳ Pendentes</button>
+  <button class="tab-btn" onclick="switchTab(1)">👥 Todos os Usuários</button>
+</div>
+
+<!-- Tab 0: Pendentes -->
+<div class="tab-content active" id="tab0">
+  <div class="table-toolbar">
+    <span style="font-weight:600;color:#7B1FA2;">Solicitações aguardando aprovação</span>
+  </div>
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>RF</th>
+          <th>Tipo Solicitado</th>
+          <th>Vínculo</th>
+          <th>Data Solicitação</th>
+          <th>Tipo Aprovado</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="tBodyPendentes">
+        <tr><td colspan="8"><div class="empty-state"><div class="icon">⏳</div>Carregando...</div></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Tab 1: Todos -->
+<div class="tab-content" id="tab1">
+  <div class="table-toolbar">
+    <input type="text" id="filtroTodos" placeholder="🔍 Filtrar por nome ou e-mail..." oninput="filtrarTodos()">
+    <select id="filtroStatus" onchange="filtrarTodos()" style="padding:7px 10px;border:1px solid #BDBDBD;border-radius:4px;">
+      <option value="">Todos os status</option>
+      <option value="ativo">Ativo</option>
+      <option value="pendente">Pendente</option>
+      <option value="rejeitado">Rejeitado</option>
+      <option value="inativo">Inativo</option>
+    </select>
+  </div>
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>RF</th>
+          <th>Tipo</th>
+          <th>Status</th>
+          <th>Vínculo</th>
+          <th>Último Login</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="tBodyTodos">
+        <tr><td colspan="8"><div class="empty-state"><div class="icon">👥</div>Carregando...</div></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+'use strict';
+
+const SUPA_URL = 'https://myhxxxjjqlzxikaitmhe.supabase.co';
+const SUPA_KEY = 'sb_publishable_yShZJNplsZzk1IbdRVfg7g_vU489ngd';
+const { createClient } = supabase;
+const sb = createClient(SUPA_URL, SUPA_KEY);
+
+let allUsers = [];
+
+// ── Init ──────────────────────────────────────────────────────
+(async () => {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { window.location = '../index.html'; return; }
+
+  const { data: profile } = await sb.schema('pessoa_gestora').from('pg_usuarios')
+    .select('*').eq('auth_user_id', session.user.id).maybeSingle();
+
+  if (!profile || profile.usuario_tipo !== 'admin' || profile.usuario_status !== 'ativo') {
+    alert('Acesso restrito a administradores.');
+    window.location = '../index.html'; return;
+  }
+
+  document.getElementById('toolbarUser').textContent = `👤 ${profile.usuario_nome}`;
+  document.getElementById('loadingOverlay').classList.add('hidden');
+  await carregarUsuarios();
+})();
+
+// ── Tab switch ────────────────────────────────────────────────
+function switchTab(idx) {
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+  document.querySelectorAll('.tab-content').forEach((c, i) => c.classList.toggle('active', i === idx));
+}
+
+// ── Carregar usuários ─────────────────────────────────────────
+async function carregarUsuarios() {
+  const { data, error } = await sb.schema('pessoa_gestora').from('pg_usuarios')
+    .select('*').order('data_criacao', { ascending: false });
+
+  if (error) { showToast('Erro ao carregar usuários: ' + error.message, 'error'); return; }
+  allUsers = data || [];
+  renderPendentes();
+  renderTodos(allUsers);
+}
+
+// ── Render Pendentes ──────────────────────────────────────────
+function renderPendentes() {
+  const pendentes = allUsers.filter(u => u.usuario_status === 'pendente');
+  const tbody = document.getElementById('tBodyPendentes');
+  if (pendentes.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="icon">✅</div>Nenhuma solicitação pendente.</div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = pendentes.map(u => `
+    <tr id="row-${u.id}">
+      <td>${esc(u.usuario_nome || '—')}</td>
+      <td>${esc(u.usuario_email || '—')}</td>
+      <td>${esc(u.usuario_rf || '—')}</td>
+      <td>${esc(u.usuario_tipo || '—')}</td>
+      <td>${esc(u.usuario_vinculo || '—')}</td>
+      <td>${formatDate(u.data_criacao)}</td>
+      <td>
+        <select class="tipo-select" id="tipo-${u.id}">
+          <option value="gestora" ${u.usuario_tipo === 'gestora' ? 'selected' : ''}>Gestora</option>
+          <option value="osc"     ${u.usuario_tipo === 'osc'     ? 'selected' : ''}>OSC</option>
+          <option value="admin"   ${u.usuario_tipo === 'admin'   ? 'selected' : ''}>Admin</option>
+        </select>
+      </td>
+      <td>
+        <div class="actions">
+          <button class="btn-green"  onclick="aprovar(${u.id})">✓ Aprovar</button>
+          <button class="btn-danger" onclick="rejeitar(${u.id})">✕ Rejeitar</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+// ── Render Todos ──────────────────────────────────────────────
+function renderTodos(lista) {
+  const tbody = document.getElementById('tBodyTodos');
+  if (lista.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8"><div class="empty-state"><div class="icon">👥</div>Nenhum usuário encontrado.</div></td></tr>`;
+    return;
+  }
+  tbody.innerHTML = lista.map(u => `
+    <tr id="rowall-${u.id}">
+      <td>${esc(u.usuario_nome || '—')}</td>
+      <td>${esc(u.usuario_email || '—')}</td>
+      <td>${esc(u.usuario_rf || '—')}</td>
+      <td>
+        <select class="tipo-select" id="tipoall-${u.id}" onchange="alterarTipo(${u.id})">
+          <option value="gestora" ${u.usuario_tipo === 'gestora' ? 'selected' : ''}>Gestora</option>
+          <option value="osc"     ${u.usuario_tipo === 'osc'     ? 'selected' : ''}>OSC</option>
+          <option value="admin"   ${u.usuario_tipo === 'admin'   ? 'selected' : ''}>Admin</option>
+        </select>
+      </td>
+      <td><span class="badge badge-${u.usuario_status}">${u.usuario_status}</span></td>
+      <td>${esc(u.usuario_vinculo || '—')}</td>
+      <td>${formatDate(u.data_ultimo_login)}</td>
+      <td>
+        <div class="actions">
+          ${u.usuario_status !== 'ativo'    ? `<button class="btn-green"  onclick="mudarStatus(${u.id},'ativo')">Ativar</button>` : ''}
+          ${u.usuario_status === 'ativo'    ? `<button class="btn-danger" onclick="mudarStatus(${u.id},'inativo')">Desativar</button>` : ''}
+          ${u.usuario_status === 'pendente' ? `<button class="btn-danger" onclick="mudarStatus(${u.id},'rejeitado')">Rejeitar</button>` : ''}
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+// ── Filtro Todos ──────────────────────────────────────────────
+function filtrarTodos() {
+  const texto  = document.getElementById('filtroTodos').value.toLowerCase();
+  const status = document.getElementById('filtroStatus').value;
+  const filtrado = allUsers.filter(u => {
+    const matchTexto  = !texto  || (u.usuario_nome || '').toLowerCase().includes(texto) || (u.usuario_email || '').toLowerCase().includes(texto);
+    const matchStatus = !status || u.usuario_status === status;
+    return matchTexto && matchStatus;
+  });
+  renderTodos(filtrado);
+}
+
+// ── Ações ─────────────────────────────────────────────────────
+async function aprovar(id) {
+  const tipoSel = document.getElementById(`tipo-${id}`)?.value;
+  const { error } = await sb.schema('pessoa_gestora').from('pg_usuarios')
+    .update({ usuario_status: 'ativo', usuario_tipo: tipoSel })
+    .eq('id', id);
+  if (error) { showToast('Erro: ' + error.message, 'error'); return; }
+  showToast('Usuário aprovado com sucesso!', 'success');
+  await carregarUsuarios();
+}
+
+async function rejeitar(id) {
+  if (!confirm('Confirma rejeitar esta solicitação?')) return;
+  const { error } = await sb.schema('pessoa_gestora').from('pg_usuarios')
+    .update({ usuario_status: 'rejeitado' }).eq('id', id);
+  if (error) { showToast('Erro: ' + error.message, 'error'); return; }
+  showToast('Solicitação rejeitada.', 'success');
+  await carregarUsuarios();
+}
+
+async function mudarStatus(id, novoStatus) {
+  const { error } = await sb.schema('pessoa_gestora').from('pg_usuarios')
+    .update({ usuario_status: novoStatus }).eq('id', id);
+  if (error) { showToast('Erro: ' + error.message, 'error'); return; }
+  showToast(`Status alterado para "${novoStatus}".`, 'success');
+  await carregarUsuarios();
+}
+
+async function alterarTipo(id) {
+  const novoTipo = document.getElementById(`tipoall-${id}`)?.value;
+  const { error } = await sb.schema('pessoa_gestora').from('pg_usuarios')
+    .update({ usuario_tipo: novoTipo }).eq('id', id);
+  if (error) { showToast('Erro: ' + error.message, 'error'); return; }
+  showToast(`Tipo alterado para "${novoTipo}".`, 'success');
+  await carregarUsuarios();
+}
+
+// ── Helpers ───────────────────────────────────────────────────
+function formatDate(iso) {
+  if (!iso) return '—';
+  return new Date(iso).toLocaleString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+function esc(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function showToast(msg, type = '') {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show' + (type ? ' ' + type : '');
+  setTimeout(() => t.className = 'toast', 3000);
+}
+</script>
+</body>
+</html>
